@@ -147,7 +147,6 @@ public class DruidConfig {
         } catch (Exception e) {
             log.error("未找到从数据源");
         }
-
     }
 
     /**

@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @author: maojiaqi
- * @Date: 2023/7/21 17:08
- * @describe: 登录接口请求对象
+ * @Date: 2023/11/7 15:05
+ * @describe: 下拉数据源请求对象
  */
 
 @Accessors(chain = true)
@@ -19,12 +20,13 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginBody {
+public class DictDataVo {
+    @NotBlank(message = "字典编码不能为空！")
+    private String dictCode;
+    private String selectedId;
+    private List<String> selectedIds;
     @Builder.Default
-    private String uuid = "";
-    @NotBlank(message = "用户名不能为空")
-    private String userCode;
-    @NotBlank(message = "密码不能为空")
-    private String password;
-    private String captchaCode;
+    private String filterValue = "";
+    private int pageNum;
+    private int pageSize;
 }

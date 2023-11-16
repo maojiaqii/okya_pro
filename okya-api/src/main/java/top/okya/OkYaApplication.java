@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.FileCopyUtils;
 
 /**

@@ -2,10 +2,13 @@ package top.okya.component.domain.dto;
 
 import java.util.Date;
 import java.io.Serializable;
+import java.util.Objects;
+
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.constants.CommonConstants;
 
 /**
  * 用户信息表(AsUser)实体类
@@ -37,7 +40,7 @@ public class AsUser implements Serializable {
     */
     private String userName;
     /**
-    * 用户类型（00系统用户）
+    * 用户类型（00管理员）
     */
     private String userType;
     /**
@@ -51,7 +54,7 @@ public class AsUser implements Serializable {
     /**
     * 用户性别（0女 1男 2未知）
     */
-    private String sex;
+    private Integer sex;
     /**
     * 头像地址
     */
@@ -63,7 +66,7 @@ public class AsUser implements Serializable {
     /**
     * 帐号状态（0正常 1停用 2代表删除）
     */
-    private String status;
+    private Integer status;
     /**
     * 最后登录IP
     */
@@ -92,5 +95,9 @@ public class AsUser implements Serializable {
     * 备注
     */
     private String remark;
+
+    public boolean isAdmin(){
+        return Objects.equals(this.userType, CommonConstants.ADMIN);
+    }
 
 }

@@ -1,6 +1,7 @@
 package top.okya.system.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +14,7 @@ import top.okya.component.constants.LoginConstants;
 import top.okya.component.constants.RedisConstants;
 import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.vo.LoginBody;
-import top.okya.component.enums.LoginExceptionType;
+import top.okya.component.enums.exception.LoginExceptionType;
 import top.okya.component.exception.LoginException;
 import top.okya.component.utils.common.DateFormatUtil;
 import top.okya.component.utils.redis.JedisUtil;
@@ -25,6 +26,7 @@ import top.okya.system.domain.AsLoginRecord;
 import top.okya.system.service.LoginService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -50,8 +52,11 @@ public class LoginServiceImpl implements LoginService {
     JedisUtil jedisUtil;
 
     @Override
-    public String login(LoginBody loginBody) {
+    public LoginUser login(HttpServletResponse response, LoginBody loginBody) {
         if (!Objects.equals(OkyaConfig.getCaptchaType().toUpperCase(), CommonConstants.DISABLED_CAPTCHA)) {
+            if(StringUtils.isBlank(loginBody.getCaptchaCode())){
+                throw new LoginException(LoginExceptionType.CAPTCHA_EMPTY, loginBody.getUserCode());
+            }
             if (!Objects.equals(jedisUtil.get(RedisConstants.CAPTCHA_CODE_KEY + loginBody.getUuid()), loginBody.getCaptchaCode())) {
                 throw new LoginException(LoginExceptionType.CAPTCHA_ERROR, loginBody.getUserCode());
             }
@@ -70,7 +75,8 @@ public class LoginServiceImpl implements LoginService {
                 .setMsg("登陆成功！");
         AsyncService.me().insertLoginRecord(asLoginRecord);
         // 生成token
-        return JwtUtil.createToken(loginUser);
+        response.setHeader("Authorization", JwtUtil.createToken(loginUser));
+        return loginUser;
     }
 
     @Override

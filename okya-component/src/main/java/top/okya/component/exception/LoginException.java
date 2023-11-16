@@ -1,10 +1,8 @@
 package top.okya.component.exception;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import top.okya.component.enums.LoginExceptionType;
-import top.okya.component.exception.base.BaseException;
+import top.okya.component.enums.exception.LoginExceptionType;
 
 /**
  * @author: maojiaqi

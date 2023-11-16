@@ -54,7 +54,7 @@ public class AsDept implements Serializable {
     /**
     * 部门状态（0正常 1停用 2删除）
     */
-    private String status;
+    private Integer status;
     /**
     * 创建者
     */

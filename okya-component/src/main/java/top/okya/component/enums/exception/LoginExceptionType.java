@@ -1,4 +1,4 @@
-package top.okya.component.enums;
+package top.okya.component.enums.exception;
 
 /**
  * @author: maojiaqi
@@ -20,6 +20,7 @@ public enum LoginExceptionType {
     PASSWORD_ERROR(20001005, "密码错误，剩余尝试次数：【%s】次！"),
     // 验证码 异常
     CAPTCHA_ERROR(20001006, "验证码错误！"),
+    CAPTCHA_EMPTY(20001006, "验证码不允许为空！"),
     // 未知错误 异常
     SERVER_EXCEPTION(20009999, "系统错误：【%s】");
 

@@ -25,7 +25,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        System.out.println(authException.toString());
         int code = HttpStatus.UNAUTHORIZED.value();
         String msg = "请求访问：" + request.getRequestURI() + "，认证失败，无法访问系统资源";
         log.error(msg);

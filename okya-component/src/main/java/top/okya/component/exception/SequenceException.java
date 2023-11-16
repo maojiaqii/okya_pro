@@ -1,7 +1,7 @@
 package top.okya.component.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import top.okya.component.enums.SequenceExceptionType;
+import top.okya.component.enums.exception.SequenceExceptionType;
 import top.okya.component.exception.base.BaseException;
 
 /**

@@ -11,7 +11,7 @@
         <result property="leader" column="leader" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>

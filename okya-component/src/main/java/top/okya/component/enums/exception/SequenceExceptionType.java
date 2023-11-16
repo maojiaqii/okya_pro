@@ -1,4 +1,4 @@
-package top.okya.component.enums;
+package top.okya.component.enums.exception;
 
 /**
  * @author: maojiaqi

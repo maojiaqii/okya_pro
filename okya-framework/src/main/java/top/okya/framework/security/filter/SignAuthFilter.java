@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import top.okya.component.constants.CommonConstants;
 import top.okya.component.constants.RedisConstants;
-import top.okya.component.enums.SecurityExceptionType;
+import top.okya.component.enums.exception.SecurityExceptionType;
 import top.okya.component.exception.SecurityException;
 import top.okya.component.utils.common.DateFormatUtil;
 import top.okya.component.utils.redis.JedisUtil;
@@ -75,26 +75,27 @@ public class SignAuthFilter extends OncePerRequestFilter {
         // 防止流读取一次后就没有了, 所以需要将流继续写出去
         HttpServletRequest httpRequest = request;
         String ct = request.getContentType();
+        String method = request.getMethod();
 
         HttpServletRequestWrapper requestWrapper = null;
         String requestBody = "";
-        if (ct == null || ct.equals(CommonConstants.APPLICATION_X_WWW_FORM_URLENCODED)) {
+        // method认证
+        if (Objects.equals(method, CommonConstants.HTTP_GET)) {
             requestWrapper = new DefaultRequestWrapper(httpRequest);
-            Map<String, String[]> pm = requestWrapper.getParameterMap();
-            Map<String, String> pm1 = new LinkedHashMap<>();
-            for (Map.Entry<String, String[]> entry : pm.entrySet()) {
-                pm1.put(entry.getKey(), entry.getValue()[0]);
+        } else if(Objects.equals(method, CommonConstants.HTTP_POST)) {
+            // Content-Type认证
+            if (ct.equals(CommonConstants.APPLICATION_JSON)) {
+                JsonRequestWrapper jsonRequestWrapper = new JsonRequestWrapper(httpRequest);
+                requestWrapper = jsonRequestWrapper;
+                requestBody = jsonRequestWrapper.getRequestBody();
+            } else {
+                handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.UNSUPPORTED_HTTP_CONTENT_TYPE, ct));
+                return;
             }
-            requestBody = JSON.toJSONString(pm1);
-        } else if (ct.equals(CommonConstants.APPLICATION_JSON)) {
-            JsonRequestWrapper jsonRequestWrapper = new JsonRequestWrapper(httpRequest);
-            requestWrapper = jsonRequestWrapper;
-            requestBody = jsonRequestWrapper.getRequestBody();
         } else {
-            handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.UNSUPPORTED_HTTP_CONTENT_TYPE, ct));
+            handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.UNSUPPORTED_HTTP_METHOD, method));
             return;
         }
-        log.info("Content-Type认证通过！");
 
         String requestUri = httpRequest.getRequestURI();
         log.info("当前请求的URI是==>{}", requestUri);
@@ -111,12 +112,8 @@ public class SignAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        String sign = requestWrapper.getHeader(signHeader);
+        // 防重放认证
         String timestamp = requestWrapper.getHeader(timeHeader);
-        if (StringUtils.isBlank(sign)) {
-            handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.EMPTY_SIGNATURE));
-            return;
-        }
         if (timestamp == null) {
             handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.EMPTY_TIME_STAMP));
             return;
@@ -124,18 +121,24 @@ public class SignAuthFilter extends OncePerRequestFilter {
         //重放时间限制（单位毫秒）
         Long difference = DateFormatUtil.currentMillis() - Long.valueOf(timestamp);
         if (difference > signTimeout) {
-            log.info("前端时间戳：{},服务端时间戳：{}", timestamp, DateFormatUtil.currentMillis());
             handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.SIGNATURE_EXPIRED));
             return;
         }
-        log.info("防重放认证通过！");
 
-        if (!SecureUtil.matches(timestamp + requestBody, sign)) {
-            handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.VERIFICATION_SIGNATURE_FAILED));
-            return;
+        // 签名认证（仅POST）
+        if(Objects.equals(method, CommonConstants.HTTP_POST)) {
+            String sign = requestWrapper.getHeader(signHeader);
+            if (StringUtils.isBlank(sign)) {
+                handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.EMPTY_SIGNATURE));
+                return;
+            }
+            if (!SecureUtil.matches(timestamp + requestBody, sign)) {
+                handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.VERIFICATION_SIGNATURE_FAILED));
+                return;
+            }
         }
-        log.info("签名认证通过！");
 
+        // 防重复提交认证
         String cacheRepeatKey = RedisConstants.REPEAT_SUBMIT_KEY + requestUri + ":" + Optional.ofNullable(request.getHeader(tokenHeader)).orElse("");
         String cacheObj = jedisUtil.get(cacheRepeatKey);
         if (Objects.equals(cacheObj, requestBody)) {
@@ -143,7 +146,6 @@ public class SignAuthFilter extends OncePerRequestFilter {
             return;
         }
         jedisUtil.set(cacheRepeatKey, requestBody, repeatMillis);
-        log.info("防重复提交认证通过！");
 
         filterChain.doFilter(requestWrapper, response);
     }

@@ -63,7 +63,7 @@ public class IpUtil {
         if (ip == null || ip.length() == 0 || CommonConstants.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : getMultistageReverseProxyIp(ip);
+        return "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip) ? "127.0.0.1" : getMultistageReverseProxyIp(ip);
     }
 
     /**

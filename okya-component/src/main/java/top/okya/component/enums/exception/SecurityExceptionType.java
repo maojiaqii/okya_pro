@@ -1,4 +1,4 @@
-package top.okya.component.enums;
+package top.okya.component.enums.exception;
 
 /**
  * @author: maojiaqi
@@ -8,6 +8,8 @@ package top.okya.component.enums;
 
 public enum SecurityExceptionType {
 
+    // Content-Type不支持 异常
+    UNSUPPORTED_HTTP_METHOD(10001000, "不支持的Http Method：【%s】！"),
     // Content-Type不支持 异常
     UNSUPPORTED_HTTP_CONTENT_TYPE(10001001, "不支持的Http Content-Type：【%s】！"),
     // 签名为空 异常

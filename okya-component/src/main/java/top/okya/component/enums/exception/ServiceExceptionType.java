@@ -1,4 +1,4 @@
-package top.okya.component.enums;
+package top.okya.component.enums.exception;
 
 /**
  * @author: maojiaqi
@@ -10,6 +10,10 @@ public enum ServiceExceptionType {
 
     // 验证码 异常
     CAPTCHA_CREATE_ERROR(30001001, "验证码生成失败！"),
+    DISABLED_CAPTCHA(30001002, "未启用验证码功能，获取失败！"),
+    DISABLED_DICTIONARY(30001101, "字典已被停用！"),
+    DELETED_DICTIONARY(30001102, "字典已被删除！"),
+    UNKNOWN_DICTIONARY(30001101, "未知的字典，编码：【%s】！"),
     // 未知错误 异常
     SERVER_EXCEPTION(30009999, "系统错误：【%s】");
 

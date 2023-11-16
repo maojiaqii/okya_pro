@@ -7,7 +7,8 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 菜单权限表(AsMenu)实体类
@@ -30,6 +31,10 @@ public class AsMenu implements Serializable {
     */
     private String menuName;
     /**
+     * 菜单名称
+     */
+    private String menuNameEn;
+    /**
     * 父菜单ID
     */
     private Long parentId;
@@ -42,9 +47,13 @@ public class AsMenu implements Serializable {
     */
     private String component;
     /**
+     * 路由
+     */
+    private String path;
+    /**
     * 路由参数
     */
-    private String query;
+    private Object query;
     /**
     * 是否为外链（0是 1否）
     */
@@ -86,6 +95,22 @@ public class AsMenu implements Serializable {
     */
     private String remark;
 
-    private Set<AsMenu> children;
+    private List<AsMenu> children;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AsMenu asMenu = (AsMenu) o;
+        return Objects.equals(menuId, asMenu.menuId) && Objects.equals(menuName, asMenu.menuName) && Objects.equals(menuNameEn, asMenu.menuNameEn) && Objects.equals(parentId, asMenu.parentId) && Objects.equals(orderNum, asMenu.orderNum) && Objects.equals(component, asMenu.component) && Objects.equals(query, asMenu.query) && Objects.equals(isFrame, asMenu.isFrame) && Objects.equals(menuType, asMenu.menuType) && Objects.equals(status, asMenu.status) && Objects.equals(perms, asMenu.perms) && Objects.equals(icon, asMenu.icon) && Objects.equals(createBy, asMenu.createBy) && Objects.equals(createTime, asMenu.createTime) && Objects.equals(updateBy, asMenu.updateBy) && Objects.equals(updateTime, asMenu.updateTime) && Objects.equals(remark, asMenu.remark) && Objects.equals(children, asMenu.children);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(menuId, menuName, menuNameEn, parentId, orderNum, component, query, isFrame, menuType, status, perms, icon, createBy, createTime, updateBy, updateTime, remark, children);
+    }
 }

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import top.okya.component.constants.RedisConstants;
 import top.okya.component.domain.Sequence;
-import top.okya.component.enums.SequenceExceptionType;
+import top.okya.component.enums.exception.SequenceExceptionType;
 import top.okya.component.exception.SequenceException;
 import top.okya.component.utils.common.DateFormatUtil;
 import top.okya.component.utils.redis.JedisUtil;

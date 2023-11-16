@@ -1,5 +1,6 @@
 package top.okya.component.annotation;
 
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @RestController
-@RequestMapping(value = "/unAuth")
+@RequestMapping
 public @interface UnAuthController {
+    @AliasFor(annotation = RequestMapping.class)
+    String value() default "";
 }

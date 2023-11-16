@@ -12,6 +12,10 @@ public class CommonConstants {
 
     public static final int FAIL = 1;
 
+    public static final int ZERO_PAGE = 0;
+
+    public static final String AND = "AND";
+
     public static final String UNKNOWN = "UNKNOWN";
 
     /**
@@ -42,14 +46,25 @@ public class CommonConstants {
     /**
      * 支持的Content-Type
      */
-    public static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+    public static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
 
     /**
      * 支持的Content-Type
      */
-    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 
     public static final String HTTP_POST = "POST";
 
     public static final String HTTP_GET = "GET";
+
+    public static final String ADMIN = "00";
+    /**
+     * 字典类型 静态列表
+      */
+    public static final int DICT_TYPE_LIST = 0;
+    /**
+     * 字典类型 动态数据库表格
+     */
+    public static final int DICT_TYPE_TABLE = 1;
+
 }

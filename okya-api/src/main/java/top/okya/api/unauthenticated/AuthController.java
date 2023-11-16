@@ -15,9 +15,8 @@ import top.okya.component.constants.CommonConstants;
 import top.okya.component.constants.RedisConstants;
 import top.okya.component.domain.HttpResult;
 import top.okya.component.domain.vo.LoginBody;
-import top.okya.component.enums.LoginExceptionType;
 import top.okya.component.enums.OperationType;
-import top.okya.component.enums.ServiceExceptionType;
+import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
 import top.okya.component.utils.common.IdUtil;
 import top.okya.component.utils.redis.JedisUtil;
@@ -25,6 +24,7 @@ import top.okya.system.service.LoginService;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
@@ -32,10 +32,10 @@ import java.util.Objects;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/21 17:29
- * @describe: 登录、登出、授权相关接口
+ * @describe: 登录相关接口
  */
 
-@UnAuthController
+@UnAuthController("/login")
 public class AuthController {
 
     @Resource(name = "captchaProducer")
@@ -54,7 +54,7 @@ public class AuthController {
     @ApiLog(title = "获取验证码")
     public HttpResult getCaptchaImage() {
         if (Objects.equals(CommonConstants.DISABLED_CAPTCHA, OkyaConfig.getCaptchaType())) {
-            return HttpResult.success("不启用验证码功能！");
+            throw new ServiceException(ServiceExceptionType.DISABLED_CAPTCHA);
         }
         String uuid = IdUtil.simpleUUID();
         String capStr = null, code = null;
@@ -84,7 +84,6 @@ public class AuthController {
     @PostMapping("/userLogin")
     @ApiLog(title = "密码登录", operationType = OperationType.LOGIN)
     public HttpResult userLogin(HttpServletResponse response, @Validated @RequestBody LoginBody loginBody) {
-        response.setHeader("Authorization", loginService.login(loginBody));
-        return HttpResult.success("登录成功！");
+        return HttpResult.success("登录成功！", loginService.login(response, loginBody));
     }
 }

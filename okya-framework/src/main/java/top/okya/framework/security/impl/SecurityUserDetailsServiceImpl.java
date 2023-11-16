@@ -14,13 +14,12 @@ import top.okya.system.dao.AsUserMapper;
 import top.okya.component.domain.dto.AsUser;
 import top.okya.component.constants.RedisConstants;
 import top.okya.component.domain.LoginUser;
-import top.okya.component.enums.LoginExceptionType;
-import top.okya.component.enums.UserStatus;
+import top.okya.component.enums.exception.LoginExceptionType;
+import top.okya.component.enums.UseStatus;
 import top.okya.component.exception.LoginException;
 import top.okya.component.utils.redis.JedisUtil;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 
 /**
  * @author: maojiaqi
@@ -51,9 +50,9 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
         AsUser asUser = asUserMapper.queryByUserCode(userCode);
         if (asUser == null) {
             throw new LoginException(LoginExceptionType.USER_NOT_FOUND, new Object[]{userCode}, userCode);
-        } else if (asUser.getStatus().equals(UserStatus.DISABLED)) {
+        } else if (asUser.getStatus() == UseStatus.DISABLED.getCode()) {
             throw new LoginException(LoginExceptionType.USER_DISABLED, new Object[]{userCode}, userCode);
-        } else if (asUser.getStatus().equals(UserStatus.DELETED)) {
+        } else if (asUser.getStatus() == UseStatus.DELETED.getCode()) {
             throw new LoginException(LoginExceptionType.USER_DELETED, new Object[]{userCode}, userCode);
         }
         checkPwd(asUser);

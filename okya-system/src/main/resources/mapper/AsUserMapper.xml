@@ -10,10 +10,10 @@
         <result property="userType" column="user_type" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
-        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
         <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="loginIp" column="login_ip" jdbcType="VARCHAR"/>
         <result property="loginDate" column="login_date" jdbcType="TIMESTAMP"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>

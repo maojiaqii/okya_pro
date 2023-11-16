@@ -6,7 +6,7 @@ import top.okya.component.annotation.ApiLog;
 import top.okya.component.annotation.TestController;
 import top.okya.component.domain.HttpResult;
 import top.okya.component.enums.OperationType;
-import top.okya.component.enums.ServiceExceptionType;
+import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
 import top.okya.component.domain.dto.AsUser;
 import top.okya.system.service.OperationService;

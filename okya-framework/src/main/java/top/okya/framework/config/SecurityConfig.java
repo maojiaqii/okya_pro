@@ -1,6 +1,7 @@
 package top.okya.framework.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,12 @@ import top.okya.framework.security.impl.LogoutSuccessHandlerImpl;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SecurityConfig {
+
+    @Value("${spring.api.path.test-prefix:#{null}}")
+    private String testPrefix;
+
+    @Value("${spring.api.path.unAuth-prefix:#{null}}")
+    private String uaPrefix;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -74,12 +81,12 @@ public class SecurityConfig {
                 // 设置异常的EntryPoint，如果不设置，默认使用Http403ForbiddenEntryPoint
                 .exceptionHandling().authenticationEntryPoint(invalidAuthenticationEntryPoint)
                 .and()
-                // 前后端分离是无状态的，不需要session了，直接禁用。
+                // 前后端分离是无状态的，不需要session，直接禁用。
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/unAuth/**").permitAll()
-                .antMatchers("/test/**").permitAll()
+                .antMatchers(uaPrefix + "/**").permitAll()
+                .antMatchers(testPrefix + "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/**/*.ico","/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
                 .anyRequest().authenticated()

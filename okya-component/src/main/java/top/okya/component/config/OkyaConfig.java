@@ -33,7 +33,7 @@ public class OkyaConfig {
     /**
      * 上传路径
      */
-    private String fileFolder;
+    private static String fileFolder;
 
     /**
      * 获取地址开关
@@ -69,12 +69,12 @@ public class OkyaConfig {
         this.copyrightYear = copyrightYear;
     }
 
-    public String getFileFolder() {
+    public static String getFileFolder() {
         return fileFolder;
     }
 
     public void setFileFolder(String fileFolder) {
-        this.fileFolder = fileFolder;
+        OkyaConfig.fileFolder = fileFolder;
     }
 
     public String getIconUrlPrefix() {

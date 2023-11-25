@@ -64,6 +64,16 @@ public enum OperationType {
     IMPORT,
 
     /**
+     * 上传
+     */
+    UPLOAD,
+
+    /**
+     * 下载
+     */
+    DOWNLOAD,
+
+    /**
      * 清空数据
      */
     CLEAN

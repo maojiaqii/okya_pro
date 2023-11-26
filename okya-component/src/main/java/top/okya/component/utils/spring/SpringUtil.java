@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 /**
  * spring工具类 方便在非spring管理环境中获取bean
  * 
- * @author ruoyi
+ * @author mao
  */
 @Component
 public final class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextAware

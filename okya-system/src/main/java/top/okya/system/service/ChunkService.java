@@ -23,7 +23,6 @@ public interface ChunkService {
      * 文件分片上传
      *
      * @param chunkVo
-     * @return
      */
-    String upload(ChunkVo chunkVo);
+    void upload(ChunkVo chunkVo);
 }

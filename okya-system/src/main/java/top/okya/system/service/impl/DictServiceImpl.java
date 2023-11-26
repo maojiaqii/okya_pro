@@ -21,11 +21,7 @@ import top.okya.system.dao.AsDictionaryMapper;
 import top.okya.system.domain.AsDictionary;
 import top.okya.system.service.DictService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author: maojiaqi
@@ -36,6 +32,14 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class DictServiceImpl implements DictService {
+    /**
+     * 字典类型 静态列表
+     */
+    private static final int DICT_TYPE_LIST = 0;
+    /**
+     * 字典类型 动态数据库表格
+     */
+    private static final int DICT_TYPE_TABLE = 1;
 
     @Autowired
     AsDictionaryMapper asDictionaryMapper;
@@ -75,12 +79,12 @@ public class DictServiceImpl implements DictService {
                     sqlConditionsForSelectedData = String.format("%s in ('%s')", asDictionary.getDictValue(), String.join("', '", selectedIds));
                 }
                 int dictType = asDictionary.getDictType();
-                if (Objects.equals(dictType, CommonConstants.DICT_TYPE_LIST)) {
+                if (Objects.equals(dictType, DICT_TYPE_LIST)) {
                     dictData = asDictionaryDataMapper.queryByCode(dictCode, sqlCondition);
                     if(StringUtils.isNotBlank(sqlConditionsForSelectedData)){
                         dictSelectedData = asDictionaryDataMapper.queryByCode(dictCode, sqlConditionsForSelectedData);
                     }
-                } else if (Objects.equals(dictType, CommonConstants.DICT_TYPE_TABLE)) {
+                } else if (Objects.equals(dictType, DICT_TYPE_TABLE)) {
                     dictData = asDictionaryDataMapper.queryByTable(asDictionary.getDictSource(), sqlCondition);
                 } else {
                     throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION, String.format("未知的字典类型：【%s】", asDictionary.getDictType()));

@@ -66,7 +66,6 @@ public class ChunkVo {
                 ", 文件名：'" + filename + '\'' +
                 ", 相对路径：'" + relativePath + '\'' +
                 ", 总块数：" + totalChunks +
-                ", file=" + file +
                 "}";
     }
 }

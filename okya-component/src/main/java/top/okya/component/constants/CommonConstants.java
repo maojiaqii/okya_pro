@@ -58,13 +58,5 @@ public class CommonConstants {
     public static final String HTTP_GET = "GET";
 
     public static final String ADMIN = "00";
-    /**
-     * 字典类型 静态列表
-      */
-    public static final int DICT_TYPE_LIST = 0;
-    /**
-     * 字典类型 动态数据库表格
-     */
-    public static final int DICT_TYPE_TABLE = 1;
 
 }

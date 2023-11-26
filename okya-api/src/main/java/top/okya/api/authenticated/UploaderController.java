@@ -13,7 +13,7 @@ import top.okya.system.service.ChunkService;
 
 /**
  * @author: maojiaqi
- * @Date: 2023/10/25 14:31
+ * @Date: 2023/11/25 20:31
  * @describe: 文件上传
  */
 
@@ -40,6 +40,7 @@ public class UploaderController {
     @PostMapping(value = "/chunk")
     @ApiLog(title = "文件分片上传", operationType = OperationType.UPLOAD)
     public HttpResult upload(ChunkVo chunkVo) {
-        return HttpResult.success(chunkService.upload(chunkVo));
+        chunkService.upload(chunkVo);
+        return HttpResult.success();
     }
 }

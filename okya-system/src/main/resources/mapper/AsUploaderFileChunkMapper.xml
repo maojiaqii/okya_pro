@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.system.dao.AsUploaderFileChunkMapper">
+
+    <resultMap type="top.okya.system.domain.AsUploaderFileChunk" id="AsUploaderFileChunkMap">
+        <result property="chunkId" column="chunk_id" jdbcType="INTEGER"/>
+        <result property="chunkName" column="chunk_name" jdbcType="VARCHAR"/>
+        <result property="chunkNum" column="chunk_num" jdbcType="INTEGER"/>
+        <result property="chunkSize" column="chunk_size" jdbcType="INTEGER"/>
+        <result property="totalSize" column="total_size" jdbcType="INTEGER"/>
+        <result property="totalChunks" column="total_chunks" jdbcType="INTEGER"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="fileIdentifier" column="file_identifier" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="merged" column="merged" jdbcType="INTEGER"/>
+        <result property="uploadBy" column="upload_by" jdbcType="VARCHAR"/>
+        <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AsUploaderFileChunkMap">
+        select chunk_id,
+               chunk_name,
+               chunk_num,
+               chunk_size,
+               total_size,
+               total_chunks,
+               file_name,
+               file_identifier,
+               file_path,
+               merged,
+               upload_by,
+               upload_time
+        from as_uploader_file_chunk
+        where chunk_id = #{chunkId}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="chunkId" useGeneratedKeys="true">
+        insert into as_uploader_file_chunk(chunk_name, chunk_num, chunk_size, total_size,
+                                           total_chunks, file_name, file_identifier, file_path,
+                                           merged, upload_by, upload_time)
+        values (#{chunkName}, #{chunkNum}, #{chunkSize}, #{totalSize}, #{totalChunks}, #{fileName}, #{fileIdentifier}, #{filePath}, #{merged}, #{uploadBy},
+                #{uploadTime})
+    </insert>
+
+</mapper>

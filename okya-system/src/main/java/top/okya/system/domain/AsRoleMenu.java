@@ -12,10 +12,7 @@ import lombok.experimental.Accessors;
  * @author mjq
  * @since 2023-08-28 16:26:40
  */
-@Accessors(chain = true)
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class AsRoleMenu implements Serializable {
     private static final long serialVersionUID = -27182953334398268L;
     /**

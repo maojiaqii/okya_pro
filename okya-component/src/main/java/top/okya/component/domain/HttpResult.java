@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * 操作消息提醒
  *
- * @author ruoyi
+ * @author mao
  */
 public class HttpResult extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;

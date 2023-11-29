@@ -3,6 +3,8 @@ package top.okya.system.dao;
 import org.apache.ibatis.annotations.Mapper;
 import top.okya.system.domain.AsUploaderFileChunk;
 
+import java.util.List;
+
 /**
  * 文件分块上传信息表(AsUploaderFileChunk)表数据库访问层
  *
@@ -13,12 +15,12 @@ import top.okya.system.domain.AsUploaderFileChunk;
 public interface AsUploaderFileChunkMapper {
 
     /**
-     * 通过ID查询单条数据
+     * 通过文件唯一码查询数据
      *
-     * @param chunkId 主键
+     * @param fileIdentifier 主键
      * @return 实例对象
      */
-    AsUploaderFileChunk queryById(Long chunkId);
+    List<AsUploaderFileChunk> queryByFileIdentifier(String fileIdentifier);
 
     /**
      * 新增数据

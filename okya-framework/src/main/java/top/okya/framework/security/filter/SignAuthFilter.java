@@ -77,6 +77,21 @@ public class SignAuthFilter extends OncePerRequestFilter {
         String ct = request.getContentType();
         String method = request.getMethod();
 
+        String requestUri = httpRequest.getRequestURI();
+        log.info("当前请求的URI是==>{}", requestUri);
+        for (String uri : ignoreUri) {
+            if (uri.equals(requestUri)) {
+                filterChain.doFilter(httpRequest, response);
+                return;
+            } else if (uri.endsWith("*")) {
+                boolean flag = requestUri.startsWith(uri.substring(0, uri.length() - 1));
+                if (flag) {
+                    filterChain.doFilter(httpRequest, response);
+                    return;
+                }
+            }
+        }
+
         HttpServletRequestWrapper requestWrapper = null;
         String requestBody = "";
         // method认证
@@ -95,21 +110,6 @@ public class SignAuthFilter extends OncePerRequestFilter {
         } else {
             handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.UNSUPPORTED_HTTP_METHOD, method));
             return;
-        }
-
-        String requestUri = httpRequest.getRequestURI();
-        log.info("当前请求的URI是==>{}", requestUri);
-        for (String uri : ignoreUri) {
-            if (uri.equals(requestUri)) {
-                filterChain.doFilter(requestWrapper, response);
-                return;
-            } else if (uri.endsWith("*")) {
-                boolean flag = requestUri.startsWith(uri.substring(0, uri.length() - 1));
-                if (flag) {
-                    filterChain.doFilter(requestWrapper, response);
-                    return;
-                }
-            }
         }
 
         // 防重放认证

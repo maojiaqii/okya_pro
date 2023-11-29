@@ -2,7 +2,7 @@ package top.okya.system.service;
 
 import top.okya.component.domain.vo.ChunkVo;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author: maojiaqi
@@ -17,7 +17,7 @@ public interface ChunkService {
      * @param chunkVo
      * @return
      */
-    Map<String, Object> checkChunk(ChunkVo chunkVo);
+    List<Integer> checkChunk(ChunkVo chunkVo);
 
     /**
      * 文件分片上传

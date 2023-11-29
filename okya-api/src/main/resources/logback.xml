@@ -24,8 +24,7 @@
         </filter>
     </appender>
 
-    <include
-            resource="org/springframework/boot/logging/logback/base.xml"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <!-- 普通日志 -->
     <appender name="INFO_FILE"

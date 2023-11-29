@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author: maojiaqi
  * @Date: 2023/6/27 16:43
- * @describe： 自定义序列异常
+ * @describe： 自定义异常
  */
 
 @Slf4j

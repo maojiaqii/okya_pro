@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author: maojiaqi
@@ -44,8 +47,12 @@ public class ChunkServiceImpl implements ChunkService {
     AsUploaderFileChunkMapper asUploaderFileChunkMapper;
 
     @Override
-    public Map<String, Object> checkChunk(ChunkVo chunkVo) {
-        return null;
+    public List<Integer> checkChunk(ChunkVo chunkVo) {
+        List<AsUploaderFileChunk> asUploaderFileChunkList = asUploaderFileChunkMapper.queryByFileIdentifier(chunkVo.getIdentifier());
+        if (asUploaderFileChunkList.isEmpty()) {
+            return Arrays.asList();
+        }
+        return asUploaderFileChunkList.stream().map(AsUploaderFileChunk::getChunkNum).collect(Collectors.toList());
     }
 
     @Override

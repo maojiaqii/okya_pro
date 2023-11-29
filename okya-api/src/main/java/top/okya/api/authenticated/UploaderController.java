@@ -31,7 +31,7 @@ public class UploaderController {
     @GetMapping(value = "/chunk")
     @ApiLog(title = "校验文件分片上传", operationType = OperationType.SEARCH)
     public HttpResult checkChunk(ChunkVo chunkVo) {
-        return HttpResult.success(chunkService.checkChunk(chunkVo));
+        return HttpResult.success("校验文件分片上传完成！", chunkService.checkChunk(chunkVo));
     }
 
     /**

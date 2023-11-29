@@ -168,7 +168,7 @@ public class HttpResult extends HashMap<String, Object> {
      * @return 结果
      */
     public boolean isError() {
-        return Objects.equals(HttpStatus.INTERNAL_SERVER_ERROR.value(), this.get(CODE_TAG));
+        return !Objects.equals(HttpStatus.OK.value(), this.get(CODE_TAG));
     }
 
     /**

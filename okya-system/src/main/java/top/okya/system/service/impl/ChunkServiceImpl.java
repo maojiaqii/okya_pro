@@ -11,8 +11,8 @@ import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.vo.ChunkVo;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
+import top.okya.component.global.Global;
 import top.okya.component.utils.common.DateFormatUtil;
-import top.okya.component.utils.spring.SecurityContextUtil;
 import top.okya.system.dao.AsUploaderFileChunkMapper;
 import top.okya.system.domain.AsUploaderFileChunk;
 import top.okya.system.service.ChunkService;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,8 +57,7 @@ public class ChunkServiceImpl implements ChunkService {
     @Override
     @Transactional
     public void upload(ChunkVo chunkVo) {
-        LoginUser loginUser = SecurityContextUtil.getLoginUser();
-        log.debug(chunkVo.toString());
+        LoginUser loginUser = Global.getLoginUser();
         String identifier = chunkVo.getIdentifier();
         MultipartFile file = chunkVo.getFile();
         String fileName = chunkVo.getFilename();

@@ -18,7 +18,7 @@ import top.okya.system.service.ChunkService;
  */
 
 @RestController
-@RequestMapping("/uploader")
+@RequestMapping("/file")
 public class UploaderController {
 
 
@@ -28,7 +28,7 @@ public class UploaderController {
     /**
      * 校验文件分片上传
      */
-    @GetMapping(value = "/chunk")
+    @GetMapping(value = "/uploader")
     @ApiLog(title = "校验文件分片上传", operationType = OperationType.SEARCH)
     public HttpResult checkChunk(ChunkVo chunkVo) {
         return HttpResult.success("校验文件分片上传完成！", chunkService.checkChunk(chunkVo));
@@ -37,9 +37,19 @@ public class UploaderController {
     /**
      * 文件分片上传
      */
-    @PostMapping(value = "/chunk")
+    @PostMapping(value = "/uploader")
     @ApiLog(title = "文件分片上传", operationType = OperationType.UPLOAD)
     public HttpResult upload(ChunkVo chunkVo) {
+        chunkService.upload(chunkVo);
+        return HttpResult.success();
+    }
+
+    /**
+     * 文件合并
+     */
+    @PostMapping(value = "/merge")
+    @ApiLog(title = "文件分片上传", operationType = OperationType.UPLOAD)
+    public HttpResult merge(ChunkVo chunkVo) {
         chunkService.upload(chunkVo);
         return HttpResult.success();
     }

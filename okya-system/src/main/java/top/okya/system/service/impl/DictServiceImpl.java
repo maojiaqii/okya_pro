@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import top.okya.component.constants.CharacterConstants;
 import top.okya.component.constants.CommonConstants;
@@ -16,6 +15,7 @@ import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.enums.UseStatus;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
+import top.okya.component.global.Global;
 import top.okya.system.dao.AsDictionaryDataMapper;
 import top.okya.system.dao.AsDictionaryMapper;
 import top.okya.system.domain.AsDictionary;
@@ -48,7 +48,7 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public Map<String, Object> getDictData(DictDataVo dictDataVo) {
-        LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = Global.getLoginUser();
         String dictCode = dictDataVo.getDictCode();
         AsDictionary asDictionary = asDictionaryMapper.queryByCode(dictCode);
         if (asDictionary != null) {

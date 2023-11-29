@@ -1,4 +1,4 @@
-package top.okya.component.utils.spring;
+package top.okya.component.global;
 
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,18 +7,15 @@ import top.okya.component.domain.LoginUser;
 
 /**
  * @author: maojiaqi
- * @Date: 2023/11/26 21:29
- * @describe： SecurityContext工具类
+ * @Date: 2023/11/29 21:29
+ * @describe： 全局工具类
  */
 
 @Component
-public class SecurityContextUtil {
-
-    public static SecurityContext getSecurityContext(){
-        return SecurityContextHolder.getContext();
-    }
+public class Global {
 
     public static LoginUser getLoginUser(){
         return (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
 }

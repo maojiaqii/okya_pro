@@ -110,7 +110,7 @@ security:
       - /loginQRCode
       - /captchaImage
       - /druid/*
-      - /uploader/chunk
+      - /file/uploader
     repeatMillis: 5000
   password:
     # 密码最大错误次数

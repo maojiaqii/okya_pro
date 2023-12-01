@@ -1,6 +1,7 @@
 package top.okya.api.authenticated;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ import top.okya.system.service.ChunkService;
 
 @RestController
 @RequestMapping("/file")
-public class UploaderController {
+public class FileController {
 
 
     @Autowired
@@ -29,7 +30,7 @@ public class UploaderController {
      * 校验文件分片上传
      */
     @GetMapping(value = "/uploader")
-    @ApiLog(title = "校验文件分片上传", operationType = OperationType.SEARCH)
+    @ApiLog(title = "校验文件分片上传", operationType = OperationType.UPLOAD)
     public HttpResult checkChunk(ChunkVo chunkVo) {
         return HttpResult.success("校验文件分片上传完成！", chunkService.checkChunk(chunkVo));
     }
@@ -47,10 +48,10 @@ public class UploaderController {
     /**
      * 文件合并
      */
-    @PostMapping(value = "/merge")
-    @ApiLog(title = "文件分片上传", operationType = OperationType.UPLOAD)
-    public HttpResult merge(ChunkVo chunkVo) {
-        chunkService.upload(chunkVo);
+    @GetMapping(value = "/merge")
+    @ApiLog(title = "文件合并", operationType = OperationType.UPLOAD)
+    public HttpResult merge(@Validated ChunkVo chunkVo) {
+        chunkService.merge(chunkVo.getIdentifier());
         return HttpResult.success();
     }
 }

@@ -1,6 +1,7 @@
 package top.okya.system.dao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import top.okya.system.domain.AsUploaderFileChunk;
 
 import java.util.List;
@@ -30,4 +31,5 @@ public interface AsUploaderFileChunkMapper {
      */
     int insert(AsUploaderFileChunk asUploaderFileChunk);
 
+    int updateMerge(@Param("identifier") String identifier, @Param("merge") int merge);
 }

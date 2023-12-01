@@ -17,6 +17,10 @@
         <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <update id="updateMerge">
+        update as_uploader_file_chunk set merged = #{merge} where file_identifier = #{identifier}
+    </update>
+
     <!--查询单个-->
     <select id="queryByFileIdentifier" resultMap="AsUploaderFileChunkMap">
         select *

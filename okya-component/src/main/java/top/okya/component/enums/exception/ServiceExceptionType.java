@@ -15,6 +15,7 @@ public enum ServiceExceptionType {
     DELETED_DICTIONARY(30001102, "字典已被删除！"),
     UNKNOWN_DICTIONARY(30001101, "未知的字典，编码：【%s】！"),
     GENERATE_FILE_FAILED(30001201, "在磁盘【%s】上生成分片文件失败！"),
+    MERGE_FILE_FAILED(30001202, "在磁盘【%s】上合并文件失败！"),
     // 未知错误 异常
     SERVER_EXCEPTION(30009999, "系统错误：【%s】");
 

@@ -40,6 +40,7 @@ public class ChunkVo {
     /**
      * 文件标识
      */
+    @NotBlank(message = "文件唯一编码不能为空！")
     private String identifier;
     /**
      * 文件名

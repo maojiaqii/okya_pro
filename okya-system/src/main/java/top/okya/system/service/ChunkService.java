@@ -25,4 +25,11 @@ public interface ChunkService {
      * @param chunkVo
      */
     void upload(ChunkVo chunkVo);
+
+    /**
+     * 文件合并
+     *
+     * @param identifier
+     */
+    void merge(String identifier);
 }

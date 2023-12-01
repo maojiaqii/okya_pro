@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.system.dao.AsUploaderFileMapper">
+
+    <resultMap type="top.okya.system.domain.AsUploaderFile" id="AsUploaderFileMap">
+        <result property="fileId" column="file_id" jdbcType="INTEGER"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="fileIdentifier" column="file_identifier" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="file_size" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="uploadBy" column="upload_by" jdbcType="VARCHAR"/>
+        <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AsUploaderFileMap">
+        select
+          file_id, file_name, file_identifier, file_path, file_size, status, upload_by, upload_time, update_by, update_time
+        from as_uploader_file
+        where file_id = #{fileId}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="fileId" useGeneratedKeys="true">
+        insert into as_uploader_file(file_name, file_identifier, file_path, file_size, status, upload_by, upload_time, update_by, update_time)
+        values (#{fileName}, #{fileIdentifier}, #{filePath}, #{fileSize}, #{status}, #{uploadBy}, #{uploadTime}, #{updateBy}, #{updateTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update as_uploader_file
+        <set>
+            <if test="fileName != null and fileName != ''">
+                file_name = #{fileName},
+            </if>
+            <if test="fileIdentifier != null and fileIdentifier != ''">
+                file_identifier = #{fileIdentifier},
+            </if>
+            <if test="filePath != null and filePath != ''">
+                file_path = #{filePath},
+            </if>
+            <if test="fileSize != null and fileSize != ''">
+                file_size = #{fileSize},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="uploadBy != null and uploadBy != ''">
+                upload_by = #{uploadBy},
+            </if>
+            <if test="uploadTime != null">
+                upload_time = #{uploadTime},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where file_id = #{fileId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from as_uploader_file where file_id = #{fileId}
+    </delete>
+
+</mapper>

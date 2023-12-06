@@ -16,6 +16,8 @@ public enum ServiceExceptionType {
     UNKNOWN_DICTIONARY(30001101, "未知的字典，编码：【%s】！"),
     GENERATE_FILE_FAILED(30001201, "在磁盘【%s】上生成分片文件失败！"),
     MERGE_FILE_FAILED(30001202, "在磁盘【%s】上合并文件失败！"),
+    GET_FILE_INFO_FAILED(30001203, "获取文件信息失败！"),
+    FILE_NOT_EXISTS(30001204, "文件不存在！"),
     // 未知错误 异常
     SERVER_EXCEPTION(30009999, "系统错误：【%s】");
 

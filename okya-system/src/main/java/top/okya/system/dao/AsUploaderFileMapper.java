@@ -17,10 +17,10 @@ public interface AsUploaderFileMapper {
     /**
      * 通过ID查询单条数据
      *
-     * @param fileId 主键
+     * @param fileIdentifier 文件标识
      * @return 实例对象
      */
-    AsUploaderFile queryById(Long fileId);
+    AsUploaderFile queryByIdentifier(String fileIdentifier);
 
     /**
      * 新增数据

@@ -2,6 +2,7 @@ package top.okya.system.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,14 +19,21 @@ import top.okya.system.dao.AsUploaderFileChunkMapper;
 import top.okya.system.dao.AsUploaderFileMapper;
 import top.okya.system.domain.AsUploaderFile;
 import top.okya.system.domain.AsUploaderFileChunk;
-import top.okya.system.service.ChunkService;
+import top.okya.system.service.FileService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class ChunkServiceImpl implements ChunkService {
+public class FileServiceImpl implements FileService {
     /**
      * 分块文件未合并
      */
@@ -159,5 +167,42 @@ public class ChunkServiceImpl implements ChunkService {
             log.error("文件合并失败", e);
             throw new ServiceException(ServiceExceptionType.MERGE_FILE_FAILED, filePath);
         }
+    }
+
+    @Override
+    public AsUploaderFile getInfo(String fileIdentifier) {
+        AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
+        if (Objects.isNull(asUploaderFile)) {
+            throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
+        }
+        return asUploaderFile;
+    }
+
+    @Override
+    public void downLoad(String fileIdentifier, HttpServletRequest request, HttpServletResponse response) {
+        AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
+        if (Objects.isNull(asUploaderFile)) {
+            throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
+        }
+        Path path = Paths.get(asUploaderFile.getFilePath());
+        if(!Files.exists(path)){
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        }
+        try {
+            String fileName = path.getFileName().toString();
+            // inline表示浏览器直接使用，attachment表示下载，fileName表示下载的文件名
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                    "inline;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()));
+            response.setContentType(request.getServletContext().getMimeType(fileName));
+            RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), "r");
+            randomAccessFile.seek(contentRange.getStart());
+        } catch (FileNotFoundException e) {
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        } catch (IOException e) {
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        }
+        InputStream is = Files.new.newInputStream(, StandardOpenOption.READ));
     }
 }

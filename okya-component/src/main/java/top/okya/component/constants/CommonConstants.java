@@ -59,4 +59,6 @@ public class CommonConstants {
 
     public static final String ADMIN = "00";
 
+    public static final String BYTES_STRING = "bytes";
+
 }

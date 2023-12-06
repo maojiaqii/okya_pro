@@ -16,11 +16,11 @@
     </resultMap>
 
     <!--查询单个-->
-    <select id="queryById" resultMap="AsUploaderFileMap">
+    <select id="queryByIdentifier" resultMap="AsUploaderFileMap">
         select
           file_id, file_name, file_identifier, file_path, file_size, status, upload_by, upload_time, update_by, update_time
         from as_uploader_file
-        where file_id = #{fileId}
+        where file_identifier = #{fileIdentifier}
     </select>
 
     <!--新增所有列-->

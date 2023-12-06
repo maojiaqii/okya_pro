@@ -1,7 +1,10 @@
 package top.okya.system.service;
 
 import top.okya.component.domain.vo.ChunkVo;
+import top.okya.system.domain.AsUploaderFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -9,7 +12,7 @@ import java.util.List;
  * @Date: 2023/11/24 14:38
  * @describe: 文件上传Service
  */
-public interface ChunkService {
+public interface FileService {
 
     /**
      * 校验文件分片上传
@@ -32,4 +35,18 @@ public interface ChunkService {
      * @param identifier
      */
     void merge(String identifier);
+
+    /**
+     * 获取文件信息
+     *
+     * @param fileIdentifier
+     */
+    AsUploaderFile getInfo(String fileIdentifier);
+
+    /**
+     * 下载文件
+     *
+     * @param fileIdentifier
+     */
+    void downLoad(String fileIdentifier, HttpServletRequest request, HttpServletResponse response);
 }

@@ -180,6 +180,10 @@ public class FileServiceImpl implements FileService {
         if (Objects.isNull(asUploaderFile)) {
             throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
         }
+        Path path = Paths.get(asUploaderFile.getFilePath());
+        if (!Files.exists(path)) {
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        }
         return asUploaderFile;
     }
 

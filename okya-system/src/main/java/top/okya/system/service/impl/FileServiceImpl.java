@@ -2,7 +2,7 @@ package top.okya.system.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,13 +23,14 @@ import top.okya.system.service.FileService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.nio.channels.Channels;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,6 +55,10 @@ public class FileServiceImpl implements FileService {
      * 分块文件已合并
      */
     private static final int CHUNK_MERGED = 1;
+    /**
+     * 每次下载的文件大小2M
+     */
+    private static final long ONECE_DOWNLOAD_SIZE = 1024 * 1024 * 2;
     /**
      * 分块文件存放文件夹名
      */
@@ -179,30 +184,89 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void downLoad(String fileIdentifier, HttpServletRequest request, HttpServletResponse response) {
+    public int downLoadCount(String fileIdentifier) {
         AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
         if (Objects.isNull(asUploaderFile)) {
             throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
         }
         Path path = Paths.get(asUploaderFile.getFilePath());
-        if(!Files.exists(path)){
+        if (!Files.exists(path)) {
             throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
         }
         try {
+            return (int) Math.ceil(Files.size(path) * 1.0 / ONECE_DOWNLOAD_SIZE);
+        } catch (IOException e) {
+            throw new ServiceException(ServiceExceptionType.FILE_IO_ERROR);
+        }
+    }
+
+    @Override
+    public void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
+        if (Objects.isNull(asUploaderFile)) {
+            throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
+        }
+        Path path = Paths.get(asUploaderFile.getFilePath());
+        if (!Files.exists(path)) {
+            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+        }
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
             String fileName = path.getFileName().toString();
-            // inline表示浏览器直接使用，attachment表示下载，fileName表示下载的文件名
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "inline;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()));
-            response.setContentType(request.getServletContext().getMimeType(fileName));
-            RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), "r");
-            randomAccessFile.seek(contentRange.getStart());
+            // http状态码要为206：表示获取部分内容
+            response.setStatus(HttpStatus.PARTIAL_CONTENT.value());
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/octet-stream");
+
+            long fileLength = Files.size(path);
+            // 开始下载位置
+            long firstBytePos;
+            // 结束下载位置
+            long lastBytePos;
+            final int groups = (int) Math.ceil(fileLength * 1.0 / ONECE_DOWNLOAD_SIZE);
+            if (no < 0) {
+                firstBytePos = 0;
+                lastBytePos = fileLength - 1;
+            } else {
+                if (no > groups) {
+                    return;
+                } else {
+                    firstBytePos = no * ONECE_DOWNLOAD_SIZE + (no == 0 ? 0 : 1);
+                    if (firstBytePos > fileLength) {
+                        return;
+                    }
+                    lastBytePos = ((no + 1) * ONECE_DOWNLOAD_SIZE > fileLength) ? (fileLength - 1) : (no + 1) * ONECE_DOWNLOAD_SIZE;
+                }
+            }
+            // Content-Length: 11，本次内容的大小
+            long downLoadedRealLength = lastBytePos - firstBytePos + 1;
+            response.setContentLengthLong(downLoadedRealLength);
+            log.info("本次下载文件：{}，起始位置：{}，结束位置：{}，下载长度：{}，总长度：{}", fileName, firstBytePos, lastBytePos, downLoadedRealLength, fileLength);
+            // Open for reading only
+            final String fileOpenMode = "r";
+            RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), fileOpenMode);
+            randomAccessFile.seek(firstBytePos);
+            // 开始读取文件
+            inputStream = Channels.newInputStream(randomAccessFile.getChannel());
+            outputStream = new BufferedOutputStream(response.getOutputStream());
+            byte[] buffer = new byte[(int) downLoadedRealLength];
+            inputStream.read(buffer);
+            outputStream.write(buffer);
         } catch (FileNotFoundException e) {
             throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
         } catch (UnsupportedEncodingException e) {
-            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+            throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION);
         } catch (IOException e) {
-            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
+            throw new ServiceException(ServiceExceptionType.FILE_IO_ERROR);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
+            }
         }
-        InputStream is = Files.new.newInputStream(, StandardOpenOption.READ));
     }
+
 }

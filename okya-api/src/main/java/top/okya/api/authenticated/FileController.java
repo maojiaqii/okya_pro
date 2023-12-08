@@ -1,16 +1,12 @@
 package top.okya.api.authenticated;
 
-import org.apache.tomcat.util.http.parser.ContentRange;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
-import top.okya.component.constants.CommonConstants;
 import top.okya.component.domain.HttpResult;
 import top.okya.component.domain.vo.ChunkVo;
 import top.okya.component.enums.OperationType;
@@ -18,6 +14,7 @@ import top.okya.system.service.FileService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author: maojiaqi
@@ -72,17 +69,21 @@ public class FileController {
     }
 
     /**
+     * 文件下载总次数
+     */
+    @GetMapping(value = "/downLoadCount")
+    @ApiLog(title = "文件下载总次数", operationType = OperationType.SEARCH)
+    public HttpResult downLoadCount(String fileIdentifier) {
+        return HttpResult.success(fileService.downLoadCount(fileIdentifier));
+    }
+
+    /**
      * 下载文件
      */
     @GetMapping(value = "/downLoad")
     @ApiLog(title = "下载文件", operationType = OperationType.DOWNLOAD)
-    public void downLoad(String fileIdentifier, HttpServletRequest request, HttpServletResponse response) {
-        // http状态码要为206：表示获取部分内容
-        response.setStatus(HttpStatus.PARTIAL_CONTENT.value());
-        // Accept-Ranges：bytes，表示支持Range请求
-        response.setHeader(HttpHeaders.ACCEPT_RANGES, CommonConstants.BYTES_STRING);
-        response.setCharacterEncoding("utf-8");
-        fileService.downLoad(fileIdentifier, request, response);
+    public void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        fileService.downLoad(fileIdentifier, no, request, response);
     }
 
 }

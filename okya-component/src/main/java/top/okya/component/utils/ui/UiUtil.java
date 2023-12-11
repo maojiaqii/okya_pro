@@ -14,7 +14,9 @@ import java.util.Objects;
 
 public class UiUtil {
 
-    // 动态菜单
+    /**
+     * 动态菜单
+     */
     public static List<AsMenu> formatMenu(List<AsMenu> dataList, Long parentId) {
         if (dataList.isEmpty()) {
             return dataList;

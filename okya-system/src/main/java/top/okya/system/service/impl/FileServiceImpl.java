@@ -79,7 +79,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void upload(ChunkVo chunkVo) {
         LoginUser loginUser = Global.getLoginUser();
         String identifier = chunkVo.getIdentifier();
@@ -120,7 +120,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void merge(String identifier) {
         LoginUser loginUser = Global.getLoginUser();
         List<AsUploaderFileChunk> asUploaderFileChunkList = asUploaderFileChunkMapper.queryByFileIdentifier(identifier)

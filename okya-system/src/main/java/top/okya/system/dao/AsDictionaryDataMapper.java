@@ -25,16 +25,6 @@ public interface AsDictionaryDataMapper {
     List<Map<String, Object>> queryByCode(@Param("dictCode") String dictCode, @Param("sqlCondition") String sqlCondition);
 
     /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<AsDictionaryData> queryAllByLimit(@Param("dictCode") String dictCode, @Param("offset") int offset, @Param("limit") int limit);
-
-
-    /**
      * 通过实体作为筛选条件查询
      *
      * @param asDictionaryData 实例对象
@@ -66,5 +56,12 @@ public interface AsDictionaryDataMapper {
      */
     int deleteById(Long dictId);
 
-    List<Map<String, Object>> queryByTable(@Param("tableName") String dictSource, @Param("sqlCondition") String sqlCondition);
+    /**
+     * 通过表名查询数据
+     *
+     * @param dictSource 表名
+     * @param sqlCondition 查询条件
+     * @return 查询结果
+     */
+    List<Map<String, Object>> queryByTable(@Param("dictSource") String dictSource, @Param("sqlCondition") String sqlCondition);
 }

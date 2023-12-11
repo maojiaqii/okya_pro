@@ -22,13 +22,17 @@ import java.util.Optional;
 @RestControllerAdvice
 public class MyResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    //判断是否要执行beforeBodyWrite方法，true为执行，false不执行
+    /**
+     * 判断是否要执行beforeBodyWrite方法，true为执行，false不执行
+     */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
-    //对response处理的执行方法
+    /**
+     * 对response处理的执行方法
+     */
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpResult hr = (HttpResult) body;

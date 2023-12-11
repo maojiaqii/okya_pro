@@ -41,6 +41,7 @@ public interface FileService {
      * 获取文件信息
      *
      * @param fileIdentifier
+     * @return 文件信息
      */
     AsUploaderFile getInfo(String fileIdentifier);
 
@@ -49,8 +50,17 @@ public interface FileService {
      *
      * @param fileIdentifier
      * @param no
+     * @param request
+     * @param response
+     * @exception IOException
      */
     void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
+    /**
+     * 下载文件数量
+     *
+     * @param fileIdentifier
+     * @return 下载文件数量
+     */
     int downLoadCount(String fileIdentifier);
 }

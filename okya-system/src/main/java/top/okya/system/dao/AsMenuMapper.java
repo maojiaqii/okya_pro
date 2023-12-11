@@ -16,7 +16,19 @@ import java.util.List;
 @Mapper
 public interface AsMenuMapper {
 
+    /**
+     * 通过用户id查询菜单
+     *
+     * @param userId 用户id
+     * @return 查询结果
+     */
     List<AsMenu> selectMenuListByUserId(Long userId);
 
+    /**
+     * 通过用户id查询按钮
+     *
+     * @param userId 用户id
+     * @return 查询结果
+     */
     List<AsMenu> selectButtonListByUserId(Long userId);
 }

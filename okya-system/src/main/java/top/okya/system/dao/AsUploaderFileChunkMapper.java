@@ -18,7 +18,7 @@ public interface AsUploaderFileChunkMapper {
     /**
      * 通过文件唯一码查询数据
      *
-     * @param fileIdentifier 主键
+     * @param fileIdentifier 文件唯一码
      * @return 实例对象
      */
     List<AsUploaderFileChunk> queryByFileIdentifier(String fileIdentifier);
@@ -31,5 +31,12 @@ public interface AsUploaderFileChunkMapper {
      */
     int insert(AsUploaderFileChunk asUploaderFileChunk);
 
+    /**
+     * 更新文件合并状态
+     *
+     * @param identifier 文件唯一码
+     * @param merge 合并状态
+     * @return 影响行数
+     */
     int updateMerge(@Param("identifier") String identifier, @Param("merge") int merge);
 }

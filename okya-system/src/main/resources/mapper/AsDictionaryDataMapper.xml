@@ -26,15 +26,6 @@
         </if>
     </select>
 
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AsDictionaryDataMap">
-        select
-          dict_id, dict_code, id, label, label_en, is_default, create_by, create_date, update_by, update_date
-        from as_dictionary_data
-        where dict_code = #{dictCode}
-        limit #{offset}, #{limit}
-    </select>
-
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AsDictionaryDataMap">
         select
@@ -75,7 +66,7 @@
     </select>
 
     <select id="queryByTable" resultType="java.util.Map">
-        select * from ${tableName} where 1=1
+        select * from ${dictSource} where 1=1
         <if test="sqlCondition != null and sqlCondition != ''">
             and ${sqlCondition}
         </if>

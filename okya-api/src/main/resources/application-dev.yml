@@ -60,9 +60,9 @@ spring:
                     config:
                         multi-statement-allow: true
     redis:
-        host: 127.0.0.1
+        host: 101.132.122.164
         port: 6379
-        password:
+        password: 0kya.top!
         #连接超时时间（毫秒）
         timeout: 30000
         database: 7

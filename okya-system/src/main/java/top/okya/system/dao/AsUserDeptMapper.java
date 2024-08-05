@@ -1,18 +1,18 @@
 package top.okya.system.dao;
 
-import top.okya.system.domain.AsUserPost;
+import top.okya.system.domain.AsUserDept;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * 用户与岗位关联表(AsUserPost)表数据库访问层
+ * 用户与岗位关联表(AsUserDept)表数据库访问层
  *
  * @author mjq
  * @since 2023-08-28 16:26:41
  */
 @Mapper
-public interface AsUserPostMapper {
+public interface AsUserDeptMapper {
 
     /**
      * 通过ID查询单条数据
@@ -20,7 +20,7 @@ public interface AsUserPostMapper {
      * @param userId 主键
      * @return 实例对象
      */
-    AsUserPost queryById(Long userId);
+    AsUserDept queryById(Long userId);
 
     /**
      * 查询指定行数据
@@ -29,32 +29,32 @@ public interface AsUserPostMapper {
      * @param limit 查询条数
      * @return 对象列表
      */
-    List<AsUserPost> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    List<AsUserDept> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
 
     /**
      * 通过实体作为筛选条件查询
      *
-     * @param asUserPost 实例对象
+     * @param asUserDept 实例对象
      * @return 对象列表
      */
-    List<AsUserPost> queryAll(AsUserPost asUserPost);
+    List<AsUserDept> queryAll(AsUserDept asUserDept);
 
     /**
      * 新增数据
      *
-     * @param asUserPost 实例对象
+     * @param asUserDept 实例对象
      * @return 影响行数
      */
-    int insert(AsUserPost asUserPost);
+    int insert(AsUserDept asUserDept);
 
     /**
      * 修改数据
      *
-     * @param asUserPost 实例对象
+     * @param asUserDept 实例对象
      * @return 影响行数
      */
-    int update(AsUserPost asUserPost);
+    int update(AsUserDept asUserDept);
 
     /**
      * 通过主键删除数据

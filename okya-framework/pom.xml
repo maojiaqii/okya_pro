@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>okya-framework</artifactId>
+    <version>${revision}</version>
 
     <dependencies>
         <dependency>
@@ -51,6 +52,13 @@
         <dependency>
             <groupId>top.okya</groupId>
             <artifactId>okya-system</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>top.okya</groupId>
+            <artifactId>okya-workflow</artifactId>
+            <version>${revision}</version>
         </dependency>
 
     </dependencies>

@@ -11,17 +11,17 @@ public class LoginConstants {
     /**
      * 登陆成功
      */
-    public static final String LOGIN_SUCCESS = "0";
+    public static final int LOGIN_SUCCESS = 0;
 
     /**
      * 登出成功
      */
-    public static final String LOGOUT_SUCCESS = "1";
+    public static final int LOGOUT_SUCCESS = 1;
 
     /**
      * 登陆成功
      */
-    public static final String LOGIN_FAIL = "2";
+    public static final int LOGIN_FAIL = 2;
 
     /**
      * USER_CODE占位符

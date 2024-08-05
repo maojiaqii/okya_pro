@@ -1,5 +1,6 @@
 package top.okya.system.service;
 
+import top.okya.component.domain.Permission;
 import top.okya.component.domain.dto.AsMenu;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface PermissionService {
      * @return 按钮集合
      */
     List<AsMenu> myButtons();
+
+    List<Permission> myPermissions();
 }

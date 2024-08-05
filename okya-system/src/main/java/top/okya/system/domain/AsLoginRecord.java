@@ -47,7 +47,7 @@ public class AsLoginRecord implements Serializable {
     /**
     * 登录状态（0成功 1失败）
     */
-    private String status;
+    private int status;
     /**
     * 提示消息
     */

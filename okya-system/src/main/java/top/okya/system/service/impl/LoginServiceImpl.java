@@ -3,6 +3,7 @@ package top.okya.system.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,9 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class LoginServiceImpl implements LoginService {
+
+    @Value("${security.token.header:#{null}}")
+    private String tokenHeader;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -75,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
                 .setMsg("登陆成功！");
         AsyncService.me().insertLoginRecord(asLoginRecord);
         // 生成token
-        response.setHeader("Authorization", JwtUtil.createToken(loginUser));
+        response.setHeader(tokenHeader, JwtUtil.createToken(loginUser));
         return loginUser;
     }
 

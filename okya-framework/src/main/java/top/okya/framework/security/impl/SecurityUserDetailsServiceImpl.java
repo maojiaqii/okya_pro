@@ -10,14 +10,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import top.okya.system.dao.AsUserMapper;
-import top.okya.component.domain.dto.AsUser;
 import top.okya.component.constants.RedisConstants;
 import top.okya.component.domain.LoginUser;
-import top.okya.component.enums.exception.LoginExceptionType;
+import top.okya.component.domain.dto.AsUser;
 import top.okya.component.enums.UseStatus;
+import top.okya.component.enums.exception.LoginExceptionType;
 import top.okya.component.exception.LoginException;
 import top.okya.component.utils.redis.JedisUtil;
+import top.okya.system.dao.AsDeptMapper;
+import top.okya.system.dao.AsRoleMapper;
+import top.okya.system.dao.AsUserMapper;
 
 import javax.annotation.Resource;
 
@@ -33,6 +35,12 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     AsUserMapper asUserMapper;
+
+    @Autowired
+    AsRoleMapper asRoleMapper;
+
+    @Autowired
+    AsDeptMapper asDeptMapper;
 
     @Resource
     private JedisUtil jedisUtil;
@@ -58,8 +66,7 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
         checkPwd(asUser);
 
         // 使用获得的信息创建SecurityUserDetails
-        LoginUser user = new LoginUser(asUser.getUserCode(), asUser);
-        return user;
+        return new LoginUser(asUser.getUserCode(), asUser, asDeptMapper.queryByUserId(asUser.getUserId()), asRoleMapper.queryByUserId(asUser.getUserId()));
     }
 
     private void checkPwd(AsUser asUser) {

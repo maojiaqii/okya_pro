@@ -6,7 +6,7 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://101.132.122.164:3306/okya?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&nullCatalogMeansCurrent=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+                url: jdbc:mysql://101.132.122.164:3306/okya?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&nullCatalogMeansCurrent=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&nullDatabaseMeansCurrent=true
                 username: okya
                 password: 0kya.top!
             # 从库数据源

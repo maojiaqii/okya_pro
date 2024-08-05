@@ -10,9 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>okya-component</artifactId>
+    <version>${revision}</version>
 
     <dependencies>
-
         <!-- Spring框架基本的核心工具 -->
         <dependency>
             <groupId>org.springframework</groupId>

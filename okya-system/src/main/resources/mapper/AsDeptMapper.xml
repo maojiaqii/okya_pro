@@ -82,6 +82,15 @@
         </where>
     </select>
 
+    <select id="queryByUserId" resultMap="AsDeptMap">
+        select
+            b.dept_id, b.dept_code, b.parent_id, b.dept_name, b.order_num, b.leader, b.phone, b.email, b.status, b.create_by, b.create_time, b.update_by, b.update_time
+        from as_user_dept a
+        left join as_dept b
+        on a.dept_id = b.dept_id
+        where a.user_id = #{userId}
+    </select>
+
     <!--新增所有列-->
     <insert id="insert" keyProperty="deptId" useGeneratedKeys="true">
         insert into as_dept(dept_code, parent_id, dept_name, order_num, leader, phone, email, status, create_by, create_time, update_by, update_time)

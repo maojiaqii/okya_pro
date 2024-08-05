@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 用户与岗位关联表(AsUserPost)实体类
+ * 用户与岗位关联表(AsUserDept)实体类
  *
  * @author mjq
  * @since 2023-08-28 16:26:41
@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AsUserPost implements Serializable {
+public class AsUserDept implements Serializable {
     private static final long serialVersionUID = -22836397926955696L;
     /**
     * 用户ID
@@ -25,6 +25,6 @@ public class AsUserPost implements Serializable {
     /**
     * 岗位ID
     */
-    private Long postId;
+    private Long deptId;
 
 }

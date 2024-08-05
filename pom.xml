@@ -12,6 +12,7 @@
         <module>okya-component</module>
         <module>okya-system</module>
         <module>okya-api</module>
+        <module>okya-workflow</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -48,6 +49,7 @@
         <easyexcel.version>3.3.1</easyexcel.version>
         <validation.version>2.7.2</validation.version>
         <guava.version>32.0.0-jre</guava.version>
+        <camunda.version>7.19.0</camunda.version>
     </properties>
 
     <dependencyManagement>
@@ -220,23 +222,19 @@
                 <version>${QRCode.version}</version>
             </dependency>
 
+            <!-- 工作流 -->
             <dependency>
-                <groupId>top.okya</groupId>
-                <artifactId>okya-framework</artifactId>
-                <version>${revision}</version>
+                <groupId>org.camunda.bpm.springboot</groupId>
+                <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+                <version>${camunda.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>mybatis</artifactId>
+                        <groupId>org.mybatis</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
-            <dependency>
-                <groupId>top.okya</groupId>
-                <artifactId>okya-system</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>top.okya</groupId>
-                <artifactId>okya-component</artifactId>
-                <version>${revision}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -23,6 +23,15 @@ public class PermissionController {
     private PermissionService permissionService;
 
     /**
+     * 我的权限
+     */
+    @GetMapping(value = "/myPermissions")
+    @ApiLog(title = "我的权限", operationType = OperationType.SEARCH)
+    public HttpResult getMyPermissions() {
+        return HttpResult.success(permissionService.myPermissions());
+    }
+
+    /**
      * 我的菜单
      */
     @GetMapping(value = "/myMenus")

@@ -57,16 +57,6 @@ public class LoginUser implements UserDetails {
     private String os;
 
     /**
-     * 菜单列表
-     */
-    private Set<AsMenu> menus;
-
-    /**
-     * 菜单列表
-     */
-    private Set<String> perms;
-
-    /**
      * 用户信息
      */
     private AsUser asUser;
@@ -84,16 +74,11 @@ public class LoginUser implements UserDetails {
     public LoginUser() {
     }
 
-    public LoginUser(String userCode, AsUser asUser) {
+    public LoginUser(String userCode, AsUser asUser, AsDept asDep, List<AsRole> asRoles) {
         this.userCode = userCode;
         this.asUser = asUser;
-    }
-
-    public LoginUser(String userCode, AsUser asUser, Set<AsMenu> menus, Set<String> perms) {
-        this.userCode = userCode;
-        this.menus = menus;
-        this.perms = perms;
-        this.asUser = asUser;
+        this.asDept = asDep;
+        this.asRoles = asRoles;
     }
 
     public List<AsRole> getAsRoles() {
@@ -102,22 +87,6 @@ public class LoginUser implements UserDetails {
 
     public void setAsRoles(List<AsRole> asRoles) {
         this.asRoles = asRoles;
-    }
-
-    public Set<AsMenu> getMenus() {
-        return menus;
-    }
-
-    public void setMenus(Set<AsMenu> menus) {
-        this.menus = menus;
-    }
-
-    public Set<String> getPerms() {
-        return perms;
-    }
-
-    public void setPerms(Set<String> perms) {
-        this.perms = perms;
     }
 
     public AsUser getAsUser() {
@@ -206,9 +175,7 @@ public class LoginUser implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return asUser.getUserName();
-    }
+    public String getUsername() { return asUser.getUserName(); }
 
     @JSONField(serialize = false)
     @Override

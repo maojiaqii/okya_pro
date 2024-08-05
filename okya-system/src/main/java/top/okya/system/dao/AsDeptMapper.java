@@ -23,6 +23,14 @@ public interface AsDeptMapper {
     AsDept queryById(Long deptId);
 
     /**
+     * 通过userID查询单条数据
+     *
+     * @param userId 用户编号
+     * @return 实例对象
+     */
+    AsDept queryByUserId(Long userId);
+
+    /**
      * 查询指定行数据
      *
      * @param offset 查询起始位置

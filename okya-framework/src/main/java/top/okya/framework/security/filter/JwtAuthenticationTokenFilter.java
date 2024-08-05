@@ -1,7 +1,9 @@
 package top.okya.framework.security.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -26,19 +28,21 @@ import java.io.IOException;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
+    @Value("${security.token.header:#{null}}")
+    private String tokenHeader;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         String token = JwtUtil.getToken(request);
-        if (token != null) {
+        if (!StringUtils.isEmpty(token)) {
             LoginUser loginUser = JwtUtil.getUserInfo(token);
             if (loginUser != null && JwtUtil.verifyToken(token)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                response.setHeader("Access-Control-Expose-Headers", "Authorization");
-                response.setHeader("Authorization", JwtUtil.createToken(loginUser));
+                response.setHeader("Access-Control-Expose-Headers", tokenHeader);
+                response.setHeader(tokenHeader, JwtUtil.createToken(loginUser));
             }
         }
         chain.doFilter(request, response);

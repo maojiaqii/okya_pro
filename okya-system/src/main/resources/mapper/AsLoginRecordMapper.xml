@@ -9,7 +9,7 @@
         <result property="loginLocation" column="login_location" jdbcType="VARCHAR"/>
         <result property="browser" column="browser" jdbcType="VARCHAR"/>
         <result property="os" column="os" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="msg" column="msg" jdbcType="VARCHAR"/>
         <result property="loginTime" column="login_time" jdbcType="TIMESTAMP"/>
     </resultMap>

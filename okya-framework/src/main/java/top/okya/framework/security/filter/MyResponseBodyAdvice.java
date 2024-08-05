@@ -1,5 +1,6 @@
 package top.okya.framework.security.filter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -19,8 +20,10 @@ import java.util.Optional;
  * @describe: 为了适配客户端应用，token额外添加在返回消息体里
  */
 
-@RestControllerAdvice
+// @RestControllerAdvice
 public class MyResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+    @Value("${security.token.header:#{null}}")
+    private String tokenHeader;
 
     /**
      * 判断是否要执行beforeBodyWrite方法，true为执行，false不执行
@@ -36,7 +39,7 @@ public class MyResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpResult hr = (HttpResult) body;
-        List<String> token = response.getHeaders().get("Authorization");
+        List<String> token = response.getHeaders().get(tokenHeader);
         if(!Optional.ofNullable(token).orElse(Collections.emptyList()).isEmpty()){
             hr.put("token", token.get(0));
         }

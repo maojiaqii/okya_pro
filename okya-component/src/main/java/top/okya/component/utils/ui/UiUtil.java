@@ -1,10 +1,15 @@
 package top.okya.component.utils.ui;
 
+import top.okya.component.domain.Permission;
+import top.okya.component.domain.PermissionMeta;
 import top.okya.component.domain.dto.AsMenu;
+import top.okya.component.domain.dto.AsPermission;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author: maojiaqi
@@ -17,20 +22,35 @@ public class UiUtil {
     /**
      * 动态菜单
      */
-    public static List<AsMenu> formatMenu(List<AsMenu> dataList, Long parentId) {
+    public static List<Permission> formatPermissions(List<AsPermission> dataList, Long parentId) {
         if (dataList.isEmpty()) {
-            return dataList;
+            return null;
         }
-        if (Objects.equals(parentId, null)) {
-            parentId = 0L;
-        }
-        List<AsMenu> newTreeList = new ArrayList<AsMenu>();
-        for (AsMenu data : dataList) {
-            if (Objects.equals(parentId, data.getParentId())) {
-                data.setChildren(formatMenu(dataList, data.getMenuId()));
-                newTreeList.add(data);
+        List<Permission> newTreeList = new ArrayList<>();
+        for (AsPermission data : dataList) {
+            if (Objects.equals(parentId, data.getParentId()) && Objects.equals("M", data.getPermissionType())) {
+                PermissionMeta permissionMeta = new PermissionMeta()
+                        .setActiveMenu(data.getActiveMenu())
+                        .setHidden(data.getHidden() == 1)
+                        .setAffix(data.getAffix() == 1)
+                        .setIcon(data.getIcon())
+                        .setBreadcrumb(data.getBreadcrumb() == 1)
+                        .setCanTo(data.getCanTo() == 1)
+                        .setAlwaysShow(data.getAlwaysShow() == 1)
+                        .setNoCache(data.getNoCache() == 1)
+                        .setTitle(data.getTitle())
+                        .setNoTagsView(data.getNoTagsView() == 1)
+                        .setOuterLink(data.getOuterLink());
+                Permission permission = new Permission()
+                        .setPath(data.getPath())
+                        .setComponent(data.getComponent())
+                        .setName(data.getName())
+                        .setRedirect(data.getRedirect())
+                        .setMeta(permissionMeta)
+                        .setChildren(formatPermissions(dataList, data.getPermissionId()));
+                newTreeList.add(permission);
             }
         }
-        return newTreeList;
+        return newTreeList.isEmpty() ? null : newTreeList;
     }
 }

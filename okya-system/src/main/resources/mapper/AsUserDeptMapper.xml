@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.okya.system.dao.AsUserPostMapper">
+<mapper namespace="top.okya.system.dao.AsUserDeptMapper">
 
-    <resultMap type="top.okya.system.domain.AsUserPost" id="AsUserPostMap">
+    <resultMap type="top.okya.system.domain.AsUserDept" id="AsUserPostMap">
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
-        <result property="postId" column="post_id" jdbcType="INTEGER"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="AsUserPostMap">
         select
-          user_id, post_id
-        from as_user_post
+          user_id, dept_id
+        from as_user_dept
         where user_id = #{userId}
     </select>
 
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="AsUserPostMap">
         select
-          user_id, post_id
-        from as_user_post
+          user_id, dept_id
+        from as_user_dept
         limit #{offset}, #{limit}
     </select>
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AsUserPostMap">
         select
-          user_id, post_id
-        from as_user_post
+          user_id, dept_id
+        from as_user_dept
         <where>
             <if test="userId != null">
                 and user_id = #{userId}
             </if>
             <if test="postId != null">
-                and post_id = #{postId}
+                and dept_id = #{postId}
             </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
-        insert into as_user_post()
+        insert into as_user_dept()
         values ()
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update as_user_post
+        update as_user_dept
         <set>
         </set>
         where user_id = #{userId}
@@ -54,7 +54,7 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from as_user_post where user_id = #{userId}
+        delete from as_user_dept where user_id = #{userId}
     </delete>
 
 </mapper>

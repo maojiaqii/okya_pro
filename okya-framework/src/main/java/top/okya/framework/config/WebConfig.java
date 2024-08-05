@@ -11,7 +11,7 @@ import top.okya.component.annotation.UnAuthController;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/14 17:07
- * @describe:
+ * @describe: 分类请求加前缀
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

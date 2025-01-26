@@ -25,38 +25,6 @@ public interface AsDictionaryDataMapper {
     List<Map<String, Object>> queryByCode(@Param("dictCode") String dictCode, @Param("sqlCondition") String sqlCondition);
 
     /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param asDictionaryData 实例对象
-     * @return 对象列表
-     */
-    List<AsDictionaryData> queryAll(AsDictionaryData asDictionaryData);
-
-    /**
-     * 新增数据
-     *
-     * @param asDictionaryData 实例对象
-     * @return 影响行数
-     */
-    int insert(AsDictionaryData asDictionaryData);
-
-    /**
-     * 修改数据
-     *
-     * @param asDictionaryData 实例对象
-     * @return 影响行数
-     */
-    int update(AsDictionaryData asDictionaryData);
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param dictId 主键
-     * @return 影响行数
-     */
-    int deleteById(Long dictId);
-
-    /**
      * 通过表名查询数据
      *
      * @param dictSource 表名

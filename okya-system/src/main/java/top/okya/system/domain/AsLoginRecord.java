@@ -23,7 +23,7 @@ public class AsLoginRecord implements Serializable {
     /**
     * 访问ID
     */
-    private Long infoId;
+    private String infoId;
     /**
     * 用户账号
     */

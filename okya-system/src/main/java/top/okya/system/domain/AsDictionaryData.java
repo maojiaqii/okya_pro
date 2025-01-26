@@ -2,6 +2,8 @@ package top.okya.system.domain;
 
 import java.util.Date;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,11 @@ public class AsDictionaryData implements Serializable {
     /**
     * 字典id
     */
-    private Long dictId;
+    private String dictId;
+    /**
+     * 父级id
+     */
+    private String pId;
     /**
     * 字典编码
     */
@@ -30,7 +36,7 @@ public class AsDictionaryData implements Serializable {
     /**
     * 字典实际值
     */
-    private String id;
+    private String value;
     /**
     * 字典显示值
     */

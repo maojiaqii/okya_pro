@@ -22,7 +22,7 @@ public class AsDept implements Serializable {
     /**
     * 部门id
     */
-    private Long deptId;
+    private String deptId;
     /**
     * 部门code
     */
@@ -30,7 +30,7 @@ public class AsDept implements Serializable {
     /**
     * 父部门id
     */
-    private Long parentId;
+    private String parentId;
     /**
     * 部门名称
     */
@@ -52,9 +52,13 @@ public class AsDept implements Serializable {
     */
     private String email;
     /**
-    * 部门状态（0正常 1停用 2删除）
+    * 部门状态（0正常 1停用）
     */
     private Integer status;
+    /**
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
     * 创建者
     */

@@ -87,5 +87,4 @@ public class LoginServiceImpl implements LoginService {
     public int insertLoginRecord(AsLoginRecord asLoginRecord) {
         return asLoginRecordMapper.insert(asLoginRecord);
     }
-
 }

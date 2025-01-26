@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.okya.component.utils.common.IdUtil;
 import top.okya.component.utils.ip.IpUtil;
 import top.okya.component.utils.spring.SpringUtil;
 import top.okya.system.domain.AsLoginRecord;
@@ -44,16 +45,15 @@ public class AsyncService {
         asLoginRecord.setIpaddr(IpUtil.getIpAddr())
                 .setLoginLocation(IpUtil.ip2Region(IpUtil.getIpAddr()))
                 .setBrowser(userAgent.getBrowser().getName())
-                .setOs(userAgent.getOperatingSystem().getName());
+                .setOs(userAgent.getOperatingSystem().getName())
+                .setInfoId(IdUtil.randomUUID());
         CompletableFuture.runAsync(() -> {
             SpringUtil.getBean(LoginService.class).insertLoginRecord(asLoginRecord);
-        }, executor).exceptionally(e->{
-            e.printStackTrace();
-            return null;
-        });
+        }, executor);
     }
 
     public void insertOperationRecord(AsOperLog asOperLog) {
+        asOperLog.setOperId(IdUtil.randomUUID());
         CompletableFuture.runAsync(() -> {
             SpringUtil.getBean(OperationService.class).insertOperationRecord(asOperLog);
         }, executor);

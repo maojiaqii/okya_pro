@@ -1,5 +1,6 @@
 package top.okya.component.domain;
 
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

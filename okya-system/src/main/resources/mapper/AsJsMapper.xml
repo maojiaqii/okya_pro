@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.system.dao.AsJsMapper">
+ 
+    <resultMap type="top.okya.system.domain.AsJs" id="AsJsMap">
+        <result property="jsId" column="js_id" jdbcType="VARCHAR"/>
+        <result property="jsCode" column="js_code" jdbcType="VARCHAR"/>
+        <result property="js" column="js" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+ 
+    <!--查询单个-->
+    <select id="queryByCode" resultMap="AsJsMap">
+        select *
+        from as_js
+        where js_code = #{jsCode}
+    </select>
+</mapper>

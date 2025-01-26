@@ -3,9 +3,10 @@
 <mapper namespace="top.okya.system.dao.AsDictionaryDataMapper">
 
     <resultMap type="top.okya.system.domain.AsDictionaryData" id="AsDictionaryDataMap">
-        <result property="dictId" column="dict_id" jdbcType="INTEGER"/>
+        <result property="dictId" column="dict_id" jdbcType="VARCHAR"/>
+        <result property="pId" column="p_id" jdbcType="VARCHAR"/>
         <result property="dictCode" column="dict_code" jdbcType="VARCHAR"/>
-        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
         <result property="label" column="label" jdbcType="VARCHAR"/>
         <result property="labelEn" column="label_en" jdbcType="VARCHAR"/>
         <result property="isDefault" column="is_default" jdbcType="INTEGER"/>
@@ -26,96 +27,11 @@
         </if>
     </select>
 
-    <!--通过实体作为筛选条件查询-->
-    <select id="queryAll" resultMap="AsDictionaryDataMap">
-        select
-          dict_id, dict_code, id, label, label_en, is_default, create_by, create_date, update_by, update_date
-        from as_dictionary_data
-        <where>
-            <if test="dictId != null">
-                and dict_id = #{dictId}
-            </if>
-            <if test="dictCode != null and dictCode != ''">
-                and dict_code = #{dictCode}
-            </if>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="label != null and label != ''">
-                and label = #{label}
-            </if>
-            <if test="labelEn != null and labelEn != ''">
-                and label_en = #{labelEn}
-            </if>
-            <if test="isDefault != null">
-                and is_default = #{isDefault}
-            </if>
-            <if test="createBy != null and createBy != ''">
-                and create_by = #{createBy}
-            </if>
-            <if test="createDate != null">
-                and create_date = #{createDate}
-            </if>
-            <if test="updateBy != null and updateBy != ''">
-                and update_by = #{updateBy}
-            </if>
-            <if test="updateDate != null">
-                and update_date = #{updateDate}
-            </if>
-        </where>
-    </select>
-
     <select id="queryByTable" resultType="java.util.Map">
         select * from ${dictSource} where 1=1
         <if test="sqlCondition != null and sqlCondition != ''">
             and ${sqlCondition}
         </if>
     </select>
-
-    <!--新增所有列-->
-    <insert id="insert" keyProperty="dictId" useGeneratedKeys="true">
-        insert into as_dictionary_data(dict_code, id, label, label_en, is_default, create_by, create_date, update_by, update_date)
-        values (#{dictCode}, #{id}, #{label}, #{labelEn}, #{isDefault}, #{createBy}, #{createDate}, #{updateBy}, #{updateDate})
-    </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update as_dictionary_data
-        <set>
-            <if test="dictCode != null and dictCode != ''">
-                dict_code = #{dictCode},
-            </if>
-            <if test="id != null and id != ''">
-                id = #{id},
-            </if>
-            <if test="label != null and label != ''">
-                label = #{label},
-            </if>
-            <if test="labelEn != null and labelEn != ''">
-                label_en = #{labelEn},
-            </if>
-            <if test="isDefault != null">
-                is_default = #{isDefault},
-            </if>
-            <if test="createBy != null and createBy != ''">
-                create_by = #{createBy},
-            </if>
-            <if test="createDate != null">
-                create_date = #{createDate},
-            </if>
-            <if test="updateBy != null and updateBy != ''">
-                update_by = #{updateBy},
-            </if>
-            <if test="updateDate != null">
-                update_date = #{updateDate},
-            </if>
-        </set>
-        where dict_id = #{dictId}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from as_dictionary_data where dict_id = #{dictId}
-    </delete>
 
 </mapper>

@@ -2,6 +2,7 @@ package top.okya.api.unauthenticated;
 
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,14 @@ public class AuthController {
     @ApiLog(title = "密码登录", operationType = OperationType.LOGIN)
     public HttpResult userLogin(HttpServletResponse response, @Validated @RequestBody LoginBody loginBody) {
         return HttpResult.success("登录成功！", loginService.login(response, loginBody));
+    }
+
+    /**
+     * 我的菜单
+     */
+    @GetMapping(value = "/icons")
+    @ApiLog(title = "我的菜单", operationType = OperationType.SEARCH)
+    public HttpResult getMyMenus() {
+        return HttpResult.success(Lists.newArrayList(ImmutableMap.of("A",1, "B",2, "C",3, "D",4), ImmutableMap.of("A",2, "B",3, "C",4, "D",5), ImmutableMap.of("A",4, "B",5, "C",6, "D",7)));
     }
 }

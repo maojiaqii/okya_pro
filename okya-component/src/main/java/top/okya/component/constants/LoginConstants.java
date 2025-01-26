@@ -22,14 +22,4 @@ public class LoginConstants {
      * 登陆成功
      */
     public static final int LOGIN_FAIL = 2;
-
-    /**
-     * USER_CODE占位符
-     */
-    public static final String USER_CODE = "${userCode}";
-
-    /**
-     * DEPT_CODE占位符
-     */
-    public static final String DEPT_CODE = "${deptCode}";
 }

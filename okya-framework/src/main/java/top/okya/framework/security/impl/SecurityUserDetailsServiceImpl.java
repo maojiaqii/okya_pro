@@ -60,8 +60,6 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
             throw new LoginException(LoginExceptionType.USER_NOT_FOUND, new Object[]{userCode}, userCode);
         } else if (asUser.getStatus() == UseStatus.DISABLED.getCode()) {
             throw new LoginException(LoginExceptionType.USER_DISABLED, new Object[]{userCode}, userCode);
-        } else if (asUser.getStatus() == UseStatus.DELETED.getCode()) {
-            throw new LoginException(LoginExceptionType.USER_DELETED, new Object[]{userCode}, userCode);
         }
         checkPwd(asUser);
 

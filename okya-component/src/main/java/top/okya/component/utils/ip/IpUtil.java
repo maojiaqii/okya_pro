@@ -83,7 +83,8 @@ public class IpUtil {
                 }
             }
         }
-        return ip.substring(0, 255);
+        assert ip != null;
+        return ip.substring(0, Math.min(ip.length(), 255));
     }
 
     /**

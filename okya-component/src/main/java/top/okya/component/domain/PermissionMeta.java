@@ -1,5 +1,6 @@
 package top.okya.component.domain;
 
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,10 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Builder
 public class PermissionMeta {
+    /**
+     * 路由参数
+     */
+    private JSONObject params;
     /**
      * 当设置 true 的时候该路由不会再侧边栏出现 如404，login等页面(默认 false)
      */

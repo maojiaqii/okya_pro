@@ -152,6 +152,7 @@ public class JwtUtil {
      */
     public static boolean verifyToken(String token) {
         try {
+            isExpire(token);
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretS)).build();
             verifier.verify(token.contains(" ") ? token.split(" ")[1] : token);
             return true;

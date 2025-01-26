@@ -3,7 +3,7 @@
 <mapper namespace="top.okya.system.dao.AsUploaderFileChunkMapper">
 
     <resultMap type="top.okya.system.domain.AsUploaderFileChunk" id="AsUploaderFileChunkMap">
-        <result property="chunkId" column="chunk_id" jdbcType="INTEGER"/>
+        <result property="chunkId" column="chunk_id" jdbcType="VARCHAR"/>
         <result property="chunkName" column="chunk_name" jdbcType="VARCHAR"/>
         <result property="chunkNum" column="chunk_num" jdbcType="INTEGER"/>
         <result property="chunkSize" column="chunk_size" jdbcType="INTEGER"/>
@@ -30,10 +30,10 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="chunkId" useGeneratedKeys="true">
-        insert into as_uploader_file_chunk(chunk_name, chunk_num, chunk_size, total_size,
+        insert into as_uploader_file_chunk(chunk_id, chunk_name, chunk_num, chunk_size, total_size,
                                            total_chunks, file_name, file_identifier, file_path,
                                            merged, upload_by, upload_time)
-        values (#{chunkName}, #{chunkNum}, #{chunkSize}, #{totalSize}, #{totalChunks}, #{fileName}, #{fileIdentifier}, #{filePath}, #{merged}, #{uploadBy},
+        values (#{chunkId}, #{chunkName}, #{chunkNum}, #{chunkSize}, #{totalSize}, #{totalChunks}, #{fileName}, #{fileIdentifier}, #{filePath}, #{merged}, #{uploadBy},
                 #{uploadTime})
     </insert>
 

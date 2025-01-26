@@ -15,6 +15,7 @@ import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
 import top.okya.component.global.Global;
 import top.okya.component.utils.common.DateFormatUtil;
+import top.okya.component.utils.common.IdUtil;
 import top.okya.system.dao.AsUploaderFileChunkMapper;
 import top.okya.system.dao.AsUploaderFileMapper;
 import top.okya.system.domain.AsUploaderFile;
@@ -90,6 +91,7 @@ public class FileServiceImpl implements FileService {
         String filePathString = folderPathString + CharacterConstants.FORWARD_SLASH + chunkName;
         // 先写入数据库
         AsUploaderFileChunk asUploaderFileChunk = new AsUploaderFileChunk()
+                .setChunkId(IdUtil.randomUUID())
                 .setChunkNum(chunkVo.getChunkNumber())
                 .setChunkName(chunkName)
                 .setChunkSize(chunkVo.getCurrentChunkSize())
@@ -136,11 +138,12 @@ public class FileServiceImpl implements FileService {
         String filePath = OkyaConfig.getFileFolder() + identifier + CharacterConstants.FORWARD_SLASH + fileName;
         asUploaderFileChunkMapper.updateMerge(identifier, CHUNK_MERGED);
         AsUploaderFile asUploaderFile = new AsUploaderFile()
+                .setFileId(IdUtil.randomUUID())
                 .setFileName(fileName)
                 .setFileIdentifier(identifier)
                 .setFilePath(filePath)
                 .setFileSize(asUploaderFileChunk.getTotalSize())
-                .setStatus(UseStatus.OK.getCode())
+                .setIsDelete(UseStatus.OK.getCode())
                 .setUploadBy(loginUser.getUserCode())
                 .setUploadTime(DateFormatUtil.nowDate());
         asUploaderFileMapper.insert(asUploaderFile);

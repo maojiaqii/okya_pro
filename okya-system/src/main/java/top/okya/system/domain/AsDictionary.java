@@ -22,7 +22,7 @@ public class AsDictionary implements Serializable {
     /**
     * 字典id
     */
-    private Long dictId;
+    private String dictId;
     /**
     * 字典编码
     */
@@ -31,10 +31,6 @@ public class AsDictionary implements Serializable {
     * 字典名称
     */
     private String dictName;
-    /**
-    * 字典类型（0静态列表1动态数据库表格）
-    */
-    private Integer dictType;
     /**
      * 下拉内容展示形式（list默认tree树形table表格）
      */
@@ -52,17 +48,13 @@ public class AsDictionary implements Serializable {
     */
     private String dictLabel;
     /**
-     * 查询条件
-     */
-    private String dictParams;
-    /**
-    * 字典过滤搜索功能对应脚本
-    */
-    private String filterSqlPrefix;
-    /**
-    * 字典状态（0正常 1停用 2删除）
+    * 字典状态（0正常 1停用）
     */
     private Integer status;
+    /**
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
     * 创建者
     */

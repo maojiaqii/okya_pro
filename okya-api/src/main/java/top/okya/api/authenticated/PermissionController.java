@@ -3,11 +3,14 @@ package top.okya.api.authenticated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
 import top.okya.component.enums.OperationType;
 import top.okya.system.service.PermissionService;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author: maojiaqi
@@ -23,29 +26,19 @@ public class PermissionController {
     private PermissionService permissionService;
 
     /**
-     * 我的权限
+     * 我的租户
      */
-    @GetMapping(value = "/myPermissions")
-    @ApiLog(title = "我的权限", operationType = OperationType.SEARCH)
-    public HttpResult getMyPermissions() {
-        return HttpResult.success(permissionService.myPermissions());
+    @GetMapping(value = "/myTenancys")
+    @ApiLog(title = "我的租户", operationType = OperationType.SEARCH)
+    public HttpResult getMyTenancys() {
+        return HttpResult.success(permissionService.myTenancys());
     }
-
     /**
      * 我的菜单
      */
-    @GetMapping(value = "/myMenus")
+    @GetMapping(value = "/myPermissions")
     @ApiLog(title = "我的菜单", operationType = OperationType.SEARCH)
-    public HttpResult getMyMenus() {
-        return HttpResult.success(permissionService.myMenus());
-    }
-
-    /**
-     * 我的按钮
-     */
-    @GetMapping(value = "/myButtons")
-    @ApiLog(title = "我的按钮", operationType = OperationType.SEARCH)
-    public HttpResult getMyButtons() {
-        return HttpResult.success(permissionService.myButtons());
+    public HttpResult getMyPermissions(@NotBlank(message = "租户id不能为空！") @RequestParam(value = "currentTenancy") String currentTenancy) {
+        return HttpResult.success(permissionService.myPermissions(currentTenancy));
     }
 }

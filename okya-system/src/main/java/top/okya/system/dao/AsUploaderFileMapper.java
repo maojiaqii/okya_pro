@@ -29,21 +29,4 @@ public interface AsUploaderFileMapper {
      * @return 影响行数
      */
     int insert(AsUploaderFile asUploaderFile);
-
-    /**
-     * 修改数据
-     *
-     * @param asUploaderFile 实例对象
-     * @return 影响行数
-     */
-    int update(AsUploaderFile asUploaderFile);
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param fileId 主键
-     * @return 影响行数
-     */
-    int deleteById(Long fileId);
-
 }

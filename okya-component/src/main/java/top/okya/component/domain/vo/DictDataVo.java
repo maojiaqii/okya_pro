@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: maojiaqi
@@ -23,10 +26,6 @@ import java.util.List;
 public class DictDataVo {
     @NotBlank(message = "字典编码不能为空！")
     private String dictCode;
-    private String selectedId;
-    private List<String> selectedIds;
     @Builder.Default
-    private String filterValue = "";
-    private int pageNum;
-    private int pageSize;
+    private Map<String, Object> params = new HashMap<>();
 }

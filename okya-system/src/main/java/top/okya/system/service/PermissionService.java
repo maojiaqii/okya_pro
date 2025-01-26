@@ -1,9 +1,9 @@
 package top.okya.system.service;
 
 import top.okya.component.domain.Permission;
-import top.okya.component.domain.dto.AsMenu;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: maojiaqi
@@ -11,19 +11,7 @@ import java.util.List;
  * @describe: 权限相关service
  */
 public interface PermissionService {
-    /**
-     * 我的菜单
-     *
-     * @return 菜单集合
-     */
-    List<AsMenu> myMenus();
+    List<Permission> myPermissions(String currentTenancy);
 
-    /**
-     * 我的按钮
-     *
-     * @return 按钮集合
-     */
-    List<AsMenu> myButtons();
-
-    List<Permission> myPermissions();
+    List<Map<String, Object>> myTenancys();
 }

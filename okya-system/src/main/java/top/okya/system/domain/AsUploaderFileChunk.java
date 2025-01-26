@@ -23,7 +23,7 @@ public class AsUploaderFileChunk implements Serializable {
     /**
      * 分块id
      */
-    private Long chunkId;
+    private String chunkId;
     /**
      * 分块名称
      */

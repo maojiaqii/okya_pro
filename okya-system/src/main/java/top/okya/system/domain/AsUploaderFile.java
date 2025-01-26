@@ -22,7 +22,7 @@ public class AsUploaderFile implements Serializable {
     /**
     * 文件id
     */
-    private Long fileId;
+    private String fileId;
     /**
     * 文件名称
     */
@@ -40,9 +40,9 @@ public class AsUploaderFile implements Serializable {
     */
     private Long fileSize;
     /**
-    * 文件状态（0正常1停用2删除）
-    */
-    private Integer status;
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
     * 上传人
     */

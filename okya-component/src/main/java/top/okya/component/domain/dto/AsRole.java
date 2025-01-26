@@ -22,7 +22,7 @@ public class AsRole implements Serializable {
     /**
     * 角色ID
     */
-    private Long roleId;
+    private String roleId;
     /**
     * 角色名称
     */
@@ -40,9 +40,13 @@ public class AsRole implements Serializable {
     */
     private String dataScope;
     /**
-    * 角色状态（0正常 1停用 2删除）
+    * 角色状态（0正常 1停用）
     */
     private String status;
+    /**
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
     * 创建者
     */

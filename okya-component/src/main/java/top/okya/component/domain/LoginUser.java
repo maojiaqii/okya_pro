@@ -4,13 +4,11 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import top.okya.component.domain.dto.AsDept;
-import top.okya.component.domain.dto.AsMenu;
 import top.okya.component.domain.dto.AsRole;
 import top.okya.component.domain.dto.AsUser;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author: maojiaqi

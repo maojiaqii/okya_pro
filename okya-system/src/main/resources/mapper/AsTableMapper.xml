@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.system.dao.AsTableMapper">
+
+    <resultMap type="top.okya.system.domain.AsTable" id="AsTableMap">
+        <result property="tableId" column="table_id" jdbcType="VARCHAR"/>
+        <result property="tableCode" column="table_code" jdbcType="VARCHAR"/>
+        <result property="tableName" column="table_name" jdbcType="VARCHAR"/>
+        <result property="tableSource" column="table_source" jdbcType="VARCHAR"/>
+        <result property="buttons" column="buttons" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="props" column="props" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="columns" column="columns" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryByCode" resultMap="AsTableMap">
+        select *
+        from as_table
+        where table_code = #{tableCode} and is_delete = 0
+    </select>
+</mapper>

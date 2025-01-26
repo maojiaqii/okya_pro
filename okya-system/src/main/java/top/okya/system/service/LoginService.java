@@ -30,5 +30,4 @@ public interface LoginService {
      * @return 插入条数
      */
     int insertLoginRecord(AsLoginRecord asLoginRecord);
-
 }

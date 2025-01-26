@@ -3,17 +3,15 @@
 <mapper namespace="top.okya.system.dao.AsDictionaryMapper">
 
     <resultMap type="top.okya.system.domain.AsDictionary" id="AsDictionaryMap">
-        <result property="dictId" column="dict_id" jdbcType="INTEGER"/>
+        <result property="dictId" column="dict_id" jdbcType="VARCHAR"/>
         <result property="dictCode" column="dict_code" jdbcType="VARCHAR"/>
         <result property="dictName" column="dict_name" jdbcType="VARCHAR"/>
-        <result property="dictType" column="dict_type" jdbcType="INTEGER"/>
         <result property="showStyle" column="show_style" jdbcType="VARCHAR"/>
         <result property="dictSource" column="dict_source" jdbcType="VARCHAR"/>
         <result property="dictValue" column="dict_value" jdbcType="VARCHAR"/>
         <result property="dictLabel" column="dict_label" jdbcType="VARCHAR"/>
-        <result property="filterSqlPrefix" column="filter_sql_prefix" jdbcType="VARCHAR"/>
-        <result property="dictParams" column="dict_params" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -23,132 +21,8 @@
     <!--查询单个-->
     <select id="queryByCode" resultMap="AsDictionaryMap">
         select
-          dict_id, dict_code, dict_name, dict_type, show_style, dict_source, dict_value, dict_label, filter_sql_prefix, dict_params, status, create_by, create_time, update_by, update_time
+          dict_id, dict_code, dict_name, show_style, dict_source, dict_value, dict_label, status, is_delete, create_by, create_time, update_by, update_time
         from as_dictionary
-        where dict_code = #{dictCode}
+        where dict_code = #{dictCode} and is_delete = 0
     </select>
-
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AsDictionaryMap">
-        select
-          dict_id, dict_code, dict_name, dict_type, show_style, dict_source, dict_value, dict_label, filter_sql_prefix, dict_params, status, create_by, create_time, update_by, update_time
-        from as_dictionary
-        limit #{offset}, #{limit}
-    </select>
-
-    <!--通过实体作为筛选条件查询-->
-    <select id="queryAll" resultMap="AsDictionaryMap">
-        select
-          dict_id, dict_code, dict_name, dict_type, show_style, dict_source, dict_value, dict_label, filter_sql_prefix, dict_params, status, create_by, create_time, update_by, update_time
-        from as_dictionary
-        <where>
-            <if test="dictId != null">
-                and dict_id = #{dictId}
-            </if>
-            <if test="dictCode != null and dictCode != ''">
-                and dict_code = #{dictCode}
-            </if>
-            <if test="dictName != null and dictName != ''">
-                and dict_name = #{dictName}
-            </if>
-            <if test="dictType != null">
-                and dict_type = #{dictType}
-            </if>
-            <if test="showStyle != null">
-                and show_style = #{showStyle}
-            </if>
-            <if test="dictSource != null and dictSource != ''">
-                and dict_source = #{dictSource}
-            </if>
-            <if test="dictValue != null and dictValue != ''">
-                and dict_value = #{dictValue}
-            </if>
-            <if test="dictLabel != null and dictLabel != ''">
-                and dict_label = #{dictLabel}
-            </if>
-            <if test="filterSqlPrefix != null and filterSqlPrefix != ''">
-                and filter_sql_prefix = #{filterSqlPrefix}
-            </if>
-            <if test="dictParams != null and dictParams != ''">
-                and dict_params = #{dictParams}
-            </if>
-            <if test="status != null">
-                and status = #{status}
-            </if>
-            <if test="createBy != null and createBy != ''">
-                and create_by = #{createBy}
-            </if>
-            <if test="createTime != null">
-                and create_time = #{createTime}
-            </if>
-            <if test="updateBy != null and updateBy != ''">
-                and update_by = #{updateBy}
-            </if>
-            <if test="updateTime != null">
-                and update_time = #{updateTime}
-            </if>
-        </where>
-    </select>
-
-    <!--新增所有列-->
-    <insert id="insert" keyProperty="dictId" useGeneratedKeys="true">
-        insert into as_dictionary(dict_code, dict_name, dict_type, show_style, dict_source, dict_value, dict_label, filter_sql_prefix, dict_params, status, create_by, create_time, update_by, update_time)
-        values (#{dictCode}, #{dictName}, #{dictType}, #{showStyle}, #{dictSource}, #{dictValue}, #{dictLabel}, #{filterSqlPrefix}, #{dictParams}, #{status}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
-    </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update as_dictionary
-        <set>
-            <if test="dictCode != null and dictCode != ''">
-                dict_code = #{dictCode},
-            </if>
-            <if test="dictName != null and dictName != ''">
-                dict_name = #{dictName},
-            </if>
-            <if test="dictType != null">
-                dict_type = #{dictType},
-            </if>
-            <if test="showAsTabel != null">
-                show_style = #{showStyle}
-            </if>
-            <if test="dictSource != null and dictSource != ''">
-                dict_source = #{dictSource},
-            </if>
-            <if test="dictValue != null and dictValue != ''">
-                dict_value = #{dictValue},
-            </if>
-            <if test="dictLabel != null and dictLabel != ''">
-                dict_label = #{dictLabel},
-            </if>
-            <if test="filterSqlPrefix != null and filterSqlPrefix != ''">
-                filter_sql_prefix = #{filterSqlPrefix}
-            </if>
-            <if test="dictParams != null and dictParams != ''">
-                dict_params = #{dictParams},
-            </if>
-            <if test="status != null">
-                status = #{status},
-            </if>
-            <if test="createBy != null and createBy != ''">
-                create_by = #{createBy},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime},
-            </if>
-            <if test="updateBy != null and updateBy != ''">
-                update_by = #{updateBy},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime},
-            </if>
-        </set>
-        where dict_id = #{dictId}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from as_dictionary where dict_id = #{dictId}
-    </delete>
-
 </mapper>

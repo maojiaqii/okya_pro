@@ -1,90 +1,35 @@
 package top.okya.system.dao;
  
-import top.okya.component.domain.dto.AsPermission;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Pageable;
+import top.okya.component.domain.dto.AsPermission;
 
 import java.util.List;
- 
+import java.util.Map;
+
 /**
  * 菜单权限表(AsPermission)表数据库访问层
  *
  * @author mjq
  * @since 2024-07-26 16:55:22
  */
+@Mapper
 public interface AsPermissionMapper {
- 
+
     /**
-     * 通过ID查询单条数据
+     * 通过UserIdID查询用户的租户
      *
-     * @param permissionId 主键
+     * @param  userId 用户id
      * @return 实例对象
      */
-    AsPermission queryById(Integer permissionId);
- 
-    /**
-     * 查询指定行数据
-     *
-     * @param asPermission 查询条件
-     * @param pageable         分页对象
-     * @return 对象列表
-     */
-    List<AsPermission> queryAllByLimit(AsPermission asPermission, @Param("pageable") Pageable pageable);
- 
-    /**
-     * 统计总行数
-     *
-     * @param asPermission 查询条件
-     * @return 总行数
-     */
-    long count(AsPermission asPermission);
- 
-    /**
-     * 新增数据
-     *
-     * @param asPermission 实例对象
-     * @return 影响行数
-     */
-    int insert(AsPermission asPermission);
- 
-    /**
-     * 批量新增数据（MyBatis原生foreach方法）
-     *
-     * @param entities List<AsPermission> 实例对象列表
-     * @return 影响行数
-     */
-    int insertBatch(@Param("entities") List<AsPermission> entities);
- 
-    /**
-     * 批量新增或按主键更新数据（MyBatis原生foreach方法）
-     *
-     * @param entities List<AsPermission> 实例对象列表
-     * @return 影响行数
-     * @throws org.springframework.jdbc.BadSqlGrammarException 入参是空List的时候会抛SQL语句错误的异常，请自行校验入参
-     */
-    int insertOrUpdateBatch(@Param("entities") List<AsPermission> entities);
- 
-    /**
-     * 修改数据
-     *
-     * @param asPermission 实例对象
-     * @return 影响行数
-     */
-    int update(AsPermission asPermission);
- 
-    /**
-     * 通过主键删除数据
-     *
-     * @param permissionId 主键
-     * @return 影响行数
-     */
-    int deleteById(Integer permissionId);
+    List<Map<String, Object>> queryTenancysByUserId(String userId);
 
     /**
      * 通过用户id查询数据
      *
-     * @param userId 用户id
+     * @param userId         用户id
+     * @param currentTenancy
      * @return 对象列表
      */
-    List<AsPermission> queryByUserId(Long userId);
+    List<AsPermission> queryByUserId(@Param("userId") String userId, @Param("currentTenancy") String currentTenancy);
 }

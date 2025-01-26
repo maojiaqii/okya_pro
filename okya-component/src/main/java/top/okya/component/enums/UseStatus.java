@@ -10,9 +10,7 @@ public enum UseStatus {
     // 状态 正常
     OK(0, "正常"),
     // 状态 停用
-    DISABLED(1, "停用"),
-    // 状态 删除
-    DELETED(2, "删除");
+    DISABLED(1, "停用");
 
     private final int code;
     private final String describe;

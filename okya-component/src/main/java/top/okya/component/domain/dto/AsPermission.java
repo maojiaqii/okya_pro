@@ -2,6 +2,8 @@ package top.okya.component.domain.dto;
  
 import java.util.Date;
 import java.io.Serializable;
+
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ public class AsPermission implements Serializable {
     /**
      * 权限编号
      */ 
-    private Long permissionId;
+    private String permissionId;
     /**
      * 菜单类型（M菜单 B按钮）
      */ 
@@ -30,7 +32,7 @@ public class AsPermission implements Serializable {
     /**
      * 父级权限编号，默认为0没有父级
      */ 
-    private Long parentId;
+    private String parentId;
     /**
      * 路由地址，如果为外链，则会在新窗口打开
      */ 
@@ -39,6 +41,10 @@ public class AsPermission implements Serializable {
      * 组件
      */ 
     private String component;
+    /**
+     * 路由参数
+     */
+    private JSONObject params;
     /**
      * 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
      */ 
@@ -100,9 +106,13 @@ public class AsPermission implements Serializable {
      */ 
     private String perms;
     /**
-     * 菜单状态（0正常 1停用 2删除）
+     * 菜单状态（0正常 1停用）
      */ 
     private Integer status;
+    /**
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
      * 创建者
      */ 

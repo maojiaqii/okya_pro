@@ -2,14 +2,11 @@ package top.okya.component.utils.ui;
 
 import top.okya.component.domain.Permission;
 import top.okya.component.domain.PermissionMeta;
-import top.okya.component.domain.dto.AsMenu;
 import top.okya.component.domain.dto.AsPermission;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author: maojiaqi
@@ -22,7 +19,7 @@ public class UiUtil {
     /**
      * 动态菜单
      */
-    public static List<Permission> formatPermissions(List<AsPermission> dataList, Long parentId) {
+    public static List<Permission> formatPermissions(List<AsPermission> dataList, String parentId) {
         if (dataList.isEmpty()) {
             return null;
         }
@@ -40,7 +37,8 @@ public class UiUtil {
                         .setNoCache(data.getNoCache() == 1)
                         .setTitle(data.getTitle())
                         .setNoTagsView(data.getNoTagsView() == 1)
-                        .setOuterLink(data.getOuterLink());
+                        .setOuterLink(data.getOuterLink())
+                        .setParams(data.getParams());
                 Permission permission = new Permission()
                         .setPath(data.getPath())
                         .setComponent(data.getComponent())

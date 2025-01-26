@@ -26,7 +26,7 @@ public class AsUser implements Serializable {
     /**
     * 用户ID
     */
-    private Long userId;
+    private String userId;
     /**
     * 用户代码
     */
@@ -34,7 +34,7 @@ public class AsUser implements Serializable {
     /**
     * 部门ID
     */
-    private Long deptId;
+    private String deptId;
     /**
     * 用户账号
     */
@@ -64,9 +64,13 @@ public class AsUser implements Serializable {
     */
     private String password;
     /**
-    * 帐号状态（0正常 1停用 2代表删除）
+    * 帐号状态（0正常 1停用）
     */
     private Integer status;
+    /**
+     * 是否删除（0否 1是）
+     */
+    private Integer isDelete;
     /**
     * 最后登录IP
     */

@@ -11,7 +11,7 @@ okya:
   # 上传的图标文件内部url
   iconUrlPrefix: https://okya.top/file
   # 验证码类型 math(默认) 数字计算 char 字符验证 none不启用验证码
-  captchaType: math
+  captchaType: none
 
 server:
   port: 11001
@@ -111,6 +111,7 @@ security:
       - /captchaImage
       - /druid/*
       - /file/uploader
+      - /ua/login/icons
     repeatMillis: 5000
   password:
     # 密码最大错误次数
@@ -128,7 +129,7 @@ camunda:
   bpm:
     database:
       type: mysql
-      schema-update: false
+      schema-update: true
 
 # prefix、pattern
 sequence:

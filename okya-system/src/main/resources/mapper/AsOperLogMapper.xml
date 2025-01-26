@@ -3,7 +3,7 @@
 <mapper namespace="top.okya.system.dao.AsOperLogMapper">
 
     <resultMap type="top.okya.system.domain.AsOperLog" id="AsOperLogMap">
-        <result property="operId" column="oper_id" jdbcType="INTEGER"/>
+        <result property="operId" column="oper_id" jdbcType="VARCHAR"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="operationType" column="operation_type" jdbcType="VARCHAR"/>
         <result property="method" column="method" jdbcType="VARCHAR"/>
@@ -22,22 +22,6 @@
         <result property="costTime" column="cost_time" jdbcType="INTEGER"/>
         <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-
-    <!--查询单个-->
-    <select id="queryById" resultMap="AsOperLogMap">
-        select
-          oper_id, title, operation_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time, cost_time, finish_time
-        from as_oper_log
-        where oper_id = #{operId}
-    </select>
-
-    <!--查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="AsOperLogMap">
-        select
-          oper_id, title, operation_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time, cost_time, finish_time
-        from as_oper_log
-        limit #{offset}, #{limit}
-    </select>
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AsOperLogMap">
@@ -104,72 +88,7 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="operId" useGeneratedKeys="true">
-        insert into as_oper_log(title, operation_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time, cost_time, finish_time)
-        values (#{title}, #{operationType}, #{method}, #{requestMethod}, #{operatorType}, #{operName}, #{deptName}, #{operUrl}, #{operIp}, #{operLocation}, #{operParam}, #{jsonResult}, #{status}, #{errorMsg}, #{operTime}, #{costTime}, #{finishTime})
+        insert into as_oper_log(oper_id, title, operation_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_time, cost_time, finish_time)
+        values (#{operId}, #{title}, #{operationType}, #{method}, #{requestMethod}, #{operatorType}, #{operName}, #{deptName}, #{operUrl}, #{operIp}, #{operLocation}, #{operParam}, #{jsonResult}, #{status}, #{errorMsg}, #{operTime}, #{costTime}, #{finishTime})
     </insert>
-
-    <!--通过主键修改数据-->
-    <update id="update">
-        update as_oper_log
-        <set>
-            <if test="title != null and title != ''">
-                title = #{title},
-            </if>
-            <if test="operationType != null and operationType != ''">
-                operation_type = #{operationType},
-            </if>
-            <if test="method != null and method != ''">
-                method = #{method},
-            </if>
-            <if test="requestMethod != null and requestMethod != ''">
-                request_method = #{requestMethod},
-            </if>
-            <if test="operatorType != null">
-                operator_type = #{operatorType},
-            </if>
-            <if test="operName != null and operName != ''">
-                oper_name = #{operName},
-            </if>
-            <if test="deptName != null and deptName != ''">
-                dept_name = #{deptName},
-            </if>
-            <if test="operUrl != null and operUrl != ''">
-                oper_url = #{operUrl},
-            </if>
-            <if test="operIp != null and operIp != ''">
-                oper_ip = #{operIp},
-            </if>
-            <if test="operLocation != null and operLocation != ''">
-                oper_location = #{operLocation},
-            </if>
-            <if test="operParam != null and operParam != ''">
-                oper_param = #{operParam},
-            </if>
-            <if test="jsonResult != null and jsonResult != ''">
-                json_result = #{jsonResult},
-            </if>
-            <if test="status != null">
-                status = #{status},
-            </if>
-            <if test="errorMsg != null and errorMsg != ''">
-                error_msg = #{errorMsg},
-            </if>
-            <if test="operTime != null">
-                oper_time = #{operTime},
-            </if>
-            <if test="costTime != null">
-                cost_time = #{costTime},
-            </if>
-            <if test="finishTime != null">
-                finish_time = #{finishTime},
-            </if>
-        </set>
-        where oper_id = #{operId}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from as_oper_log where oper_id = #{operId}
-    </delete>
-
 </mapper>

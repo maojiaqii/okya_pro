@@ -1,12 +1,17 @@
 package top.okya.api.authenticated;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
+import top.okya.component.domain.vo.DictDataVo;
+import top.okya.component.domain.vo.UserPwdVo;
 import top.okya.component.enums.OperationType;
 import top.okya.system.service.PermissionService;
 
@@ -33,6 +38,7 @@ public class PermissionController {
     public HttpResult getMyTenancys() {
         return HttpResult.success(permissionService.myTenancys());
     }
+
     /**
      * 我的菜单
      */
@@ -40,5 +46,25 @@ public class PermissionController {
     @ApiLog(title = "我的菜单", operationType = OperationType.SEARCH)
     public HttpResult getMyPermissions(@NotBlank(message = "租户id不能为空！") @RequestParam(value = "currentTenancy") String currentTenancy) {
         return HttpResult.success(permissionService.myPermissions(currentTenancy));
+    }
+
+    /**
+     * 重置密码
+     */
+    @PostMapping(value = "/resetUserPwd")
+    @ApiLog(title = "重置密码", operationType = OperationType.UPDATE)
+    public HttpResult resetUserPwd(@Validated @RequestBody UserPwdVo userPwdVo) {
+        permissionService.resetPwd(userPwdVo);
+        return HttpResult.success();
+    }
+
+    /**
+     * 重置用户状态
+     */
+    @GetMapping(value = "/resetUserStatus")
+    @ApiLog(title = "重置用户状态", operationType = OperationType.UPDATE)
+    public HttpResult resetUserStatus(@NotBlank(message = "用户id不能为空！") @RequestParam(value = "user_id") String user_id) {
+        permissionService.resetStatus(user_id);
+        return HttpResult.success();
     }
 }

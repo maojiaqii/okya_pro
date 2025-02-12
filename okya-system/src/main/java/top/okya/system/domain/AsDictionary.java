@@ -44,9 +44,13 @@ public class AsDictionary implements Serializable {
     */
     private String dictValue;
     /**
-    * abel字段名
+    * label字段名
     */
     private String dictLabel;
+    /**
+     * parentId字段名
+     */
+    private String dictPid;
     /**
     * 字典状态（0正常 1停用）
     */

@@ -28,7 +28,7 @@ public interface AsPermissionMapper {
      * 通过用户id查询数据
      *
      * @param userId         用户id
-     * @param currentTenancy
+     * @param currentTenancy 当前租户
      * @return 对象列表
      */
     List<AsPermission> queryByUserId(@Param("userId") String userId, @Param("currentTenancy") String currentTenancy);

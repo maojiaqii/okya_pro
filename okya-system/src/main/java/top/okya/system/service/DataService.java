@@ -1,5 +1,6 @@
 package top.okya.system.service;
 
+import top.okya.component.domain.DictData;
 import top.okya.component.domain.TableData;
 import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.domain.vo.FormDataVo;
@@ -26,7 +27,7 @@ public interface DataService {
      * @param dictDataVo
      * @return
      */
-    Map<String, Object> getDictData(DictDataVo dictDataVo);
+    DictData getDictData(DictDataVo dictDataVo);
     /**
      * 获取表单数据
      *

@@ -31,4 +31,12 @@
         where user_code = #{userCode} and is_delete = 0
     </select>
 
+    <update id="updatePwdByUserId">
+        update as_user set password = #{pwd} where user_id = #{userId}
+    </update>
+
+    <update id="updateStatusByUserId">
+        update as_user set status = 0 where user_id = #{userId}
+    </update>
+
 </mapper>

@@ -1,6 +1,7 @@
 package top.okya.system.service;
 
 import top.okya.component.domain.Permission;
+import top.okya.component.domain.vo.UserPwdVo;
 
 import java.util.List;
 import java.util.Map;
@@ -14,4 +15,8 @@ public interface PermissionService {
     List<Permission> myPermissions(String currentTenancy);
 
     List<Map<String, Object>> myTenancys();
+
+    void resetPwd(UserPwdVo userPwdVo);
+
+    void resetStatus(String userId);
 }

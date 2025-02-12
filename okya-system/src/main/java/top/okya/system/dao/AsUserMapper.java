@@ -22,4 +22,13 @@ public interface AsUserMapper {
      */
     AsUser queryByUserCode(String userCode);
 
+    /**
+     * 通过用户id修改密码
+     *
+     * @param userId 用户id
+     * @param pwd    密码
+     */
+    int updatePwdByUserId(@Param("userId") String userId, @Param("pwd") String pwd);
+
+    int updateStatusByUserId(String userId);
 }

@@ -3,14 +3,11 @@ package top.okya.system.service.impl;
 import com.alibaba.fastjson2.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.okya.component.constants.CharacterConstants;
-import top.okya.component.constants.CommonConstants;
+import top.okya.component.domain.DictData;
 import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.TableData;
 import top.okya.component.domain.vo.DictDataVo;
@@ -31,7 +28,6 @@ import top.okya.system.domain.AsForm;
 import top.okya.system.domain.AsTable;
 import top.okya.system.service.DataService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -94,7 +90,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public Map<String, Object> getDictData(DictDataVo dictDataVo) {
+    public DictData getDictData(DictDataVo dictDataVo) {
         String dictCode = dictDataVo.getDictCode();
         AsDictionary asDictionary = asDictionaryMapper.queryByCode(dictCode);
         if (asDictionary == null) {
@@ -117,7 +113,7 @@ public class DataServiceImpl implements DataService {
         query.putAll(JSONObject.parseObject(JSONObject.toJSONString(loginUser), Map.class));
         query.put("sqlToExecute", dictSource);
         List<Map<String, Object>> dictData = sqlProviderMapper.query(query);
-        return ImmutableMap.of("dictCode", dictCode, "dictValue", asDictionary.getDictValue(), "dictLabel", asDictionary.getDictLabel(), "dictStyle", asDictionary.getShowStyle(), "data", dictData);
+        return new DictData(dictCode, asDictionary.getDictValue(), asDictionary.getDictLabel(), asDictionary.getDictPid(), asDictionary.getShowStyle(), dictData);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package top.okya.system.dao;
 
-import com.alibaba.fastjson2.JSONObject;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
+import top.okya.component.utils.mybatis.JsonResultHandler;
 import top.okya.component.utils.mybatis.SqlProvider;
 
 import java.util.List;
@@ -30,7 +32,8 @@ public interface SqlProviderMapper {
     void delete(Map<String, Object> map);
 
     @SelectProvider(type = SqlProvider.class, method = "getFormData")
-    Map<String, Object> getFormData(Map<String, Object> map);
+    @ResultType(Map.class)
+    void getFormData(Map<String, Object> map, JsonResultHandler jsonResultHandler);
 
     @UpdateProvider(type = SqlProvider.class, method = "updateSql")
     void update(Map<String, Object> map);

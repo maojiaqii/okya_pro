@@ -2,7 +2,6 @@ package top.okya.component.utils.mybatis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import top.okya.component.constants.CharacterConstants;
@@ -20,7 +19,6 @@ import java.util.Objects;
  * @describe： mybatis JSON数据工具类
  */
 
-@Slf4j
 public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private static ObjectMapper objectMapper;
@@ -31,9 +29,6 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     public JsonTypeHandler(Class<T> type) {
-        if (log.isInfoEnabled()) {
-            log.info("JsonTypeHandler(" + type + ")");
-        }
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
@@ -42,7 +37,7 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private T parse(String json) {
         try {
-            if (json == null || json.length() == 0) {
+            if (json == null || json.isEmpty()) {
                 return null;
             }
             return objectMapper.readValue(json, type);

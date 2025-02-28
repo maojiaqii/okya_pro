@@ -9,6 +9,8 @@
         <result property="userName" column="user_name" jdbcType="VARCHAR"/>
         <result property="userType" column="user_type" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="rolesJson" column="buttons" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="deptsJson" column="buttons" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
         <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
         <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
@@ -26,7 +28,7 @@
 
     <select id="queryByUserCode" resultMap="AsUserMap">
         select
-            user_id, user_code, dept_id, user_name, user_type, email, phone_number, sex, avatar, password, status, is_delete, login_ip, login_date, create_by, create_time, update_by, update_time, remark
+            user_id, user_code, dept_id, user_name, user_type, roles_json, depts_json, email, phone_number, sex, avatar, password, status, is_delete, login_ip, login_date, create_by, create_time, update_by, update_time, remark
         from as_user
         where user_code = #{userCode} and is_delete = 0
     </select>

@@ -19,6 +19,7 @@ import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
 import top.okya.component.global.Global;
 import top.okya.component.utils.common.IdUtil;
+import top.okya.component.utils.mybatis.JsonResultHandler;
 import top.okya.system.dao.AsDictionaryMapper;
 import top.okya.system.dao.AsFormMapper;
 import top.okya.system.dao.AsTableMapper;
@@ -125,7 +126,10 @@ public class DataServiceImpl implements DataService {
         AsForm asForm = getAsForm(formDataVo.getFormCode());
         JSONObject dbMapping = asForm.getDbMapping();
         dbMapping.put("content", data.get(0));
-        return sqlProviderMapper.getFormData(dbMapping);
+        JsonResultHandler jsonResultHandler = new JsonResultHandler(dbMapping);
+        sqlProviderMapper.getFormData(dbMapping, jsonResultHandler);
+        List<Map<String, Object>> resultList = jsonResultHandler.getResultList();
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
 
     @Override

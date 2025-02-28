@@ -4,6 +4,7 @@ import java.util.Date;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.alibaba.fastjson2.JSONArray;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -63,6 +64,14 @@ public class AsUser implements Serializable {
     * 密码
     */
     private String password;
+    /**
+     * 角色
+     */
+    private JSONArray rolesJson;
+    /**
+     * 分管部门
+     */
+    private JSONArray deptsJson;
     /**
     * 帐号状态（0正常 1停用）
     */

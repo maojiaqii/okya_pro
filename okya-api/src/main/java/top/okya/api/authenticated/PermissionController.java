@@ -48,6 +48,8 @@ public class PermissionController {
         return HttpResult.success(permissionService.myPermissions(currentTenancy));
     }
 
+
+
     /**
      * 重置密码
      */

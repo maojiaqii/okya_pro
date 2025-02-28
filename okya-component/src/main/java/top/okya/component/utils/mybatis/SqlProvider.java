@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +35,7 @@ public class SqlProvider {
     private static final String where = "where";
     private static final String and = "and";
     private static final String set = "set";
+    private static final String json_handler = ",typeHandler=top.okya.component.utils.mybatis.JsonTypeHandler";
 
     public String selectSql(HashMap<String, Object> map) {
         assert !Objects.isNull(map.get("sqlToExecute"));
@@ -58,9 +60,10 @@ public class SqlProvider {
         insertSql.append(map.get("dbTableName")).append(CharacterConstants.BLANK_SPACE).append(CharacterConstants.EXTENSION_LEFT);
         ((List<Map<String, Object>>) map.get("mapping")).forEach(v -> {
             String formField = (String) v.get("formField");
+            boolean isJson = !Objects.isNull(v.get("isJson")) && (boolean) v.get("isJson");
             if (content.containsKey(formField) && !Objects.isNull(content.get(formField))) {
                 insertSql.append(v.get("dbColumn")).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
-                insertValuesSql.append(CharacterConstants.POUND + CharacterConstants.BRACES_LEFT + "content.").append(formField).append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
+                insertValuesSql.append(CharacterConstants.POUND + CharacterConstants.BRACES_LEFT + "content.").append(formField).append(isJson ? json_handler : "").append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
             }
         });
         LoginUser loginUser = Global.getLoginUser();
@@ -103,11 +106,12 @@ public class SqlProvider {
         StringBuilder updateWhereSql = new StringBuilder(" where ");
         ((List<Map<String, Object>>) map.get("mapping")).forEach(v -> {
             String formField = (String) v.get("formField");
+            boolean isJson = !Objects.isNull(v.get("isJson")) && (boolean) v.get("isJson");
             if (content.containsKey(formField) && !Objects.isNull(content.get(formField))) {
                 if (v.containsKey("isKey") && (boolean) v.get("isKey")) {
                     updateWhereSql.append(v.get("dbColumn")).append(CharacterConstants.EQUAL).append(CharacterConstants.POUND).append(CharacterConstants.BRACES_LEFT).append("content.").append(formField).append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.BLANK_SPACE).append(and).append(CharacterConstants.BLANK_SPACE);
                 } else {
-                    updateSql.append(v.get("dbColumn")).append(CharacterConstants.EQUAL).append(CharacterConstants.POUND).append(CharacterConstants.BRACES_LEFT).append("content.").append(formField).append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
+                    updateSql.append(v.get("dbColumn")).append(CharacterConstants.EQUAL).append(CharacterConstants.POUND).append(CharacterConstants.BRACES_LEFT).append("content.").append(formField).append(isJson ? json_handler : "").append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
                 }
             }
         });

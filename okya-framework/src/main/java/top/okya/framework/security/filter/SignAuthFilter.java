@@ -139,13 +139,13 @@ public class SignAuthFilter extends OncePerRequestFilter {
         }
 
         // 防重复提交认证
-        String cacheRepeatKey = RedisConstants.REPEAT_SUBMIT_KEY + requestUri + ":" + Optional.ofNullable(request.getHeader(tokenHeader)).orElse("");
+        /*String cacheRepeatKey = RedisConstants.REPEAT_SUBMIT_KEY + requestUri + ":" + Optional.ofNullable(request.getHeader(tokenHeader)).orElse("");
         String cacheObj = jedisUtil.get(cacheRepeatKey);
         if (Objects.equals(cacheObj, requestBody)) {
             handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.REPEAT_SUBMIT));
             return;
         }
-        jedisUtil.set(cacheRepeatKey, requestBody, repeatMillis);
+        jedisUtil.set(cacheRepeatKey, requestBody, repeatMillis);*/
 
         filterChain.doFilter(requestWrapper, response);
     }

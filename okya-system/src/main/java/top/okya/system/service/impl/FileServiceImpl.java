@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import top.okya.component.config.OkyaConfig;
 import top.okya.component.constants.CharacterConstants;
@@ -36,8 +38,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +69,16 @@ public class FileServiceImpl implements FileService {
      */
     private static final String CHUNK = "/chunk";
 
+    /**
+     * 上传锁
+     */
+    private static final ConcurrentHashMap<String, Object> uploadLock = new ConcurrentHashMap<>();
+
+    /**
+     * 合并锁
+     */
+    private static final ConcurrentHashMap<String, Object> mergeLock = new ConcurrentHashMap<>();
+
     @Autowired
     AsUploaderFileChunkMapper asUploaderFileChunkMapper;
 
@@ -82,98 +96,138 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void upload(ChunkVo chunkVo) {
-        LoginUser loginUser = Global.getLoginUser();
         String identifier = chunkVo.getIdentifier();
-        MultipartFile file = chunkVo.getFile();
-        String fileName = chunkVo.getFilename();
-        String chunkName = fileName + CharacterConstants.MINUS + chunkVo.getChunkNumber();
-        String folderPathString = OkyaConfig.getFileFolder() + identifier + CHUNK;
-        String filePathString = folderPathString + CharacterConstants.FORWARD_SLASH + chunkName;
-        // 先写入数据库
-        AsUploaderFileChunk asUploaderFileChunk = new AsUploaderFileChunk()
-                .setChunkId(IdUtil.randomUUID())
-                .setChunkNum(chunkVo.getChunkNumber())
-                .setChunkName(chunkName)
-                .setChunkSize(chunkVo.getCurrentChunkSize())
-                .setTotalSize(chunkVo.getTotalSize())
-                .setTotalChunks(chunkVo.getTotalChunks())
-                .setFilePath(folderPathString)
-                .setFileName(fileName)
-                .setFileIdentifier(identifier)
-                .setMerged(CHUNK_UNMERGED)
-                .setUploadBy(loginUser.getUserCode())
-                .setUploadTime(DateFormatUtil.nowDate());
-        asUploaderFileChunkMapper.insert(asUploaderFileChunk);
-        try {
-            Path folder = Paths.get(folderPathString);
-            // 文件路径不存在
-            if (!Files.isWritable(folder)) {
-                Files.createDirectories(folder);
+        // 使用 ConcurrentHashMap 来确保同一 identifier 合并操作的互斥
+        synchronized (uploadLock.computeIfAbsent(identifier, k -> new Object())) {
+            try {
+                LoginUser loginUser = Global.getLoginUser();
+                MultipartFile file = chunkVo.getFile();
+                String fileName = chunkVo.getFilename();
+                String chunkName = fileName + CharacterConstants.MINUS + chunkVo.getChunkNumber();
+                Path chunkFolder = Paths.get(OkyaConfig.getFileFolder(), identifier + CHUNK);
+                Path targetPath = chunkFolder.resolve(chunkName);
+
+                // 先写入数据库
+                AsUploaderFileChunk asUploaderFileChunk = new AsUploaderFileChunk()
+                        .setChunkId(IdUtil.randomUUID())
+                        .setChunkNum(chunkVo.getChunkNumber())
+                        .setChunkName(chunkName)
+                        .setChunkSize(chunkVo.getCurrentChunkSize())
+                        .setTotalSize(chunkVo.getTotalSize())
+                        .setTotalChunks(chunkVo.getTotalChunks())
+                        .setFilePath(chunkFolder.toString())
+                        .setFileName(fileName)
+                        .setFileIdentifier(identifier)
+                        .setMerged(CHUNK_UNMERGED)
+                        .setUploadBy(loginUser.getUserCode())
+                        .setUploadTime(DateFormatUtil.nowDate());
+                asUploaderFileChunkMapper.insert(asUploaderFileChunk);
+                try {
+                    // 文件路径不存在
+                    if (!Files.isWritable(chunkFolder)) {
+                        Files.createDirectories(chunkFolder);
+                    }
+                    byte[] bytes = file.getBytes();
+                    Files.deleteIfExists(targetPath);
+                    //文件写入指定路径
+                    Files.write(targetPath, bytes);
+
+                    // 注册事务同步处理
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {}
+
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (status == STATUS_ROLLED_BACK) {
+                                deleteQuietly(targetPath);
+                            }
+                        }
+                    });
+                } catch (IOException e) {
+                    log.error("文件生成失败", e);
+                    throw new ServiceException(ServiceExceptionType.GENERATE_FILE_FAILED, targetPath.toString());
+                }
+            } finally {
+                uploadLock.remove(identifier);
             }
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(filePathString);
-            Files.deleteIfExists(path);
-            //文件写入指定路径
-            Files.write(path, bytes);
-        } catch (IOException e) {
-            log.error("文件生成失败", e);
-            throw new ServiceException(ServiceExceptionType.GENERATE_FILE_FAILED, filePathString);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void merge(String identifier) {
-        LoginUser loginUser = Global.getLoginUser();
-        List<AsUploaderFileChunk> asUploaderFileChunkList = asUploaderFileChunkMapper.queryByFileIdentifier(identifier)
-                .stream()
-                .filter(i -> Objects.equals(i.getMerged(), CHUNK_UNMERGED))
-                .collect(Collectors.toList());
-        if (asUploaderFileChunkList.isEmpty()) {
-            return;
-        }
-        AsUploaderFileChunk asUploaderFileChunk = asUploaderFileChunkList.get(0);
-        String fileName = asUploaderFileChunk.getFileName();
-        String chunkFileFolder = OkyaConfig.getFileFolder() + identifier + CHUNK;
-        String filePath = OkyaConfig.getFileFolder() + identifier + CharacterConstants.FORWARD_SLASH + fileName;
-        asUploaderFileChunkMapper.updateMerge(identifier, CHUNK_MERGED);
-        AsUploaderFile asUploaderFile = new AsUploaderFile()
-                .setFileId(IdUtil.randomUUID())
-                .setFileName(fileName)
-                .setFileIdentifier(identifier)
-                .setFilePath(filePath)
-                .setFileSize(asUploaderFileChunk.getTotalSize())
-                .setIsDelete(UseStatus.OK.getCode())
-                .setUploadBy(loginUser.getUserCode())
-                .setUploadTime(DateFormatUtil.nowDate());
-        asUploaderFileMapper.insert(asUploaderFile);
-        try {
-            Path pas = Paths.get(filePath);
-            Files.deleteIfExists(pas);
-            Files.createFile(pas);
-            Files.list(Paths.get(chunkFileFolder))
-                    .filter(path -> path.getFileName().toString().contains("-"))
-                    .sorted((o1, o2) -> {
-                        String p1 = o1.getFileName().toString();
-                        String p2 = o2.getFileName().toString();
-                        int i1 = p1.lastIndexOf("-");
-                        int i2 = p2.lastIndexOf("-");
-                        return Integer.valueOf(p2.substring(i2)).compareTo(Integer.valueOf(p1.substring(i1)));
-                    })
-                    .forEach(path -> {
-                        try {
-                            //以追加的形式写入文件
-                            Files.write(Paths.get(filePath), Files.readAllBytes(path), StandardOpenOption.APPEND);
-                            //合并后删除该块
-                            Files.delete(path);
-                        } catch (IOException e) {
-                            log.error("文件合并失败", e);
-                            throw new ServiceException(ServiceExceptionType.MERGE_FILE_FAILED, filePath);
+        // 使用 ConcurrentHashMap 来确保同一 identifier 合并操作的互斥
+        synchronized (mergeLock.computeIfAbsent(identifier, k -> new Object())) {
+            try {
+                LoginUser loginUser = Global.getLoginUser();
+                List<AsUploaderFileChunk> unmergedChunks = asUploaderFileChunkMapper.queryByFileIdentifier(identifier)
+                        .stream()
+                        .filter(i -> Objects.equals(i.getMerged(), CHUNK_UNMERGED))
+                        .collect(Collectors.toList());
+                if (unmergedChunks.isEmpty()) {
+                    return;
+                }
+                AsUploaderFileChunk chunk = unmergedChunks.get(0);
+                String fileName = chunk.getFileName();
+                Path chunkFolder = Paths.get(OkyaConfig.getFileFolder(), identifier + CHUNK);
+                Path targetDir = Paths.get(OkyaConfig.getFileFolder(), identifier);
+                Path targetPath = targetDir.resolve(fileName);
+
+                // 更新分片状态为已合并并插入文件记录
+                asUploaderFileChunkMapper.updateMerge(identifier, CHUNK_MERGED);
+                AsUploaderFile asUploaderFile = new AsUploaderFile()
+                        .setFileId(IdUtil.randomUUID())
+                        .setFileName(fileName)
+                        .setFileIdentifier(identifier)
+                        .setFilePath(targetPath.toString())
+                        .setFileSize(chunk.getTotalSize())
+                        .setIsDelete(UseStatus.OK.getCode())
+                        .setUploadBy(loginUser.getUserCode())
+                        .setUploadTime(DateFormatUtil.nowDate());
+                asUploaderFileMapper.insert(asUploaderFile);
+
+                // 文件合并操作
+                List<Path> chunksToDelete = new ArrayList<>();
+                try {
+                    Files.createDirectories(targetDir); // 确保目标目录存在
+                    Files.deleteIfExists(targetPath);
+                    Files.createFile(targetPath);
+                    // 获取并排序分片文件
+                    List<Path> sortedChunks = Files.list(chunkFolder)
+                            .filter(path -> path.getFileName().toString().contains("-"))
+                            .sorted(this::compareChunkPaths)
+                            .collect(Collectors.toList());
+
+                    // 流式合并分片
+                    try (OutputStream os = Files.newOutputStream(targetPath, StandardOpenOption.APPEND)) {
+                        for (Path chunkPath : sortedChunks) {
+                            Files.copy(chunkPath, os);
+                            chunksToDelete.add(chunkPath);
+                        }
+                    }
+
+                    // 注册事务同步处理
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            deleteChunksAndFolder(chunksToDelete, chunkFolder);
+                        }
+
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (status == STATUS_ROLLED_BACK) {
+                                deleteQuietly(targetPath);
+                            }
                         }
                     });
-        } catch (IOException e) {
-            log.error("文件合并失败", e);
-            throw new ServiceException(ServiceExceptionType.MERGE_FILE_FAILED, filePath);
+                } catch (IOException e) {
+                    log.error("文件合并失败", e);
+                    throw new ServiceException(ServiceExceptionType.MERGE_FILE_FAILED, targetPath.toString());
+                }
+            } finally {
+                mergeLock.remove(identifier);
+            }
         }
     }
 
@@ -192,14 +246,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public int downLoadCount(String fileIdentifier) {
-        AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
-        if (Objects.isNull(asUploaderFile)) {
-            throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
-        }
+        AsUploaderFile asUploaderFile = getInfo(fileIdentifier);
         Path path = Paths.get(asUploaderFile.getFilePath());
-        if (!Files.exists(path)) {
-            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
-        }
         try {
             return (int) Math.ceil(Files.size(path) * 1.0 / ONECE_DOWNLOAD_SIZE);
         } catch (IOException e) {
@@ -209,14 +257,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        AsUploaderFile asUploaderFile = asUploaderFileMapper.queryByIdentifier(fileIdentifier);
-        if (Objects.isNull(asUploaderFile)) {
-            throw new ServiceException(ServiceExceptionType.GET_FILE_INFO_FAILED);
-        }
+        AsUploaderFile asUploaderFile = getInfo(fileIdentifier);
         Path path = Paths.get(asUploaderFile.getFilePath());
-        if (!Files.exists(path)) {
-            throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
-        }
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
@@ -273,6 +315,47 @@ public class FileServiceImpl implements FileService {
             if (outputStream != null) {
                 outputStream.close();
             }
+        }
+    }
+
+    // 分片文件比较逻辑
+    private int compareChunkPaths(Path p1, Path p2) {
+        String filename1 = p1.getFileName().toString();
+        String filename2 = p2.getFileName().toString();
+        int num1 = extractChunkNumber(filename1);
+        int num2 = extractChunkNumber(filename2);
+        return Integer.compare(num1, num2);
+    }
+
+    // 提取分片编号
+    private int extractChunkNumber(String filename) {
+        int lastDash = filename.lastIndexOf("-");
+        if (lastDash == -1) {
+            throw new ServiceException(ServiceExceptionType.INVALID_CHUNK_NAME, filename);
+        }
+        try {
+            return Integer.parseInt(filename.substring(lastDash + 1));
+        } catch (NumberFormatException e) {
+            throw new ServiceException(ServiceExceptionType.INVALID_CHUNK_NAME, filename);
+        }
+    }
+
+    // 安全删除分片文件和文件夹
+    private void deleteChunksAndFolder(List<Path> chunks, Path folder) {
+        chunks.forEach(this::deleteQuietly);
+        try {
+            Files.deleteIfExists(folder);
+        } catch (IOException e) {
+            log.error("无法删除分片目录，可能不为空: {}", folder, e);
+        }
+    }
+
+    // 静默删除文件
+    private void deleteQuietly(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.error("文件删除失败: {}", path, e);
         }
     }
 

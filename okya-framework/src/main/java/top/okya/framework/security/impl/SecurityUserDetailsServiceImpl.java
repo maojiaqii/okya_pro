@@ -64,7 +64,7 @@ public class SecurityUserDetailsServiceImpl implements UserDetailsService {
         checkPwd(asUser);
 
         // 使用获得的信息创建SecurityUserDetails
-        return new LoginUser(asUser.getUserCode(), asUser, asDeptMapper.queryByUserId(asUser.getUserId()), asRoleMapper.queryByUserId(asUser.getUserId()));
+        return new LoginUser(asUser.getUserCode(), asUser, asDeptMapper.queryById(asUser.getDeptId()), asRoleMapper.queryByUserId(asUser.getUserId()));
     }
 
     private void checkPwd(AsUser asUser) {

@@ -15,10 +15,18 @@ import java.util.List;
 public interface AsDeptMapper {
 
     /**
-     * 通过userID查询单条数据
+     * 通过userID查询分管部门数据
      *
      * @param userId 用户编号
      * @return 实例对象
      */
-    AsDept queryByUserId(String userId);
+    List<AsDept> queryFgbmByUserId(String userId);
+
+    /**
+     * 通过userID查询单条数据
+     *
+     * @param deptId 部门编号
+     * @return 实例对象
+     */
+    AsDept queryById(String deptId);
 }

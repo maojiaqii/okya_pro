@@ -19,6 +19,7 @@ public enum ServiceExceptionType {
     GET_FILE_INFO_FAILED(30001203, "获取文件信息失败！"),
     FILE_NOT_EXISTS(30001204, "文件不存在！"),
     FILE_IO_ERROR(30001204, "文件IO异常！"),
+    INVALID_CHUNK_NAME(30001205, "无效的分片文件名:【%s】！"),
     DESIGN_ERROR(30001301, "【%s】配置错误：【%s】！"),
     // 未知错误 异常
     SERVER_EXCEPTION(30009999, "系统错误：【%s】");

@@ -39,7 +39,7 @@
         <where>
             a.is_delete = 0 and a.status = 0
             <if test="userId != null">
-                and exists (select 1 from as_role_tenancy art where art.tenancy_id = a.tenancy_id and exists (select 1 from as_user_role ar where ar.user_id = #{userId} and ar.role_id = art.role_id))
+                and exists (select 1 from as_role_tenancy art where art.tenancy_id = a.tenancy_id and exists (select 1 from as_user ar where ar.user_id = #{userId} and ar.roles_json like concat('%"', art.role_id, '"%')))
             </if>
         </where>
         order by a.order_num
@@ -52,7 +52,7 @@
         <where>
             a.is_delete = 0 and a.status = 0 and a.tenancy_id = #{currentTenancy}
             <if test="userId != null">
-                and exists (select 1 from as_role_permission rm where a.permission_id = rm.permission_id and exists (select 1 from as_user_role ur where ur.user_id = #{userId} and rm.role_id = ur.role_id))
+                and exists (select 1 from as_role_permission rm where a.permission_id = rm.permission_id and exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', rm.role_id, '"%')))
             </if>
         </where>
         order by a.parent_id, a.order_num

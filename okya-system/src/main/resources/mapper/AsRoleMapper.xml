@@ -20,9 +20,9 @@
     <select id="queryByUserId" resultMap="AsRoleMap">
         select
             b.role_id, b.role_name, b.role_key, b.role_sort, b.data_scope, b.status, b.is_delete, b.create_by, b.create_time, b.update_by, b.update_time, b.remark
-        from as_user_role a
+        from as_user a
         left join as_role b
-        on a.role_id = b.role_id
+        on a.roles_json like concat('%"', b.role_id, '"%')
         and b.is_delete = 0
         where a.user_id = #{userId}
     </select>

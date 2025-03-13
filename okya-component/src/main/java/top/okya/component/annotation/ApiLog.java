@@ -1,7 +1,6 @@
 package top.okya.component.annotation;
 
 import top.okya.component.enums.OperationType;
-import top.okya.component.enums.OperatorType;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

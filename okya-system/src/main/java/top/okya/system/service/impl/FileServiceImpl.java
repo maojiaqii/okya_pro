@@ -29,11 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.nio.channels.Channels;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +62,7 @@ public class FileServiceImpl implements FileService {
     /**
      * 每次下载的文件大小2M
      */
-    private static final long ONECE_DOWNLOAD_SIZE = 1024 * 1024 * 2;
+    private static final long ONCE_DOWNLOAD_SIZE = 1024 * 1024 * 2;
     /**
      * 分块文件存放文件夹名
      */
@@ -135,7 +134,8 @@ public class FileServiceImpl implements FileService {
                     // 注册事务同步处理
                     TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                         @Override
-                        public void afterCommit() {}
+                        public void afterCommit() {
+                        }
 
                         @Override
                         public void afterCompletion(int status) {
@@ -190,7 +190,8 @@ public class FileServiceImpl implements FileService {
                 // 文件合并操作
                 List<Path> chunksToDelete = new ArrayList<>();
                 try {
-                    Files.createDirectories(targetDir); // 确保目标目录存在
+                    // 确保目标目录存在
+                    Files.createDirectories(targetDir);
                     Files.deleteIfExists(targetPath);
                     Files.createFile(targetPath);
                     // 获取并排序分片文件
@@ -249,31 +250,33 @@ public class FileServiceImpl implements FileService {
         AsUploaderFile asUploaderFile = getInfo(fileIdentifier);
         Path path = Paths.get(asUploaderFile.getFilePath());
         try {
-            return (int) Math.ceil(Files.size(path) * 1.0 / ONECE_DOWNLOAD_SIZE);
+            return (int) Math.ceil(Files.size(path) * 1.0 / ONCE_DOWNLOAD_SIZE);
         } catch (IOException e) {
             throw new ServiceException(ServiceExceptionType.FILE_IO_ERROR);
         }
     }
 
     @Override
-    public void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void downLoad(String fileIdentifier, int no, HttpServletRequest request, HttpServletResponse response) {
         AsUploaderFile asUploaderFile = getInfo(fileIdentifier);
         Path path = Paths.get(asUploaderFile.getFilePath());
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
+        try (FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+             BufferedOutputStream outputStream = new BufferedOutputStream(response.getOutputStream(), 8192)) {
+
             String fileName = path.getFileName().toString();
             // http状态码要为206：表示获取部分内容
             response.setStatus(HttpStatus.PARTIAL_CONTENT.value());
             response.setCharacterEncoding("utf-8");
             response.setContentType("application/octet-stream");
 
-            long fileLength = Files.size(path);
+            long fileLength = fileChannel.size();
             // 开始下载位置
             long firstBytePos;
             // 结束下载位置
             long lastBytePos;
-            final int groups = (int) Math.ceil(fileLength * 1.0 / ONECE_DOWNLOAD_SIZE);
+            final int groups = (int) Math.ceil(fileLength * 1.0 / ONCE_DOWNLOAD_SIZE);
+
+            // 计算下载范围
             if (no < 0) {
                 firstBytePos = 0;
                 lastBytePos = fileLength - 1;
@@ -281,40 +284,47 @@ public class FileServiceImpl implements FileService {
                 if (no > groups) {
                     return;
                 } else {
-                    firstBytePos = no * ONECE_DOWNLOAD_SIZE + (no == 0 ? 0 : 1);
+                    firstBytePos = no * ONCE_DOWNLOAD_SIZE + (no == 0 ? 0 : 1);
                     if (firstBytePos > fileLength) {
                         return;
                     }
-                    lastBytePos = ((no + 1) * ONECE_DOWNLOAD_SIZE > fileLength) ? (fileLength - 1) : (no + 1) * ONECE_DOWNLOAD_SIZE;
+                    lastBytePos = ((no + 1) * ONCE_DOWNLOAD_SIZE > fileLength) ? (fileLength - 1) : (no + 1) * ONCE_DOWNLOAD_SIZE;
                 }
             }
-            // Content-Length: 11，本次内容的大小
+
+            // Content-Length: 本次内容的大小
             long downLoadedRealLength = lastBytePos - firstBytePos + 1;
             response.setContentLengthLong(downLoadedRealLength);
             log.info("本次下载文件：{}，起始位置：{}，结束位置：{}，下载长度：{}，总长度：{}", fileName, firstBytePos, lastBytePos, downLoadedRealLength, fileLength);
-            // Open for reading only
-            final String fileOpenMode = "r";
-            RandomAccessFile randomAccessFile = new RandomAccessFile(path.toFile(), fileOpenMode);
-            randomAccessFile.seek(firstBytePos);
-            // 开始读取文件
-            inputStream = Channels.newInputStream(randomAccessFile.getChannel());
-            outputStream = new BufferedOutputStream(response.getOutputStream());
-            byte[] buffer = new byte[(int) downLoadedRealLength];
-            inputStream.read(buffer);
-            outputStream.write(buffer);
+
+            // 设置文件位置
+            fileChannel.position(firstBytePos);
+
+            // 使用固定大小的缓冲区分块读取4KB的缓冲区
+            int bufferSize = 4096;
+            ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+
+            long bytesRemaining = downLoadedRealLength;
+            int bytesRead;
+
+            // 分块读取并写入响应
+            while (bytesRemaining > 0 && (bytesRead = fileChannel.read(buffer)) != -1) {
+                buffer.flip(); // 切换到读模式
+
+                int bytesToWrite = (int) Math.min(bytesRead, bytesRemaining);
+                outputStream.write(buffer.array(), 0, bytesToWrite);
+
+                bytesRemaining -= bytesToWrite;
+                buffer.clear(); // 清空缓冲区，准备下一次读取
+            }
+
+            outputStream.flush();
         } catch (FileNotFoundException e) {
             throw new ServiceException(ServiceExceptionType.FILE_NOT_EXISTS);
         } catch (UnsupportedEncodingException e) {
             throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION);
         } catch (IOException e) {
             throw new ServiceException(ServiceExceptionType.FILE_IO_ERROR);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (outputStream != null) {
-                outputStream.close();
-            }
         }
     }
 

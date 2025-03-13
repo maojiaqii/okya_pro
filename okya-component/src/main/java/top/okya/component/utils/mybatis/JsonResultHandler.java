@@ -29,6 +29,7 @@ public class JsonResultHandler implements ResultHandler<Map<String, Object>> {
 
     @Override
     public void handleResult(ResultContext<? extends Map<String, Object>> resultContext) {
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> mappings = (List<Map<String, Object>>) dbMapping.get("mapping");
         Map<String, Object> row = resultContext.getResultObject();
         for(Map<String, Object> mapping : mappings){

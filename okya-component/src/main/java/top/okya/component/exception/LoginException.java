@@ -31,6 +31,13 @@ public class LoginException extends InternalAuthenticationServiceException {
         return userCode;
     }
 
+    public LoginException(LoginExceptionType loginExceptionType) {
+        super(loginExceptionType.getDesc());
+        this.code = loginExceptionType.getCode();
+        this.msg = loginExceptionType.getDesc();
+        log.error("【登录】异常--------------> 错误码：{}，错误描述：{}", this.code, this.msg);
+    }
+
     public LoginException(LoginExceptionType loginExceptionType, String userCode) {
         super(loginExceptionType.getDesc());
         this.code = loginExceptionType.getCode();

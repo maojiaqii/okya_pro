@@ -67,6 +67,15 @@ public class DateFormatUtil {
     /**
      * 格式化当前系统时间
      *
+     * @return 当前系统时间格式化字符串
+     */
+    public static String formatNow() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    /**
+     * 格式化当前系统时间
+     *
      * @param pattern 返回日期格式
      * @return 当前系统时间格式化字符串
      */

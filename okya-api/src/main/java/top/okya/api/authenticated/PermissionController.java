@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
-import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.domain.vo.UserPwdVo;
 import top.okya.component.enums.OperationType;
 import top.okya.system.service.PermissionService;

@@ -1,9 +1,12 @@
 package top.okya.component.global;
 
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import top.okya.component.domain.LoginUser;
+import top.okya.component.enums.exception.LoginExceptionType;
+import top.okya.component.exception.LoginException;
 
 /**
  * @author: maojiaqi
@@ -15,7 +18,14 @@ import top.okya.component.domain.LoginUser;
 public class Global {
 
     public static LoginUser getLoginUser(){
-        return (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof LoginUser) {
+                return (LoginUser) principal;
+            }
+        }
+        return null;
     }
 
 }

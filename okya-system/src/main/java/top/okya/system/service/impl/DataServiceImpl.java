@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.okya.component.domain.DictData;
-import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.TableData;
 import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.domain.vo.FormDataVo;
@@ -17,7 +16,6 @@ import top.okya.component.domain.vo.others.table.TablePageVo;
 import top.okya.component.enums.UseStatus;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
-import top.okya.component.global.Global;
 import top.okya.component.utils.common.IdUtil;
 import top.okya.component.utils.mybatis.JsonResultHandler;
 import top.okya.system.dao.AsDictionaryMapper;
@@ -80,13 +78,11 @@ public class DataServiceImpl implements DataService {
 
         // 查询
         Map<String, Object> query = tableDataVo.getParams();
-        LoginUser loginUser = Global.getLoginUser();
-        query.putAll(JSONObject.parseObject(JSONObject.toJSONString(loginUser), Map.class));
         query.put("sqlToExecute", tableSource);
         query.put("orderToAppend", tableDataVo.getOrder());
         List<Map<String, Object>> tableData = sqlProviderMapper.query(query);
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(tableData);
-        long total = pageInfo.getTotal(); // 总记录数
+        long total = pageInfo.getTotal();
         return new TableData(total, tableData);
     }
 
@@ -110,8 +106,6 @@ public class DataServiceImpl implements DataService {
         }
         // 查询
         Map<String, Object> query = dictDataVo.getParams();
-        LoginUser loginUser = Global.getLoginUser();
-        query.putAll(JSONObject.parseObject(JSONObject.toJSONString(loginUser), Map.class));
         query.put("sqlToExecute", dictSource);
         List<Map<String, Object>> dictData = sqlProviderMapper.query(query);
         return new DictData(dictCode, asDictionary.getDictValue(), asDictionary.getDictLabel(), asDictionary.getDictPid(), asDictionary.getShowStyle(), dictData);

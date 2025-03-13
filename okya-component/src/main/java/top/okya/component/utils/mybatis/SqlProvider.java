@@ -1,20 +1,14 @@
 package top.okya.component.utils.mybatis;
 
-import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import top.okya.component.constants.CharacterConstants;
-import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.vo.others.table.TableOrderVo;
-import top.okya.component.global.Global;
-import top.okya.component.utils.common.DateFormatUtil;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author: maojiaqi
@@ -28,10 +22,6 @@ public class SqlProvider {
 
     private static final String script_start = "<script>";
     private static final String script_end = "</script>";
-    private static final String create_by = "create_by";
-    private static final String create_time = "create_time";
-    private static final String update_by = "update_by";
-    private static final String update_time = "update_time";
     private static final String where = "where";
     private static final String and = "and";
     private static final String set = "set";
@@ -66,11 +56,8 @@ public class SqlProvider {
                 insertValuesSql.append(CharacterConstants.POUND + CharacterConstants.BRACES_LEFT + "content.").append(formField).append(isJson ? json_handler : "").append(CharacterConstants.BRACES_RIGHT).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
             }
         });
-        LoginUser loginUser = Global.getLoginUser();
-        insertSql.append(create_by + CharacterConstants.COMMA + CharacterConstants.BLANK_SPACE);
-        insertValuesSql.append(CharacterConstants.QUOTATION_MARK).append(loginUser.getUserCode()).append(CharacterConstants.QUOTATION_MARK).append(CharacterConstants.COMMA).append(CharacterConstants.BLANK_SPACE);
-        insertSql.append(create_time);
-        insertValuesSql.append(CharacterConstants.QUOTATION_MARK).append(DateFormatUtil.now()).append(CharacterConstants.QUOTATION_MARK);
+        insertSql.delete(insertSql.length() - 2, insertSql.length());
+        insertValuesSql.delete(insertValuesSql.length() - 2, insertValuesSql.length());
         insertSql.append(CharacterConstants.EXTENSION_RIGHT);
         insertValuesSql.append(CharacterConstants.EXTENSION_RIGHT);
         String mybatisSql = script_start + insertSql + insertValuesSql + script_end;

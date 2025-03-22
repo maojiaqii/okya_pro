@@ -20,10 +20,4 @@ public interface OperationService {
      */
     int insertOperationRecord(AsOperLog asOperLog);
 
-    /**
-     * 数据库测试
-     *
-     * @return
-     */
-    List<AsOperLog> queryAll();
 }

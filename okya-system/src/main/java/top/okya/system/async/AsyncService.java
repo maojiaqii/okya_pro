@@ -2,6 +2,7 @@ package top.okya.system.async;
 
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,7 +27,7 @@ import java.util.concurrent.Executor;
 @Component
 public class AsyncService {
 
-    private Executor executor = SpringUtil.getBean("asyncServiceExecutor");
+    private Executor executor = new DelegatingSecurityContextExecutor(SpringUtil.getBean("asyncServiceExecutor"));
 
     /**
      * 单例模式

@@ -19,6 +19,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.update.UpdateSet;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -35,7 +36,9 @@ import top.okya.component.global.Global;
 import top.okya.component.utils.common.DateFormatUtil;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author: maojiaqi
@@ -56,6 +59,7 @@ public class DataIsolationInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object target = invocation.getTarget();
+        System.out.println(target instanceof StatementHandler);
         //确保只有拦截的目标对象是 StatementHandler 类型时才执行特定逻辑
         if (target instanceof StatementHandler) {
             StatementHandler statementHandler = (StatementHandler) target;
@@ -196,11 +200,24 @@ public class DataIsolationInterceptor implements Interceptor {
      * @param insert Insert 语法树
      */
     private void setEnvToInsert(Insert insert) {
-        AsUser loginUser = Global.getLoginUser().getAsUser();
+        LoginUser loginUser1 = Global.getLoginUser();
+        // 用户登录登出时，记录as_login_record表，无法获取到登录用户
+        if(Objects.isNull(loginUser1)){
+            return;
+        }
+        AsUser loginUser = loginUser1.getAsUser();
         // 添加env列
         List<Column> columns = insert.getColumns();
-        columns.add(new Column(create_by));
-        columns.add(new Column(create_time));
+        boolean exists1 = columns.stream()
+                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(create_by));
+        boolean exists2 = columns.stream()
+                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(create_time));
+        if(exists1){
+            columns.add(new Column(create_by));
+        }
+        if(exists2){
+            columns.add(new Column(create_time));
+        }
         // values中添加环境变量值
         List<SelectBody> selects = insert.getSelect().getSelectBody(SetOperationList.class).getSelects();
         for (SelectBody select : selects) {
@@ -212,8 +229,12 @@ public class DataIsolationInterceptor implements Interceptor {
                     if (expression instanceof RowConstructor) {
                         RowConstructor rowConstructor = (RowConstructor) expression;
                         ExpressionList exprList = rowConstructor.getExprList();
-                        exprList.addExpressions(new StringValue(loginUser.getUserId()))
-                                .addExpressions(new StringValue(DateFormatUtil.formatNow()));
+                        if(exists1){
+                            exprList.addExpressions(new StringValue(loginUser.getUserId()));
+                        }
+                        if(exists2){
+                            exprList.addExpressions(new StringValue(DateFormatUtil.formatNow()));
+                        }
                     }
                 }
             }

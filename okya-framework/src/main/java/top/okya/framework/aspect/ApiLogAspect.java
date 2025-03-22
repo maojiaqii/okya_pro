@@ -75,15 +75,7 @@ public class ApiLogAspect {
             LoginUser loginUser = (LoginUser) principal;
             asOperLog.setOperName(loginUser.getUserCode());
         }
-        log.info("\n==> 【拦截到请求】\n"
-                /*+ "==> 请求者编号：" + ((VtUserLogin)request.getSession().getAttribute("user")).getUserCode() + "\n"*/
-                + "==> 模块标题：" + asOperLog.getTitle() + "\n"
-                + "==> 业务类型：" + asOperLog.getOperationType() + "\n"
-                + "==> 请求者IP：" + ip + "\n"
-                + "==> 请求时间：" + reqTime + "\n"
-                + "==> 请求接口：" + asOperLog.getRequestMethod() + " " + asOperLog.getOperUrl() + "\n"
-                + "==> 请求方法：" + asOperLog.getMethod() + "\n"
-                + "==> 参数内容：" + args);
+        log.info("\n==> 【拦截到请求】\n==> 模块标题：{}\n==> 业务类型：{}\n==> 请求者IP：{}\n==> 请求时间：{}\n==> 请求接口：{} {}\n==> 请求方法：{}\n==> 参数内容：{}", asOperLog.getTitle(), asOperLog.getOperationType(), ip, reqTime, asOperLog.getRequestMethod(), asOperLog.getOperUrl(), asOperLog.getMethod(), args);
     }
 
     /**
@@ -97,10 +89,7 @@ public class ApiLogAspect {
         String jsonResult = JSON.toJSONString(result);
         asOperLog.setStatus(CommonConstants.SUCCESS).setFinishTime(DateFormatUtil.millisToDate(respTime + req)).setCostTime(respTime).setJsonResult(jsonResult);
         AsyncService.me().insertOperationRecord(asOperLog);
-        log.info("\n<== 【应答的信息】\n"
-                + "<== 应答时间：" + reqTime + "\n"
-                + "<== 应答耗时：" + respTime + "毫秒\n"
-                + "<== 应答内容：" + jsonResult);
+        log.info("\n<== 【应答的信息】\n<== 应答时间：{}\n<== 应答耗时：{}毫秒\n<== 应答内容：{}", reqTime, respTime, jsonResult);
     }
 
     /**
@@ -118,11 +107,7 @@ public class ApiLogAspect {
         long respTime = System.currentTimeMillis() - req;
         asOperLog.setStatus(CommonConstants.FAIL).setFinishTime(DateFormatUtil.millisToDate(respTime + req)).setErrorMsg(errorMsg).setCostTime(respTime).setJsonResult(data);
         AsyncService.me().insertOperationRecord(asOperLog);
-        log.info("\n<== 【报错的异常】\n"
-                + "<== 错误时间：" + reqTime + "\n"
-                + "<== 错误耗时：" + respTime + "毫秒\n"
-                + "<== 错误描述：" + errorMsg + "\n"
-                + (data != null ? "<== 错误内容：" + data + "\n" : ""));
+        log.error("\n<== 【报错的异常】\n<== 错误时间：{}\n<== 错误耗时：{}毫秒\n<== 错误描述：{}\n{}", reqTime, respTime, errorMsg, data != null ? "<== 错误内容：" + data + "\n" : "");
     }
 
 }

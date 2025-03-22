@@ -15,14 +15,6 @@ import java.util.List;
 public interface AsOperLogMapper {
 
     /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param asOperLog 实例对象
-     * @return 对象列表
-     */
-    List<AsOperLog> queryAll(AsOperLog asOperLog);
-
-    /**
      * 新增数据
      *
      * @param asOperLog 实例对象

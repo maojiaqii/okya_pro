@@ -28,8 +28,4 @@ public class OperationServiceImpl implements OperationService {
         return asOperLogMapper.insert(asOperLog);
     }
 
-    @Override
-    public List<AsOperLog> queryAll() {
-        return asOperLogMapper.queryAll(new AsOperLog());
-    }
 }

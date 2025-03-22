@@ -29,12 +29,6 @@ public class TestyController {
         throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION, new Object[]{"异常测试"}, new AsUser().setUserId("1").setEmail("1233333"));
     }
 
-    @ApiLog(title = "查询测试", operationType = OperationType.SEARCH)
-    @GetMapping("/b")
-    public HttpResult testb() {
-        return HttpResult.success(operationService.queryAll());
-    }
-
     @ApiLog(title = "运行时异常测试", operationType = OperationType.TEST)
     @GetMapping("/ac")
     public HttpResult testc() {

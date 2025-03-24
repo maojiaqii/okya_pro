@@ -31,6 +31,9 @@ public interface SqlProviderMapper {
     @DeleteProvider(type = SqlProvider.class, method = "deleteSql")
     void delete(Map<String, Object> map);
 
+    @UpdateProvider(type = SqlProvider.class, method = "deleteSqlLogic")
+    void deleteLogic(Map<String, Object> map);
+
     @SelectProvider(type = SqlProvider.class, method = "getFormData")
     @ResultType(Map.class)
     void getFormData(Map<String, Object> map, JsonResultHandler jsonResultHandler);

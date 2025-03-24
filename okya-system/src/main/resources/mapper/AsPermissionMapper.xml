@@ -25,7 +25,6 @@
         <result property="canTo" column="can_to" jdbcType="INTEGER"/>
         <result property="perms" column="perms" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -37,7 +36,7 @@
         select a.tenancy_id, a.tenancy_name, a.icon, a.title
         from as_tenancy a
         <where>
-            a.is_delete = 0 and a.status = 0
+            a.status = 0
             <if test="userId != null">
                 and exists (select 1 from as_role_tenancy art where art.tenancy_id = a.tenancy_id and exists (select 1 from as_user ar where ar.user_id = #{userId} and ar.roles_json like concat('%"', art.role_id, '"%')))
             </if>
@@ -50,7 +49,7 @@
         a.always_show, a.title, a.icon, a.no_cache, a.breadcrumb, a.affix, a.no_tags_view, a.outer_link, a.active_menu, a.can_to, a.perms
         from as_permission a
         <where>
-            a.is_delete = 0 and a.status = 0 and a.tenancy_id = #{currentTenancy}
+            a.status = 0 and a.tenancy_id = #{currentTenancy}
             <if test="userId != null">
                 and exists (select 1 from as_role_permission rm where a.permission_id = rm.permission_id and exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', rm.role_id, '"%')))
             </if>

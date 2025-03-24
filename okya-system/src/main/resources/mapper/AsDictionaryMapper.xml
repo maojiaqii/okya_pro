@@ -12,7 +12,6 @@
         <result property="dictLabel" column="dict_label" jdbcType="VARCHAR"/>
         <result property="dictPid" column="dict_pid" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -22,8 +21,8 @@
     <!--查询单个-->
     <select id="queryByCode" resultMap="AsDictionaryMap">
         select
-          dict_id, dict_code, dict_name, show_style, dict_source, dict_value, dict_label, dict_pid, status, is_delete, create_by, create_time, update_by, update_time
+          dict_id, dict_code, dict_name, show_style, dict_source, dict_value, dict_label, dict_pid, status, create_by, create_time, update_by, update_time
         from as_dictionary
-        where dict_code = #{dictCode} and is_delete = 0
+        where dict_code = #{dictCode}
     </select>
 </mapper>

@@ -45,6 +45,11 @@ public class OkyaConfig {
      */
     private static String captchaType;
 
+    /**
+     * 删除类型
+     */
+    private static String deletionType;
+
     public String getName() {
         return name;
     }
@@ -83,6 +88,14 @@ public class OkyaConfig {
 
     public void setIconUrlPrefix(String iconUrlPrefix) {
         this.iconUrlPrefix = iconUrlPrefix;
+    }
+
+    public static String getDeletionType() {
+        return deletionType;
+    }
+
+    public void setDeletionType(String deletionType) {
+        OkyaConfig.deletionType = Optional.ofNullable(deletionType).orElse("L").toUpperCase();
     }
 
     public static String getCaptchaType() {

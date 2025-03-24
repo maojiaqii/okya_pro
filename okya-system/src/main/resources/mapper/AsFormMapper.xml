@@ -12,7 +12,6 @@
         <result property="lifecycle" column="lifecycle" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
         <result property="dbMapping" column="db_mapping" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -24,7 +23,7 @@
     <select id="queryByCode" resultMap="AsFormMap">
         select *
         from as_form
-        where form_code = #{formCode} and is_delete = 0
+        where form_code = #{formCode}
     </select>
  
 </mapper>

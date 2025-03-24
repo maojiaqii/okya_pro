@@ -16,7 +16,6 @@
         <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="loginIp" column="login_ip" jdbcType="VARCHAR"/>
         <result property="loginDate" column="login_date" jdbcType="TIMESTAMP"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
@@ -28,9 +27,9 @@
 
     <select id="queryByUserCode" resultMap="AsUserMap">
         select
-            user_id, user_code, dept_id, user_name, user_type, roles_json, depts_json, email, phone_number, sex, avatar, password, status, is_delete, login_ip, login_date, create_by, create_time, update_by, update_time, remark
+            user_id, user_code, dept_id, user_name, user_type, roles_json, depts_json, email, phone_number, sex, avatar, password, status, login_ip, login_date, create_by, create_time, update_by, update_time, remark
         from as_user
-        where user_code = #{userCode} and is_delete = 0
+        where user_code = #{userCode}
     </select>
 
     <update id="updatePwdByUserId">

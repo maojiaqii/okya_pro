@@ -4,6 +4,8 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.RowConstructor;
 import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
@@ -19,8 +21,8 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
-import net.sf.jsqlparser.statement.update.UpdateSet;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;
@@ -30,15 +32,18 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.springframework.stereotype.Component;
+import top.okya.component.config.OkyaConfig;
+import top.okya.component.constants.CharacterConstants;
+import top.okya.component.constants.SqlConstants;
 import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.dto.AsUser;
 import top.okya.component.global.Global;
 import top.okya.component.utils.common.DateFormatUtil;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author: maojiaqi
@@ -50,16 +55,9 @@ import java.util.Objects;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class DataIsolationInterceptor implements Interceptor {
 
-    private static final String[] TABLE_PREFIX = new String[]{"as_", "bs_"};
-    private static final String create_by = "create_by";
-    private static final String create_time = "create_time";
-    private static final String update_by = "update_by";
-    private static final String update_time = "update_time";
-
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object target = invocation.getTarget();
-        System.out.println(target instanceof StatementHandler);
         //确保只有拦截的目标对象是 StatementHandler 类型时才执行特定逻辑
         if (target instanceof StatementHandler) {
             StatementHandler statementHandler = (StatementHandler) target;
@@ -84,6 +82,29 @@ public class DataIsolationInterceptor implements Interceptor {
         }
     }
 
+    private void divideSelectWhereExpression(PlainSelect selectBody) {
+        if (selectBody.getFromItem() instanceof Table) {
+            Expression newWhereExpression = selectBody.getWhere();
+            if (selectBody.getJoins() == null || selectBody.getJoins().isEmpty()) {
+                Table mainTable = selectBody.getFromItem(Table.class);
+                String mainTableAlias = Objects.isNull(mainTable.getAlias()) ? null : mainTable.getAlias().getName();
+                if(startsWithAny(mainTable.getName())) {
+                    newWhereExpression = setEnvToWhereExpression(selectBody.getWhere(), mainTableAlias);
+                }
+            } else {
+                // 如果是多表关联查询，在关联查询中新增每个表的环境变量条件
+                newWhereExpression = multipleTableJoinWhereExpression(selectBody);
+            }
+            // 将新的where设置到Select中
+            selectBody.setWhere(newWhereExpression);
+        } else if (selectBody.getFromItem() instanceof SubSelect) {
+            // 如果是子查询，在子查询中新增环境变量条件
+            SubSelect subSelect = (SubSelect) selectBody.getFromItem();
+            PlainSelect subSelectBody = subSelect.getSelectBody(PlainSelect.class);
+            divideSelectWhereExpression(subSelectBody);
+        }
+    }
+
     private String setEnvToStatement(String originalSql) {
         Statement statement;
         try {
@@ -94,25 +115,7 @@ public class DataIsolationInterceptor implements Interceptor {
         if (statement instanceof Select) {
             Select select = (Select) statement;
             PlainSelect selectBody = select.getSelectBody(PlainSelect.class);
-            if (selectBody.getFromItem() instanceof Table) {
-                Expression newWhereExpression;
-                if (selectBody.getJoins() == null || selectBody.getJoins().isEmpty()) {
-                    newWhereExpression = setEnvToWhereExpression(selectBody.getWhere(), null);
-                } else {
-                    // 如果是多表关联查询，在关联查询中新增每个表的环境变量条件
-                    newWhereExpression = multipleTableJoinWhereExpression(selectBody);
-                }
-                // 将新的where设置到Select中
-                selectBody.setWhere(newWhereExpression);
-            } else if (selectBody.getFromItem() instanceof SubSelect) {
-                // 如果是子查询，在子查询中新增环境变量条件
-                // 当前方法只能处理单层子查询，如果有多层级的子查询的场景需要通过递归设置环境变量
-                SubSelect subSelect = (SubSelect) selectBody.getFromItem();
-                PlainSelect subSelectBody = subSelect.getSelectBody(PlainSelect.class);
-                Expression newWhereExpression = setEnvToWhereExpression(subSelectBody.getWhere(), null);
-                subSelectBody.setWhere(newWhereExpression);
-            }
-
+            divideSelectWhereExpression(selectBody);
             // 获得修改后的语句
             return select.toString();
         } else if (statement instanceof Insert) {
@@ -121,26 +124,27 @@ public class DataIsolationInterceptor implements Interceptor {
             if(startsWithAny(table.getName())){
                 setEnvToInsert(insert);
             }
-
             return insert.toString();
         } else if (statement instanceof Update) {
             Update update = (Update) statement;
-            Expression newWhereExpression = setEnvToWhereExpression(update.getWhere(), null);
-            // 将新的where设置到Update中
-            update.setWhere(newWhereExpression);
-
             Table table = update.getTable();
+            String mainTableAlias = Objects.isNull(table.getAlias()) ? null : table.getAlias().getName();
             if(startsWithAny(table.getName())){
                 setEnvToUpdate(update);
+                Expression newWhereExpression = setEnvToWhereExpression(update.getWhere(), mainTableAlias);
+                // 将新的where设置到Update中
+                update.setWhere(newWhereExpression);
             }
-
             return update.toString();
         } else if (statement instanceof Delete) {
             Delete delete = (Delete) statement;
-            Expression newWhereExpression = setEnvToWhereExpression(delete.getWhere(), null);
-            // 将新的where设置到delete中
-            delete.setWhere(newWhereExpression);
-
+            Table table = delete.getTable();
+            String mainTableAlias = Objects.isNull(table.getAlias()) ? null : table.getAlias().getName();
+            if(startsWithAny(table.getName())){
+                Expression newWhereExpression = setEnvToWhereExpression(delete.getWhere(), mainTableAlias);
+                // 将新的where设置到delete中
+                delete.setWhere(newWhereExpression);
+            }
             return delete.toString();
         }
         return originalSql;
@@ -154,12 +158,14 @@ public class DataIsolationInterceptor implements Interceptor {
      * @return 新的SQL Where语法树
      */
     private Expression setEnvToWhereExpression(Expression whereExpression, String alias) {
-        // 添加SQL语法树的一个where分支，并添加环境变量条件
-        return whereExpression;
-        /*AndExpression andExpression = new AndExpression();
+        AndExpression andExpression = new AndExpression();
         EqualsTo envEquals = new EqualsTo();
-        envEquals.setLeftExpression(new Column(StringUtils.isNotBlank(alias) ? String.format("%s.env", alias) : "env"));
-        envEquals.setRightExpression(new StringValue(env));
+        if(Objects.equals(OkyaConfig.getDeletionType(), "L")){
+            envEquals.setLeftExpression(new Column(StringUtils.isNotBlank(alias) ? alias + CharacterConstants.PERIOD + SqlConstants.is_delete : SqlConstants.is_delete));
+            envEquals.setRightExpression(new StringValue("0"));
+        } else {
+            return whereExpression;
+        }
         if (whereExpression == null) {
             return envEquals;
         } else {
@@ -167,7 +173,7 @@ public class DataIsolationInterceptor implements Interceptor {
             andExpression.setRightExpression(envEquals);
             andExpression.setLeftExpression(whereExpression);
             return andExpression;
-        }*/
+        }
     }
 
     /**
@@ -178,17 +184,26 @@ public class DataIsolationInterceptor implements Interceptor {
      */
     private Expression multipleTableJoinWhereExpression(PlainSelect selectBody) {
         Table mainTable = selectBody.getFromItem(Table.class);
-        String mainTableAlias = mainTable.getAlias().getName();
-        // 将 t1.env = ENV 的条件添加到where中
-        Expression newWhereExpression = setEnvToWhereExpression(selectBody.getWhere(), mainTableAlias);
+        String mainTableAlias = Objects.isNull(mainTable.getAlias()) ? null : mainTable.getAlias().getName();
+        Expression newWhereExpression = selectBody.getWhere();
+        if(startsWithAny(mainTable.getName())){
+            // 将 t1.env = ENV 的条件添加到where中
+            newWhereExpression = setEnvToWhereExpression(selectBody.getWhere(), mainTableAlias);
+        }
         List<Join> joins = selectBody.getJoins();
         for (Join join : joins) {
             FromItem joinRightItem = join.getRightItem();
             if (joinRightItem instanceof Table) {
                 Table joinTable = (Table) joinRightItem;
-                String joinTableAlias = joinTable.getAlias().getName();
-                // 将每一个join的 tx.env = ENV 的条件添加到where中
-                newWhereExpression = setEnvToWhereExpression(newWhereExpression, joinTableAlias);
+                String joinTableAlias = Objects.isNull(joinTable.getAlias()) ? null : joinTable.getAlias().getName();
+                if(startsWithAny(joinTable.getName())){
+                    // 将每一个join的 tx.env = ENV 的条件添加到where中
+                    newWhereExpression = setEnvToWhereExpression(newWhereExpression, joinTableAlias);
+                }
+            } else if (joinRightItem instanceof SubSelect) {
+                // 如果是子查询，在子查询中新增环境变量条件
+                PlainSelect subSelectBody = ((SubSelect) joinRightItem).getSelectBody(PlainSelect.class);
+                divideSelectWhereExpression(subSelectBody);
             }
         }
         return newWhereExpression;
@@ -209,14 +224,18 @@ public class DataIsolationInterceptor implements Interceptor {
         // 添加env列
         List<Column> columns = insert.getColumns();
         boolean exists1 = columns.stream()
-                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(create_by));
+                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(SqlConstants.create_by));
         boolean exists2 = columns.stream()
-                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(create_time));
+                .noneMatch(c -> c.getColumnName().equalsIgnoreCase(SqlConstants.create_time));
         if(exists1){
-            columns.add(new Column(create_by));
+            columns.add(new Column(SqlConstants.create_by));
         }
         if(exists2){
-            columns.add(new Column(create_time));
+            columns.add(new Column(SqlConstants.create_time));
+        }
+        if(Objects.equals(OkyaConfig.getDeletionType(), "L")){
+            boolean exists3 = columns.stream()
+                    .noneMatch(c -> c.getColumnName().equalsIgnoreCase(SqlConstants.create_by));
         }
         // values中添加环境变量值
         List<SelectBody> selects = insert.getSelect().getSelectBody(SetOperationList.class).getSelects();
@@ -249,15 +268,15 @@ public class DataIsolationInterceptor implements Interceptor {
     private void setEnvToUpdate(Update update) {
         AsUser loginUser = Global.getLoginUser().getAsUser();
         // 添加env列
-        update.addUpdateSet(new Column(update_by), new StringValue(loginUser.getUserId()));
-        update.addUpdateSet(new Column(update_time), new StringValue(DateFormatUtil.formatNow()));
+        update.addUpdateSet(new Column(SqlConstants.update_by), new StringValue(loginUser.getUserId()));
+        update.addUpdateSet(new Column(SqlConstants.update_time), new StringValue(DateFormatUtil.formatNow()));
     }
 
     private boolean startsWithAny(String target) {
         if (target == null) {
             return false;
         }
-        for (String prefix : TABLE_PREFIX) {
+        for (String prefix : SqlConstants.TABLE_PREFIX) {
             if (target.toLowerCase().startsWith(prefix)) {
                 return true;
             }

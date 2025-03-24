@@ -9,7 +9,6 @@
         <result property="roleSort" column="role_sort" jdbcType="INTEGER"/>
         <result property="dataScope" column="data_scope" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -19,11 +18,10 @@
 
     <select id="queryByUserId" resultMap="AsRoleMap">
         select
-            b.role_id, b.role_name, b.role_key, b.role_sort, b.data_scope, b.status, b.is_delete, b.create_by, b.create_time, b.update_by, b.update_time, b.remark
+            b.role_id, b.role_name, b.role_key, b.role_sort, b.data_scope, b.status, b.create_by, b.create_time, b.update_by, b.update_time, b.remark
         from as_user a
         left join as_role b
         on a.roles_json like concat('%"', b.role_id, '"%')
-        and b.is_delete = 0
         where a.user_id = #{userId}
     </select>
 

@@ -40,10 +40,6 @@ public class AsUploaderFile implements Serializable {
     */
     private Long fileSize;
     /**
-     * 是否删除（0否 1是）
-     */
-    private Integer isDelete;
-    /**
     * 上传人
     */
     private String uploadBy;

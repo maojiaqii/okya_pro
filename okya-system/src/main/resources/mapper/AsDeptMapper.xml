@@ -12,7 +12,6 @@
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
@@ -21,17 +20,17 @@
 
     <select id="queryById" resultMap="AsDeptMap">
         select
-            b.dept_id, b.dept_code, b.parent_id, b.dept_name, b.order_num, b.leader, b.phone, b.email, b.status, b.is_delete, b.create_by, b.create_time, b.update_by, b.update_time
+            b.dept_id, b.dept_code, b.parent_id, b.dept_name, b.order_num, b.leader, b.phone, b.email, b.status, b.create_by, b.create_time, b.update_by, b.update_time
         from as_dept b
-        where b.dept_id = #{deptId} and b.is_delete = 0
+        where b.dept_id = #{deptId}
     </select>
 
     <select id="queryFgbmByUserId" resultMap="AsDeptMap">
         select
-            b.dept_id, b.dept_code, b.parent_id, b.dept_name, b.order_num, b.leader, b.phone, b.email, b.status, b.is_delete, b.create_by, b.create_time, b.update_by, b.update_time
+            b.dept_id, b.dept_code, b.parent_id, b.dept_name, b.order_num, b.leader, b.phone, b.email, b.status, b.create_by, b.create_time, b.update_by, b.update_time
         from as_user a
         left join as_dept b
-        on a.depts_json like concat('%"', b.dept_id, '"%') and b.is_delete = 0
+        on a.depts_json like concat('%"', b.dept_id, '"%')
         where a.user_id = #{userId}
     </select>
 

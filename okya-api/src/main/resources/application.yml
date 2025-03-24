@@ -12,6 +12,8 @@ okya:
   iconUrlPrefix: https://okya.top/file
   # 验证码类型 math(默认) 数字计算 char 字符验证 none不启用验证码
   captchaType: none
+  # 数据库数据删除方式（L: 逻辑删除（logical deletion‌）；P：物理删除（physical deletion‌））
+  deletionType: L
 
 server:
   port: 11001

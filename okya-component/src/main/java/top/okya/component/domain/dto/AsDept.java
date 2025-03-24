@@ -56,10 +56,6 @@ public class AsDept implements Serializable {
     */
     private Integer status;
     /**
-     * 是否删除（0否 1是）
-     */
-    private Integer isDelete;
-    /**
     * 创建者
     */
     private String createBy;

@@ -26,12 +26,12 @@ public class CharacterConstants {
     /**
      * 竖线 |
      */
-    public static final String VERTICAL_LINE = "\\|";
+    public static final String VERTICAL_LINE = "|";
 
     /**
      * 点 .
      */
-    public static final String PERIOD = "\\.";
+    public static final String PERIOD = ".";
 
     /**
      * 中文句号 。
@@ -166,7 +166,7 @@ public class CharacterConstants {
     /**
      * 星号 *
      */
-    public static final String STAR = "\\*";
+    public static final String STAR = "*";
 
     /**
      * 百分号 %

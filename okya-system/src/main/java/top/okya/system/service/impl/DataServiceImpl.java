@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.okya.component.config.OkyaConfig;
 import top.okya.component.domain.DictData;
 import top.okya.component.domain.TableData;
 import top.okya.component.domain.vo.DictDataVo;
@@ -164,7 +165,11 @@ public class DataServiceImpl implements DataService {
         List<Map<String, Object>> data = formDataVo.getData();
         for (Map<String, Object> a : data) {
             dbMapping.put("content", a);
-            sqlProviderMapper.delete(dbMapping);
+            if(Objects.equals(OkyaConfig.getDeletionType(), "L")){
+                sqlProviderMapper.deleteLogic(dbMapping);
+            } else {
+                sqlProviderMapper.delete(dbMapping);
+            }
         }
         return "删除成功！";
     }

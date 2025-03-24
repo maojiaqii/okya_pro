@@ -182,7 +182,6 @@ public class FileServiceImpl implements FileService {
                         .setFileIdentifier(identifier)
                         .setFilePath(targetPath.toString())
                         .setFileSize(chunk.getTotalSize())
-                        .setIsDelete(UseStatus.OK.getCode())
                         .setUploadBy(loginUser.getUserCode())
                         .setUploadTime(DateFormatUtil.nowDate());
                 asUploaderFileMapper.insert(asUploaderFile);

@@ -1,7 +1,7 @@
 package top.okya.framework.security.filter;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,6 @@ import top.okya.component.enums.exception.SecurityExceptionType;
 import top.okya.component.exception.SecurityException;
 import top.okya.component.utils.common.DateFormatUtil;
 import top.okya.component.utils.redis.JedisUtil;
-import top.okya.component.utils.security.SecureUtil;
 import top.okya.framework.security.wrapper.DefaultRequestWrapper;
 import top.okya.framework.security.wrapper.JsonRequestWrapper;
 
@@ -26,11 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author: maojiaqi
@@ -57,8 +53,11 @@ public class SignAuthFilter extends OncePerRequestFilter {
     @Value("${security.sign.timeHeader:#{null}}")
     private String timeHeader;
 
-    @Value("${security.token.header:#{null}}")
-    private String tokenHeader;
+    @Value("${security.sign.secretKey:#{null}}")
+    private String secretKey;
+
+    @Value("${security.sign.nonceHeader:#{null}}")
+    private String nonceHeader;
 
     @Value("${security.sign.repeatMillis:#{null}}")
     private Long repeatMillis;
@@ -128,24 +127,26 @@ public class SignAuthFilter extends OncePerRequestFilter {
         // 签名认证（仅POST）
         if(Objects.equals(method, CommonConstants.HTTP_POST)) {
             String sign = requestWrapper.getHeader(signHeader);
-            if (StringUtils.isBlank(sign)) {
+            String nonce = requestWrapper.getHeader(nonceHeader);
+            if (StringUtils.isBlank(sign) || StringUtils.isBlank(nonce)) {
                 handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.EMPTY_SIGNATURE));
                 return;
             }
-            if (!SecureUtil.matches(timestamp + requestBody, sign)) {
+            // 2. 验证nonce是否重复（需要配合Redis）
+            if (jedisUtil.hasKey(RedisConstants.NONCE_KEY + nonce)) {
+                handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.REPEAT_SUBMIT));
+                return;
+            }
+            jedisUtil.set(RedisConstants.NONCE_KEY + nonce, nonce, repeatMillis);
+
+            // 3. 验证签名
+            String signStr = timestamp + nonce + requestBody + secretKey;
+            String serverSign = DigestUtils.sha256Hex(signStr);
+            if (!serverSign.equals(sign)) {
                 handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.VERIFICATION_SIGNATURE_FAILED));
                 return;
             }
         }
-
-        // 防重复提交认证
-        /*String cacheRepeatKey = RedisConstants.REPEAT_SUBMIT_KEY + requestUri + ":" + Optional.ofNullable(request.getHeader(tokenHeader)).orElse("");
-        String cacheObj = jedisUtil.get(cacheRepeatKey);
-        if (Objects.equals(cacheObj, requestBody)) {
-            handlerExceptionResolver.resolveException(request, response, null, new SecurityException(SecurityExceptionType.REPEAT_SUBMIT));
-            return;
-        }
-        jedisUtil.set(cacheRepeatKey, requestBody, repeatMillis);*/
 
         filterChain.doFilter(requestWrapper, response);
     }

@@ -2,13 +2,16 @@ package top.okya.component.domain.dto;
  
 import java.util.Date;
 import java.io.Serializable;
+import java.util.List;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
- 
+import top.okya.component.domain.child.PermissionMetaPermis;
+
 /**
  * 菜单权限表(AsPermission)实体类
  *
@@ -102,10 +105,6 @@ public class AsPermission implements Serializable {
      */ 
     private Integer canTo;
     /**
-     * 按钮权限标识
-     */ 
-    private String perms;
-    /**
      * 菜单状态（0正常 1停用）
      */ 
     private Integer status;
@@ -129,4 +128,8 @@ public class AsPermission implements Serializable {
      * 备注
      */ 
     private String remark;
+    /**
+     * 权限集合
+     */
+    private PermissionMetaPermis permission;
 }

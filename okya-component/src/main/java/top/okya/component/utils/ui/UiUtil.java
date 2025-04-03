@@ -1,7 +1,7 @@
 package top.okya.component.utils.ui;
 
 import top.okya.component.domain.Permission;
-import top.okya.component.domain.PermissionMeta;
+import top.okya.component.domain.child.PermissionMeta;
 import top.okya.component.domain.dto.AsPermission;
 
 import java.util.ArrayList;
@@ -38,7 +38,8 @@ public class UiUtil {
                         .setTitle(data.getTitle())
                         .setNoTagsView(data.getNoTagsView() == 1)
                         .setOuterLink(data.getOuterLink())
-                        .setParams(data.getParams());
+                        .setParams(data.getParams())
+                        .setPermission(data.getPermission());
                 Permission permission = new Permission()
                         .setPath(data.getPath())
                         .setComponent(data.getComponent())

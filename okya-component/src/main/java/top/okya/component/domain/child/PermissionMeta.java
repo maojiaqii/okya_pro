@@ -1,4 +1,4 @@
-package top.okya.component.domain;
+package top.okya.component.domain.child;
 
 import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * @author: maojiaqi
  * @Date: 2024/7/26 17:15
- * @describe：权限自定义属性类
+ * @describe：路由自定义属性类
  */
 
 @Accessors(chain = true)
@@ -67,4 +69,8 @@ public class PermissionMeta {
      * 设置为true即使hidden为true，也依然可以进行路由跳转(默认 false)
      */
     private boolean canTo;
+    /**
+    * 权限集合
+    */
+    private PermissionMetaPermis permission;
 }

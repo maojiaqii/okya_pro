@@ -1,18 +1,18 @@
 package top.okya.component.domain;
 
-import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.domain.child.PermissionMeta;
 
 import java.util.List;
 
 /**
  * @author: maojiaqi
  * @Date: 2024/7/26 16:05
- * @describe：权限主体类
+ * @describe：路由主体类
  */
 
 @Accessors(chain = true)

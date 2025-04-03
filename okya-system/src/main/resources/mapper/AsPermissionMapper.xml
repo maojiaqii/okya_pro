@@ -23,7 +23,6 @@
         <result property="outerLink" column="outer_link" jdbcType="VARCHAR"/>
         <result property="activeMenu" column="active_menu" jdbcType="VARCHAR"/>
         <result property="canTo" column="can_to" jdbcType="INTEGER"/>
-        <result property="perms" column="perms" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -46,7 +45,7 @@
 
     <select id="queryByUserId" resultMap="AsPermissionMap">
         select a.permission_id, a.permission_type, a.parent_id, a.path, a.component, a.params, a.name, a.redirect, a.order_num, a.hidden,
-        a.always_show, a.title, a.icon, a.no_cache, a.breadcrumb, a.affix, a.no_tags_view, a.outer_link, a.active_menu, a.can_to, a.perms
+        a.always_show, a.title, a.icon, a.no_cache, a.breadcrumb, a.affix, a.no_tags_view, a.outer_link, a.active_menu, a.can_to
         from as_permission a
         <where>
             a.status = 0 and a.tenancy_id = #{currentTenancy}
@@ -55,6 +54,30 @@
             </if>
         </where>
         order by a.parent_id, a.order_num
+    </select>
+
+    <select id="queryButtonsByUserId" resultType="java.lang.String">
+        select distinct a.button
+        from as_role_table_button a
+        <where>
+            exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', a.role_id, '"%'))
+        </where>
+    </select>
+
+    <select id="queryColumnsByUserId" resultType="java.lang.String">
+        select distinct a.column
+        from as_role_table_column a
+        <where>
+            exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', a.role_id, '"%'))
+        </where>
+    </select>
+
+    <select id="queryFieldsByUserId" resultType="java.lang.String">
+        select distinct a.field
+        from as_role_form_field a
+        <where>
+            exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', a.role_id, '"%'))
+        </where>
     </select>
 
 </mapper>

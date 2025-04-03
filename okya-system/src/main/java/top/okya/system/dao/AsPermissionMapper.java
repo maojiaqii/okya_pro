@@ -32,4 +32,28 @@ public interface AsPermissionMapper {
      * @return 对象列表
      */
     List<AsPermission> queryByUserId(@Param("userId") String userId, @Param("currentTenancy") String currentTenancy);
+
+    /**
+     * 通过用户id查询数据
+     *
+     * @param userId         用户id
+     * @return 按钮权限标识列表
+     */
+    List<String> queryButtonsByUserId(@Param("userId") String userId);
+
+    /**
+     * 通过用户id查询数据
+     *
+     * @param userId         用户id
+     * @return 表格列权限标识列表
+     */
+    List<String> queryColumnsByUserId(@Param("userId") String userId);
+
+    /**
+     * 通过用户id查询数据
+     *
+     * @param userId         用户id
+     * @return 表单字段权限标识列表
+     */
+    List<String> queryFieldsByUserId(@Param("userId") String userId);
 }

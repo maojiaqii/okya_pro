@@ -57,4 +57,9 @@ public class RedisConstants {
      */
     public static final String RATE_LIMIT_KEY = "rate_limit:";
 
+    /**
+     * 防篡改 redis key
+     */
+    public static final String NONCE_KEY = "nonce:";
+
 }

@@ -8,7 +8,7 @@ import top.okya.component.domain.LoginUser;
 /**
  * @author: maojiaqi
  * @Date: 2023/11/29 21:29
- * @describe： 全局工具类
+ * @describe: 全局工具类
  */
 
 @Component

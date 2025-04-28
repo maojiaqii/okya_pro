@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
+import top.okya.component.exception.check.CheckAndThrowExceptions;
 import top.okya.system.dao.AsFormMapper;
 import top.okya.system.dao.AsJsMapper;
 import top.okya.system.dao.AsTableMapper;
@@ -32,13 +33,13 @@ public class UiServiceImpl implements UiService {
     AsFormMapper asFormMapper;
     @Autowired
     AsJsMapper asJsMapper;
+    @Autowired
+    CheckAndThrowExceptions checkAndThrowExceptions;
 
     @Override
     public Map<String, Object> getTableInfo(String tableCode) {
         AsTable asTable = asTableMapper.queryByCode(tableCode);
-        if (asTable == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "表格", tableCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asTable);
         JSONObject jsonObject = asTable.getProps();
         jsonObject.put("buttons", asTable.getButtons());
         jsonObject.put("columns", asTable.getColumns());
@@ -48,9 +49,7 @@ public class UiServiceImpl implements UiService {
     @Override
     public Map<String, Object> getFormInfo(String formCode) {
         AsForm asForm = asFormMapper.queryByCode(formCode);
-        if (asForm == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "表单", formCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asForm);
         JSONObject jsonObject = asForm.getProps();
         if (!jsonObject.containsKey("schema")){
             throw new ServiceException(ServiceExceptionType.DESIGN_ERROR, "表单", "缺少schema节点");
@@ -65,9 +64,7 @@ public class UiServiceImpl implements UiService {
     @Override
     public AsJs getJsInfo(String jsCode) {
         AsJs asJs = asJsMapper.queryByCode(jsCode);
-        if (asJs == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "js代码", jsCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asJs);
         return asJs;
     }
 }

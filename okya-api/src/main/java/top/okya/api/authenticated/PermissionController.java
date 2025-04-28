@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
+import top.okya.component.domain.vo.RolePermissionVo;
 import top.okya.component.domain.vo.UserPwdVo;
 import top.okya.component.enums.OperationType;
 import top.okya.system.service.PermissionService;
@@ -47,7 +48,51 @@ public class PermissionController {
         return HttpResult.success(permissionService.myPermissions(currentTenancy));
     }
 
+    /**
+     * 所有权限控制的按钮
+     */
+    @GetMapping(value = "/tablePermiButtons")
+    @ApiLog(title = "所有权限控制的按钮", operationType = OperationType.SEARCH)
+    public HttpResult getTablePermiButtons() {
+        return HttpResult.success(permissionService.getTablePermiButtons());
+    }
 
+    /**
+     * 所有权限控制的表格列
+     */
+    @GetMapping(value = "/tablePermiColumns")
+    @ApiLog(title = "所有权限控制的表格列", operationType = OperationType.SEARCH)
+    public HttpResult getTablePermiColumns() {
+        return HttpResult.success(permissionService.getTablePermiColumns());
+    }
+
+    /**
+     * 所有权限控制的表单字段
+     */
+    @GetMapping(value = "/formPermiFields")
+    @ApiLog(title = "所有权限控制的表单字段", operationType = OperationType.SEARCH)
+    public HttpResult getFormPermiFields() {
+        return HttpResult.success(permissionService.getFormPermiFields());
+    }
+
+    /**
+     * 角色权限集合
+     */
+    @GetMapping(value = "/getRolePermissions")
+    @ApiLog(title = "角色权限集合", operationType = OperationType.SEARCH)
+    public HttpResult getRolePermissions(@NotBlank(message = "角色id不能为空！") @RequestParam(value = "roleId") String roleId) {
+        return HttpResult.success(permissionService.getRolePermissions(roleId));
+    }
+
+    /**
+     * 保存角色权限集合
+     */
+    @PostMapping(value = "/saveRolePermissions")
+    @ApiLog(title = "保存角色权限集合", operationType = OperationType.GRANT)
+    public HttpResult saveRolePermissions(@Validated @RequestBody RolePermissionVo rolePermissionVo) {
+        permissionService.saveRolePermissions(rolePermissionVo);
+        return HttpResult.success();
+    }
 
     /**
      * 重置密码

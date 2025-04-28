@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/12 11:44
- * @describe： 实现DataSource的功能，即切换数据源
+ * @describe: 实现DataSource的功能，即切换数据源
  */
 
 @Aspect

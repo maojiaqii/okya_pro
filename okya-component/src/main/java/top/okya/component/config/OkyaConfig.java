@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/11 10:51
- * @describe： 读取项目自定义配置
+ * @describe: 读取项目自定义配置
  */
 
 @Component

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/13 14:40
- * @describe： ip工具类
+ * @describe: ip工具类
  */
 
 @Slf4j

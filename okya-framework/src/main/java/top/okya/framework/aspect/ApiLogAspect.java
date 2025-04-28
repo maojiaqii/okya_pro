@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author: maojiaqi
  * @Date: 2022/5/13 11:44
- * @describe： 实现ApiLog的功能，即打印请求日志和响应日志
+ * @describe: 实现ApiLog的功能，即打印请求日志和响应日志
  */
 
 @Aspect

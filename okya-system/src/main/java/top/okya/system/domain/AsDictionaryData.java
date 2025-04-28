@@ -6,8 +6,10 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.domain.dto.base.Basic;
 
 /**
  * 字典数据表(AsDictionaryData)实体类
@@ -15,11 +17,12 @@ import lombok.experimental.Accessors;
  * @author mjq
  * @since 2023-11-08 10:23:53
  */
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AsDictionaryData implements Serializable {
+public class AsDictionaryData extends Basic implements Serializable {
     private static final long serialVersionUID = -18491477307566401L;
     /**
     * 字典id
@@ -49,21 +52,5 @@ public class AsDictionaryData implements Serializable {
     * 默认选中（0否 1是）
     */
     private Integer isDefault;
-    /**
-    * 创建人
-    */
-    private String createBy;
-    /**
-    * 创建时间
-    */
-    private Date createDate;
-    /**
-    * 更新人
-    */
-    private String updateBy;
-    /**
-    * 更新时间
-    */
-    private Date updateDate;
 
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author: maojiaqi
  * @Date: 2022/3/4 14:57
- * @describe： redisson操作类
+ * @describe: redisson操作类
  */
 
 @Component

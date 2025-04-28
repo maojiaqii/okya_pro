@@ -3,7 +3,7 @@ package top.okya.component.constants;
 /**
  * @author: maojiaqi
  * @Date: 2022/5/13 11:44
- * @describe： 缓存的key 常量
+ * @describe: 缓存的key 常量
  */
 
 public class RedisConstants {

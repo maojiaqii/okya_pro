@@ -1,9 +1,8 @@
 package top.okya.system.dao;
- 
+
 import org.apache.ibatis.annotations.Mapper;
 import top.okya.system.domain.AsForm;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Pageable;
+
 import java.util.List;
  
 /**
@@ -22,4 +21,6 @@ public interface AsFormMapper {
      * @return 实例对象
      */
     AsForm queryByCode(String formCode);
+
+    List<AsForm> queryAll();
 }

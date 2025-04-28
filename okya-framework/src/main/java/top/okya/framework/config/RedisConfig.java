@@ -17,7 +17,7 @@ import java.time.Duration;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/11 14:57
- * @describe：redis配置类
+ * @describe:redis配置类
  */
 
 @Configuration

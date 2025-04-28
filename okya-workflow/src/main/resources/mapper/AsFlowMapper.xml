@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.workflow.dao.AsFlowMapper">
+ 
+    <resultMap type="top.okya.workflow.domain.AsFlow" id="AsFlowMap">
+        <result property="flowId" column="flow_id" jdbcType="VARCHAR"/>
+        <result property="flowCode" column="flow_code" jdbcType="VARCHAR"/>
+        <result property="flowName" column="flow_name" jdbcType="VARCHAR"/>
+        <result property="flowVersion" column="flow_version" jdbcType="INTEGER"/>
+        <result property="flowNodes" column="flow_nodes" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="published" column="published" jdbcType="INTEGER"/>
+        <result property="deploymentId" column="deployment_id" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insert">
+        insert into as_flow (flow_id, flow_code, flow_name, flow_version, flow_nodes, status, remark)
+        values (#{flowId}, #{flowCode}, #{flowName}, #{flowVersion}, #{flowNodes, typeHandler=top.okya.component.utils.mybatis.JsonTypeHandler}, #{status}, #{remark})
+    </insert>
+
+    <update id="update">
+        update as_flow set flow_name = #{flowName}, flow_nodes = #{flowNodes, typeHandler=top.okya.component.utils.mybatis.JsonTypeHandler}, status = #{status}, remark = #{remark}
+        where flow_id = #{flowId}
+    </update>
+
+    <!--查询单个-->
+    <select id="queryLasted" resultMap="AsFlowMap">
+        select af1.flow_id, af1.flow_code, af1.flow_name, af1.published, af1.status, af1.create_by, af1.create_time, af1.update_by, af1.update_time, af1.remark
+        from as_flow af1
+        join (select af.flow_code, max(af.flow_version) fv
+              from as_flow af
+              group by af.flow_code) af2 on af2.flow_code = af1.flow_code and af2.fv = af1.flow_version
+        <where>
+            <if test="flowCode != null and flowCode != ''">
+                and af1.flow_code = #{flowCode}
+            </if>
+        </where>
+    </select>
+
+    <!--查询最新版本号-->
+    <select id="queryLastedVerByCode" resultType="java.lang.Integer">
+        select max(flow_version) from as_flow where flow_code = #{flowCode}
+    </select>
+
+    <select id="queryFlowById" resultMap="AsFlowMap">
+        select * from as_flow where flow_id = #{flowId}
+    </select>
+
+    <select id="queryFlowByDeploymentId" resultMap="AsFlowMap">
+        select * from as_flow where deployment_id = #{deploymentId}
+    </select>
+
+    <update id="published">
+        update as_flow set published = 1, deployment_id = #{deploymentId} where flow_id = #{flowId}
+    </update>
+
+    <update id="unPublished">
+        update as_flow set published = 3 where flow_id != #{flowId} and published = 1
+    </update>
+
+</mapper>

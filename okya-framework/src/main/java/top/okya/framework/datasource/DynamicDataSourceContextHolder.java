@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/11 14:57
- * @describe：数据源切换处理
+ * @describe:数据源切换处理
  */
 @Slf4j
 public class DynamicDataSourceContextHolder {

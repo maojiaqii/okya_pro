@@ -1,5 +1,6 @@
 package top.okya.component.utils.common;
 
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,17 +14,17 @@ import java.util.Objects;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/13 14:40
- * @describe： 日期工具类
+ * @describe: 日期工具类
  */
 public class DateFormatUtil {
 
     private static final String DAY = "DAY";
-
     private static final String WEEK = "WEEK";
-
     private static final String MONTH = "MONTH";
-
     private static final String YEAR = "YEAR";
+    private static final String HOUR = "小时";
+    private static final String MINUTE = "分";
+    private static final String SECOND = "秒";
 
     /**
      * 获取当前系统时间
@@ -71,6 +72,14 @@ public class DateFormatUtil {
      */
     public static String formatNow() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    /**
+     * 格式化日期
+     */
+    public static String formatDate(Date date) {
+        if (date == null) return "";
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
     /**
@@ -126,6 +135,28 @@ public class DateFormatUtil {
                     .withMinute(0).withSecond(0).withNano(0);
         }
         return ChronoUnit.SECONDS.between(LocalDateTime.now(), midnight) * 1000;
+    }
+
+    /**
+     * 格式化持续时间
+     */
+    public static String formatDuration(long durationInMillis) {
+        long seconds = durationInMillis / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+
+        StringBuilder duration = new StringBuilder();
+        if (hours > 0) {
+            duration.append(hours).append(HOUR);
+        }
+        if (minutes > 0 || hours > 0) {
+            duration.append(minutes).append(MINUTE);
+        }
+        duration.append(seconds).append(SECOND);
+
+        return duration.toString();
     }
 
 }

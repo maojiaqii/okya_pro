@@ -7,8 +7,10 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.domain.dto.base.Basic;
 
 /**
  * 表格表(AsTable)实体类
@@ -16,11 +18,12 @@ import lombok.experimental.Accessors;
  * @author makejava
  * @since 2024-12-06 22:29:58
  */
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AsTable implements Serializable {
+public class AsTable extends Basic implements Serializable {
     private static final long serialVersionUID = 869958808508298009L;
     /**
      * 表格id
@@ -50,24 +53,4 @@ public class AsTable implements Serializable {
      * 表格属性
      */
     private JSONArray columns;
-    /**
-     * 表格状态（0正常 1停用）
-     */
-    private Integer status;
-    /**
-     * 创建者
-     */
-    private String createBy;
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-    /**
-     * 更新者
-     */
-    private String updateBy;
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 }

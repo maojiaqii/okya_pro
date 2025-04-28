@@ -4,8 +4,10 @@ import java.util.Date;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.domain.dto.base.Basic;
 
 /**
  * 字典表(AsDictionary)实体类
@@ -13,11 +15,12 @@ import lombok.experimental.Accessors;
  * @author mjq
  * @since 2023-11-08 10:22:49
  */
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AsDictionary implements Serializable {
+public class AsDictionary extends Basic implements Serializable {
     private static final long serialVersionUID = 868778977724261631L;
     /**
     * 字典id
@@ -51,25 +54,5 @@ public class AsDictionary implements Serializable {
      * parentId字段名
      */
     private String dictPid;
-    /**
-    * 字典状态（0正常 1停用）
-    */
-    private Integer status;
-    /**
-    * 创建者
-    */
-    private String createBy;
-    /**
-    * 创建时间
-    */
-    private Date createTime;
-    /**
-    * 更新者
-    */
-    private String updateBy;
-    /**
-    * 更新时间
-    */
-    private Date updateTime;
 
 }

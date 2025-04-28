@@ -27,4 +27,5 @@ public interface AsTableMapper {
      */
     AsTable queryByCode(String tableCode);
 
+    List<AsTable> queryAll();
 }

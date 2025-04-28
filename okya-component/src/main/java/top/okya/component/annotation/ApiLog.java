@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * @author: maojiaqi
  * @Date: 2022/5/13 11:43
- * @describe： 用于打印请求和响应日志的注解
+ * @describe: 用于打印请求和响应日志的注解
  */
 
 @Documented

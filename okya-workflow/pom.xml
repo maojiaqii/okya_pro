@@ -17,6 +17,12 @@
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>top.okya</groupId>
+            <artifactId>okya-component</artifactId>
+            <version>1.0.0-ok</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -43,7 +43,7 @@
         order by a.order_num
     </select>
 
-    <select id="queryByUserId" resultMap="AsPermissionMap">
+    <select id="queryPermissionsByUserId" resultMap="AsPermissionMap">
         select a.permission_id, a.permission_type, a.parent_id, a.path, a.component, a.params, a.name, a.redirect, a.order_num, a.hidden,
         a.always_show, a.title, a.icon, a.no_cache, a.breadcrumb, a.affix, a.no_tags_view, a.outer_link, a.active_menu, a.can_to
         from as_permission a
@@ -65,7 +65,7 @@
     </select>
 
     <select id="queryColumnsByUserId" resultType="java.lang.String">
-        select distinct a.column
+        select distinct a.colum
         from as_role_table_column a
         <where>
             exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', a.role_id, '"%'))
@@ -79,5 +79,67 @@
             exists (select 1 from as_user ur where ur.user_id = #{userId} and ur.roles_json like concat('%"', a.role_id, '"%'))
         </where>
     </select>
+
+    <select id="queryTenancysByRoleId" resultType="java.lang.String">
+        select tenancy_id from as_role_tenancy where role_id = #{roleId}
+    </select>
+
+    <select id="queryPermissionsByRoleId" resultType="java.lang.String">
+        select arp.permission_id from as_role_permission arp where arp.role_id = #{roleId}
+        and exists(select 1 from as_permission ap where ap.permission_id = arp.permission_id and not exists(select 1 from as_permission ap1 where ap1.parent_id = ap.permission_id))
+    </select>
+
+    <select id="queryButtonsByRoleId" resultType="java.lang.String">
+        select button from as_role_table_button where role_id = #{roleId}
+    </select>
+
+    <select id="queryColumnsByRoleId" resultType="java.lang.String">
+        select colum from as_role_table_column where role_id = #{roleId}
+    </select>
+
+    <select id="queryFieldsByRoleId" resultType="java.lang.String">
+        select field from as_role_form_field where role_id = #{roleId}
+    </select>
+
+    <delete id="deleteTenancyByRoleId">
+        delete from as_role_tenancy where role_id = #{roleId}
+    </delete>
+
+    <delete id="deletePermissionByRoleId">
+        delete from as_role_permission where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteTableByRoleId">
+        delete from as_role_table_column where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteButtonByRoleId">
+        delete from as_role_table_button where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteFormByRoleId">
+        delete from as_role_form_field where role_id = #{roleId}
+    </delete>
+
+    <insert id="saveRoleTenancy">
+        insert into as_role_tenancy (role_id, tenancy_id) values (#{roleId}, #{tenancy})
+    </insert>
+
+    <insert id="saveRolePermission">
+        insert into as_role_permission (role_id, permission_id) values (#{roleId}, #{permission})
+    </insert>
+
+    <insert id="saveRoleTable">
+        insert into as_role_table_column (role_id, colum) values (#{roleId}, #{table})
+    </insert>
+
+    <insert id="saveRoleButton">
+        insert into as_role_table_button (role_id, button) values (#{roleId}, #{button})
+    </insert>
+
+    <insert id="saveRoleForm">
+        insert into as_role_form_field (role_id, field) values (#{roleId}, #{form})
+    </insert>
+
 
 </mapper>

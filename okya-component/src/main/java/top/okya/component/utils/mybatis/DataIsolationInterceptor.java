@@ -48,7 +48,7 @@ import java.util.Optional;
 /**
  * @author: maojiaqi
  * @Date: 2025/3/7 16:08
- * @describe:
+ * @describe: 数据库脚本执行前的拦截器
  */
 
 @Component
@@ -114,8 +114,15 @@ public class DataIsolationInterceptor implements Interceptor {
         }
         if (statement instanceof Select) {
             Select select = (Select) statement;
-            PlainSelect selectBody = select.getSelectBody(PlainSelect.class);
-            divideSelectWhereExpression(selectBody);
+            if(select.getSelectBody() instanceof PlainSelect){
+                PlainSelect selectBody = select.getSelectBody(PlainSelect.class);
+                divideSelectWhereExpression(selectBody);
+            } else if (select.getSelectBody() instanceof SetOperationList) {
+                SetOperationList selectBody = select.getSelectBody(SetOperationList.class);
+                for (SelectBody selectB : selectBody.getSelects()) {
+                    divideSelectWhereExpression((PlainSelect) selectB);
+                }
+            }
             // 获得修改后的语句
             return select.toString();
         } else if (statement instanceof Insert) {

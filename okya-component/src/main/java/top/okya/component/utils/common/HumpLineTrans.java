@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * @author: maojiaqi
  * @Date: 2020/3/27 13:13
- * @describe： 将驼峰式转成数据库字段（下划线）
+ * @describe: 将驼峰式转成数据库字段（下划线）
  */
 public class HumpLineTrans {
 

@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/13 14:40
- * @describe： mybatis JSON数据工具类
+ * @describe: mybatis JSON数据工具类
  */
 
 public class JsonTypeHandler<T> extends BaseTypeHandler<T> {

@@ -38,7 +38,7 @@
         <lombok.version>1.18.26</lombok.version>
         <httpclient.version>4.5.5</httpclient.version>
         <mysql.version>8.0.33</mysql.version>
-        <mybatis.version>3.0.3</mybatis.version>
+        <mybatis.version>2.3.1</mybatis.version>
         <jsqlparser.version>4.9</jsqlparser.version>
         <dynamic.datasource.version>3.5.2</dynamic.datasource.version>
         <jedis.version>3.1.0</jedis.version>
@@ -51,6 +51,7 @@
         <validation.version>2.7.2</validation.version>
         <guava.version>32.0.0-jre</guava.version>
         <camunda.version>7.19.0</camunda.version>
+        <qlexpress.version>3.3.4</qlexpress.version>
     </properties>
 
     <dependencyManagement>
@@ -236,6 +237,13 @@
                 </exclusions>
             </dependency>
 
+            <!-- QLExpress表达式引擎 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>QLExpress</artifactId>
+                <version>${qlexpress.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -252,12 +260,6 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${mybatis.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>${jsqlparser.version}</version>
         </dependency>
 
         <dependency>
@@ -283,6 +285,12 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>${pagehelper.boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis-spring-boot-starter</artifactId>
+                    <groupId>org.mybatis.spring.boot</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

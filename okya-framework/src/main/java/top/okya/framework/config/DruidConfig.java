@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/11 14:57
- * @describe：druid 配置多数据源
+ * @describe:druid 配置多数据源
  */
 
 @Configuration

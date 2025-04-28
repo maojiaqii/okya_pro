@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author: maojiaqi
  * @Date: 2023/6/27 15:24
- * @describe： 序列生成器（redis）
+ * @describe: 序列生成器（redis）
  */
 
 @Component

@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * @author: maojiaqi
  * @Date: 2021/1/27 15:16
- * @describe： http请求工具类
+ * @describe: http请求工具类
  */
 @Slf4j
 public class HttpUtil {

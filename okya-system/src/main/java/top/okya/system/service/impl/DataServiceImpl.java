@@ -14,9 +14,9 @@ import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.domain.vo.FormDataVo;
 import top.okya.component.domain.vo.TableDataVo;
 import top.okya.component.domain.vo.others.table.TablePageVo;
-import top.okya.component.enums.UseStatus;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
+import top.okya.component.exception.check.CheckAndThrowExceptions;
 import top.okya.component.utils.common.IdUtil;
 import top.okya.component.utils.mybatis.JsonResultHandler;
 import top.okya.system.dao.AsDictionaryMapper;
@@ -51,26 +51,15 @@ public class DataServiceImpl implements DataService {
     AsDictionaryMapper asDictionaryMapper;
     @Autowired
     private AsFormMapper asFormMapper;
+    @Autowired
+    CheckAndThrowExceptions checkAndThrowExceptions;
 
     @Override
     public TableData getTableData(TableDataVo tableDataVo) {
         String tableCode = tableDataVo.getTableCode();
         AsTable asTable = asTableMapper.queryByCode(tableCode);
-        if (asTable == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "表格", tableCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asTable);
         String tableSource = asTable.getTableSource();
-        int status = asTable.getStatus();
-        String tableName = asTable.getTableName();
-        log.info("表格名称：{}，表格状态：{}", tableName, status);
-
-        // 状态异常
-        if (Objects.equals(status, UseStatus.DISABLED.getCode())) {
-            throw new ServiceException(ServiceExceptionType.DISABLED, tableName);
-        } else if (!Objects.equals(status, UseStatus.OK.getCode())) {
-            throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION, String.format("【%s】状态异常：【%s】", tableName, status));
-        }
-
         // 分页
         TablePageVo tablePageVo = tableDataVo.getPage();
         if (!Objects.isNull(tablePageVo)) {
@@ -91,20 +80,8 @@ public class DataServiceImpl implements DataService {
     public DictData getDictData(DictDataVo dictDataVo) {
         String dictCode = dictDataVo.getDictCode();
         AsDictionary asDictionary = asDictionaryMapper.queryByCode(dictCode);
-        if (asDictionary == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "字典", dictCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asDictionary);
         String dictSource = asDictionary.getDictSource();
-        int status = asDictionary.getStatus();
-        String dictName = asDictionary.getDictName();
-        log.info("字典名称：{}，字典状态：{}", dictName, status);
-
-        // 状态异常
-        if (Objects.equals(status, UseStatus.DISABLED.getCode())) {
-            throw new ServiceException(ServiceExceptionType.DISABLED, dictName);
-        } else if (!Objects.equals(status, UseStatus.OK.getCode())) {
-            throw new ServiceException(ServiceExceptionType.SERVER_EXCEPTION, String.format("【%s】状态异常：【%s】", dictName, status));
-        }
         // 查询
         Map<String, Object> query = dictDataVo.getParams();
         query.put("sqlToExecute", dictSource);
@@ -176,9 +153,7 @@ public class DataServiceImpl implements DataService {
 
     private AsForm getAsForm(String formCode) {
         AsForm asForm = asFormMapper.queryByCode(formCode);
-        if (asForm == null) {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN, "表单", formCode);
-        }
+        checkAndThrowExceptions.checkDbResult(asForm);
         JSONObject dbMapping = asForm.getDbMapping();
         if (dbMapping == null) {
             throw new ServiceException(ServiceExceptionType.DESIGN_ERROR, "表单", "db_mapping数据库映射关系为空！");

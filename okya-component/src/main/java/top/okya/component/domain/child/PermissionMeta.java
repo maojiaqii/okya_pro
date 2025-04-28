@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author: maojiaqi
  * @Date: 2024/7/26 17:15
- * @describe：路由自定义属性类
+ * @describe: 路由自定义属性类
  */
 
 @Accessors(chain = true)

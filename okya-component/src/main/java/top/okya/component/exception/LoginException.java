@@ -7,7 +7,7 @@ import top.okya.component.enums.exception.LoginExceptionType;
 /**
  * @author: maojiaqi
  * @Date: 2023/6/27 16:43
- * @describe： 自定义登录异常
+ * @describe: 自定义登录异常
  */
 
 @Slf4j

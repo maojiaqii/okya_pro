@@ -7,7 +7,7 @@ import top.okya.component.exception.base.BaseException;
 /**
  * @author: maojiaqi
  * @Date: 2023/6/27 16:43
- * @describe： 自定义序列异常
+ * @describe: 自定义序列异常
  */
 
 @Slf4j

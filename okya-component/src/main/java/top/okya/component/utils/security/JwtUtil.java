@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/14 17:29
- * @describe： token工具类
+ * @describe: token工具类
  */
 
 @Component

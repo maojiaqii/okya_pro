@@ -3,17 +3,15 @@ package top.okya;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.FileCopyUtils;
 
 /**
  * @author: maojiaqi
  * @Date: 2023/7/13 17:09
- * @describe：项目主启动类
+ * @describe:项目主启动类
  */
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * @author: maojiaqi
  * @Date: 2022/8/8 20:47
- * @describe： 验证码文本生成器
+ * @describe: 验证码文本生成器
  */
 public class KaptchaCreator extends DefaultTextCreator {
     private static final String[] CNUMBERS = "0,1,2,3,4,5,6,7,8,9,10".split(",");

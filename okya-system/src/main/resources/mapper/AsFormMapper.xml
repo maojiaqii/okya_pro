@@ -25,5 +25,10 @@
         from as_form
         where form_code = #{formCode}
     </select>
+
+    <!--查询单个-->
+    <select id="queryAll" resultMap="AsFormMap">
+        select * from as_form
+    </select>
  
 </mapper>

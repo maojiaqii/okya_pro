@@ -3,7 +3,7 @@ package top.okya.component.enums;
 /**
  * @author: maojiaqi
  * @Date: 2023/7/11 10:51
- * @describe： 限流类型
+ * @describe: 限流类型
  */
 
 public enum LimitType {

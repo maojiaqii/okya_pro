@@ -9,7 +9,7 @@ import org.springframework.web.filter.CorsFilter;
 /**
  * @author: maojiaqi
  * @Date: 2020/3/18 22:58
- * @describe： 跨域问题
+ * @describe: 跨域问题
  */
 @Configuration
 public class CorsConfig {

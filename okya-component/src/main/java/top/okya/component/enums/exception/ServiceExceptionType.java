@@ -11,9 +11,9 @@ public enum ServiceExceptionType {
     // 验证码 异常
     CAPTCHA_CREATE_ERROR(30001001, "验证码生成失败！"),
     DISABLED_CAPTCHA(30001002, "未启用验证码功能，获取失败！"),
-    DISABLED(30001101, "【%s】已被停用！"),
+    DISABLED(30001101, "操作的对象已被停用！"),
     DELETED(30001102, "【%s】已被删除！"),
-    UNKNOWN(30001103, "未知的【%s】，编码：【%s】！"),
+    UNKNOWN(30001103, "未找到操作的对象！"),
     GENERATE_FILE_FAILED(30001201, "在磁盘【%s】上生成分片文件失败！"),
     MERGE_FILE_FAILED(30001202, "在磁盘【%s】上合并文件失败！"),
     GET_FILE_INFO_FAILED(30001203, "获取文件信息失败！"),

@@ -23,4 +23,8 @@
         from as_table
         where table_code = #{tableCode}
     </select>
+
+    <select id="queryAll" resultMap="AsTableMap">
+        select * from as_table
+    </select>
 </mapper>

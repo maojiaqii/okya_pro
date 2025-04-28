@@ -12,7 +12,7 @@ import static com.google.code.kaptcha.Constants.*;
 /**
  * @author: maojiaqi
  * @Date: 2022/8/8 20:22
- * @describe： 验证码配置
+ * @describe: 验证码配置
  */
 
 @Configuration

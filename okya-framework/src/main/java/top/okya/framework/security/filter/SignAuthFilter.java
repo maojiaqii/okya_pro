@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * @author: maojiaqi
  * @Date: 2022/8/15 15:44
- * @describe： 防篡改、防重放攻击、防重复提交过滤器
+ * @describe: 防篡改、防重放攻击、防重复提交过滤器
  */
 @Slf4j
 @Component

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author: maojiaqi
  * @Date: 2023/6/27 10:20
- * @describe： redis分布式锁工具类
+ * @describe: redis分布式锁工具类
  */
 
 @Component

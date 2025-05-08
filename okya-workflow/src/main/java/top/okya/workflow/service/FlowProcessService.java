@@ -44,29 +44,4 @@ public interface FlowProcessService {
      * @param reason 取消原因
      */
     void cancelProcess(String processInstanceId, String reason);
-
-    /**
-     * 自动完成流程中的所有任务，直到流程结束
-     *
-     * @param processInstanceId 流程实例ID
-     * @param variables 任务变量
-     * @return 是否成功完成流程
-     */
-    boolean autoCompleteProcess(String processInstanceId, Map<String, Object> variables);
-    
-    /**
-     * 获取流程实例的历史路径
-     *
-     * @param processInstanceId 流程实例ID
-     * @return 流程历史路径信息列表
-     */
-    WorkflowHistory getProcessHistoryPath(String processInstanceId);
-
-    /**
-     * 获取流程实例的历史路径描述
-     *
-     * @param processInstanceId 流程实例ID
-     * @return 流程历史路径描述
-     */
-    String getProcessHistoryPathDescription(String processInstanceId);
 }

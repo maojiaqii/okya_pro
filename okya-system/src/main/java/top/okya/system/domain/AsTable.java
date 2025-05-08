@@ -53,4 +53,8 @@ public class AsTable extends Basic implements Serializable {
      * 表格属性
      */
     private JSONArray columns;
+    /**
+     * 流程表格类型
+     */
+    private Integer workflowType;
 }

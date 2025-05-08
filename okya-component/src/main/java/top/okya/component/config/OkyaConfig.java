@@ -50,6 +50,11 @@ public class OkyaConfig {
      */
     private static String deletionType;
 
+    /**
+     * Map Key大小写类型
+     */
+    private static String mapKeyType;
+
     public String getName() {
         return name;
     }
@@ -94,8 +99,16 @@ public class OkyaConfig {
         return deletionType;
     }
 
+    public static String getMapKeyType() {
+        return mapKeyType;
+    }
+
     public void setDeletionType(String deletionType) {
         OkyaConfig.deletionType = Optional.ofNullable(deletionType).orElse("L").toUpperCase();
+    }
+
+    public void setMapKeyType(String mapKeyType) {
+        OkyaConfig.mapKeyType = Optional.ofNullable(mapKeyType).orElse("L").toUpperCase();
     }
 
     public static String getCaptchaType() {

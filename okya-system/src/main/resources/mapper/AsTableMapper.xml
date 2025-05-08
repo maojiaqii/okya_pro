@@ -10,6 +10,7 @@
         <result property="buttons" column="buttons" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
         <result property="props" column="props" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
         <result property="columns" column="columns" jdbcType="OTHER" typeHandler="top.okya.component.utils.mybatis.JsonTypeHandler"/>
+        <result property="workflowType" column="workflow_type" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
-import top.okya.component.domain.WorkflowHistory;
 import top.okya.component.domain.vo.WorkflowDesignVo;
 import top.okya.component.domain.vo.WorkflowProcessVo;
 import top.okya.component.domain.vo.vgroup.workflow.Publish;
 import top.okya.component.domain.vo.vgroup.workflow.Save;
 import top.okya.component.enums.OperationType;
 import top.okya.workflow.service.FlowDesignService;
+import top.okya.workflow.service.FlowHistoryService;
 import top.okya.workflow.service.FlowProcessService;
 
 import javax.validation.constraints.NotBlank;
@@ -37,6 +37,9 @@ public class FlowController {
 
     @Autowired
     FlowProcessService flowProcessService;
+
+    @Autowired
+    FlowHistoryService flowHistoryService;
 
     /**
      * 获取流程列表
@@ -94,14 +97,14 @@ public class FlowController {
     @GetMapping(value = "/processHistory")
     @ApiLog(title = "获取流程历史", operationType = OperationType.SEARCH)
     public HttpResult processHistory(@NotBlank(message = "流程实例Id不能为空！") @RequestParam(value = "processInstanceId") String processInstanceId) {
-        return HttpResult.success(flowProcessService.getProcessHistoryPath(processInstanceId));
+        return HttpResult.success(flowHistoryService.getProcessHistoryPath(processInstanceId));
     }
 
     /**
      * 发起流程
      */
     @PostMapping(value = "/startProcess")
-    @ApiLog(title = "发起流程", operationType = OperationType.OTHER)
+    @ApiLog(title = "发起流程/送审", operationType = OperationType.OTHER)
     public HttpResult startProcess(@Validated @RequestBody WorkflowProcessVo workflowStartVo) {
         String processInstanceId = flowProcessService.startProcess(workflowStartVo);
         return HttpResult.success("流程启动成功", processInstanceId);

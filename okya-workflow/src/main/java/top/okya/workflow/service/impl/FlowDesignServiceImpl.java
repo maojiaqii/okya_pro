@@ -132,7 +132,7 @@ public class FlowDesignServiceImpl implements FlowDesignService {
                     .deploy();
 
             // 更新流程状态
-            asFlowMapper.unPublished(asFlow.getFlowId());
+            asFlowMapper.unPublished(flowCode, asFlow.getFlowId());
             asFlowMapper.published(asFlow.getFlowId(), deployment.getId());
 
             return "流程发布成功！部署ID：" + deployment.getId();

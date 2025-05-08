@@ -25,6 +25,15 @@ public interface SqlProviderMapper {
     @SelectProvider(type = SqlProvider.class, method = "selectSql")
     List<Map<String, Object>> query(Map<String, Object> map);
 
+    @SelectProvider(type = SqlProvider.class, method = "queryWorkFlowTodo")
+    List<Map<String, Object>> queryWorkFlowTodo(Map<String, Object> map);
+
+    @SelectProvider(type = SqlProvider.class, method = "queryWorkFlowDone")
+    List<Map<String, Object>> queryWorkFlowDone(Map<String, Object> map);
+
+    @SelectProvider(type = SqlProvider.class, method = "queryWorkFlowBelongToMe")
+    List<Map<String, Object>> queryWorkFlowBelongToMe(Map<String, Object> map);
+
     @InsertProvider(type = SqlProvider.class, method = "insertSql")
     int insert(Map<String, Object> map);
 

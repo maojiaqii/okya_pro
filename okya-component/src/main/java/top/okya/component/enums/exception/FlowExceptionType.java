@@ -12,7 +12,11 @@ public enum FlowExceptionType {
     FLOW_VALIDATE_ERROR(30001002, "流程模型不合法：【%s】"),
     FLOW_PUBLISH_ERROR(30001003, "流程部署失败：【%s】"),
     FLOW_START_ERROR(30001004, "发起流程失败：【%s】"),
-    FLOW_TEMPLATE_NOT_FOUND(30001005, "无法找到流程模版"),
+    FLOW_RUN_ERROR(30001005, "流程运行失败：【%s】"),
+    FLOW_TEMPLATE_NOT_FOUND(30001006, "无法找到流程模版：【%s】"),
+    FLOW_TASK_NOT_FOUND(30001007, "无法找到流程任务：【%s】"),
+    FLOW_TOO_MANY_NODES(30001008, "一个以上的下一节点：【%s】"),
+    FLOW_BUSINESS_INFO_NOT_FOUND(30001009, "无法找到流程执行信息：【%s】"),
     // 未知错误 异常
     SERVER_EXCEPTION(30009999, "系统错误：【%s】");
 

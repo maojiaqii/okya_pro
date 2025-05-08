@@ -55,12 +55,26 @@
         select * from as_flow where deployment_id = #{deploymentId}
     </select>
 
+    <select id="getAssigneesByRole" resultType="java.lang.String">
+        select * from as_user au
+        where
+        <foreach collection="roles" item="item" open="(" close=")" separator=" or ">
+            au.roles_json like concat('%"', #{item}, '"%')
+        </foreach>
+        <if test="roleRange == 1">
+            and au.dept_id = #{deptId}
+        </if>
+        <if test="roleRange == 2">
+            and getFullDeptIds(#{deptId}) like concat('%', au.dept_id, '%')
+        </if>
+    </select>
+
     <update id="published">
         update as_flow set published = 1, deployment_id = #{deploymentId} where flow_id = #{flowId}
     </update>
 
     <update id="unPublished">
-        update as_flow set published = 3 where flow_id != #{flowId} and published = 1
+        update as_flow set published = 3 where flow_id != #{flowId} and flow_code = #{flowCode} and published = 1
     </update>
 
 </mapper>

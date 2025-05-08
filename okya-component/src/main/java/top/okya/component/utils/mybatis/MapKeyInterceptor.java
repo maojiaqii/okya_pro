@@ -1,11 +1,21 @@
 package top.okya.component.utils.mybatis;
 
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.springframework.stereotype.Component;
+import top.okya.component.config.OkyaConfig;
 
 import java.sql.Statement;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author: maojiaqi
@@ -15,7 +25,7 @@ import java.util.*;
 
 @Component
 @Intercepts(@Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {Statement.class}))
-public class MapKeyLowerInterceptor implements Interceptor {
+public class MapKeyInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         // 执行原有逻辑，获取结果集
@@ -39,7 +49,7 @@ public class MapKeyLowerInterceptor implements Interceptor {
             keys.forEach(key -> {
                 Object value = map.get(key);
                 map.remove(key);
-                map.put(key.toLowerCase(), value);
+                map.put(Objects.equals(OkyaConfig.getMapKeyType(), "U") ? key.toUpperCase() : key.toLowerCase(), value);
             });
         }
     }

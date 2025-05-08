@@ -34,9 +34,11 @@ public interface AsFlowMapper {
 
     AsFlow queryFlowById(String flowId);
 
+    List<String> getAssigneesByRole(@Param("roles") List<String> roles, @Param("roleRange") int roleRange, @Param("deptId") Object deptId);
+
     int published(@Param("flowId") String flowId, @Param("deploymentId") String deploymentId);
 
-    int unPublished(String flowId);
+    int unPublished(@Param("flowCode") String flowCode, @Param("flowId") String flowId);
 
     int update(AsFlow asFlow);
 

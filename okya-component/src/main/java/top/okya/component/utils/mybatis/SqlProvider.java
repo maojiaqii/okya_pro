@@ -24,6 +24,135 @@ public class SqlProvider {
     public String selectSql(HashMap<String, Object> map) {
         assert !Objects.isNull(map.get("sqlToExecute"));
         StringBuilder sql = new StringBuilder(map.get("sqlToExecute").toString());
+        return getOrderString(map, sql);
+    }
+
+    public String queryWorkFlowTodo(HashMap<String, Object> map) {
+        assert !Objects.isNull(map.get("sqlToExecute"));
+        String sqlToExecute = map.get("sqlToExecute").toString();
+        String sql = "select flow_business_detail_select.*,\n" +
+                "flow_afbi.proc_inst_id, flow_afbi.business_table, flow_afbi.flow_code, flow_afbi.flow_version, flow_afbi.flow_current_node_id, flow_afbi.flow_current_node_name, flow_afbi.flow_start_time, flow_afbi.flow_end_time, \n" +
+                "flow_art.ID_ task_id,\n" +
+                "flow_start_au.user_id flow_start_user_id, flow_start_au.user_name flow_start_user_name, flow_start_ad.dept_id flow_start_dept_id, flow_start_ad.dept_name flow_start_dept_name,\n" +
+                "flow_current_au.user_id flow_current_user_id, flow_current_au.user_name flow_current_user_name, flow_current_ad.dept_id flow_current_dept_id, flow_current_ad.dept_name flow_current_dept_name from\n" +
+                "(%s) flow_business_detail_select\n" +
+                "left join as_flow_business_info flow_afbi\n" +
+                "on flow_afbi.flow_business_key = flow_business_detail_select.flow_business_key \n" +
+                "left join as_user flow_start_au\n" +
+                "on flow_start_au.user_id = flow_afbi.start_user_id \n" +
+                "left join as_dept flow_start_ad\n" +
+                "on flow_start_ad.dept_id = flow_start_au.dept_id\n" +
+                "left join ACT_RU_TASK flow_art\n" +
+                "on flow_art.PROC_INST_ID_ = flow_afbi.proc_inst_id\n" +
+                "and flow_art.SUSPENSION_STATE_ = 1\n" +
+                "left join as_user flow_current_au\n" +
+                "on flow_current_au.user_id = flow_art.ASSIGNEE_\n" +
+                "left join as_dept flow_current_ad\n" +
+                "on flow_current_ad.dept_id = flow_current_au.dept_id\n" +
+                "<where>\n" +
+                "\t((flow_afbi.proc_inst_id is null \n" +
+                "\t<if test=\"flowCurrentUser != null and flowCurrentUser != ''\">\n" +
+                "        and flow_business_detail_select.create_by = #{flowCurrentUser}\n" +
+                "    </if>)\n" +
+                "\tor (flow_art.ID_ is not null\n" +
+                "\t<if test=\"flowCurrentUser != null and flowCurrentUser != ''\">\n" +
+                "        and flow_current_au.user_id = #{flowCurrentUser}\n" +
+                "    </if>\n" +
+                "\t<if test=\"flowStartUser != null and flowStartUser != ''\">\n" +
+                "        and (flow_start_au.user_name like concat('%', #{flowStartUser}, '%') or flow_start_au.user_code = #{flowStartUser})\n" +
+                "    </if>\n" +
+                "    <if test=\"minFlowStartTime != null and minFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &gt;= #{minFlowStartTime}\n" +
+                "    </if>\n" +
+                "    <if test=\"maxFlowStartTime != null and maxFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &lt;= #{maxFlowStartTime}\n" +
+                "    </if>\n" +
+                "\t))\n" +
+                "</where>";
+        return getOrderString(map, new StringBuilder(sql.replace("%s", sqlToExecute)));
+    }
+
+    public String queryWorkFlowDone(HashMap<String, Object> map) {
+        assert !Objects.isNull(map.get("sqlToExecute"));
+        String sqlToExecute = map.get("sqlToExecute").toString();
+        String sql = "select flow_business_detail_select.*,\n" +
+                "flow_afbi.proc_inst_id, flow_afbi.business_table, flow_afbi.flow_code, flow_afbi.flow_version, flow_afbi.flow_current_node_id, flow_afbi.flow_current_node_name, flow_afbi.flow_start_time, flow_afbi.flow_end_time, \n" +
+                "flow_art.ID_ task_id,\n" +
+                "flow_start_au.user_id flow_start_user_id, flow_start_au.user_name flow_start_user_name, flow_start_ad.dept_id flow_start_dept_id, flow_start_ad.dept_name flow_start_dept_name,\n" +
+                "flow_current_au.user_id flow_current_user_id, flow_current_au.user_name flow_current_user_name, flow_current_ad.dept_id flow_current_dept_id, flow_current_ad.dept_name flow_current_dept_name from\n" +
+                "(%s) flow_business_detail_select\n" +
+                "left join as_flow_business_info flow_afbi\n" +
+                "on flow_afbi.flow_business_key = rrrrrrr12rrrrrrrrrrrrrr222rrreeeew334342rrrrrrrrrrrrrrrrrr.flow_business_key \n" +
+                "left join as_user flow_start_au\n" +
+                "on flow_start_au.user_id = flow_afbi.start_user_id \n" +
+                "left join as_dept flow_start_ad\n" +
+                "on flow_start_ad.dept_id = flow_start_au.dept_id\n" +
+                "left join ACT_RU_TASK flow_art\n" +
+                "on flow_art.PROC_INST_ID_ = flow_afbi.proc_inst_id\n" +
+                "and flow_art.SUSPENSION_STATE_ = 1\n" +
+                "left join as_user flow_current_au\n" +
+                "on flow_current_au.user_id = flow_art.ASSIGNEE_\n" +
+                "left join as_dept flow_current_ad\n" +
+                "on flow_current_ad.dept_id = flow_current_au.dept_id\n" +
+                "<where>\n" +
+                "\t(flow_afbi.proc_inst_id is null or flow_art.ID_ is not null)\n" +
+                "\t<if test=\"flowCurrentUser != null and flowCurrentUser != ''\">\n" +
+                "        and flow_current_au.user_id = #{flowCurrentUser}\n" +
+                "    </if>\n" +
+                "\t<if test=\"flowStartUser != null and flowStartUser != ''\">\n" +
+                "        and (flow_start_au.user_name like concat('%', #{flowStartUser}, '%') or flow_start_au.user_code = #{flowStartUser})\n" +
+                "    </if>\n" +
+                "    <if test=\"minFlowStartTime != null and minFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &gt;= #{minFlowStartTime}\n" +
+                "    </if>\n" +
+                "    <if test=\"maxFlowStartTime != null and maxFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &lt;= #{maxFlowStartTime}\n" +
+                "    </if>\n" +
+                "</where>";
+        return getOrderString(map, new StringBuilder(String.format(sql, sqlToExecute)));
+    }
+
+    public String queryWorkFlowBelongToMe(HashMap<String, Object> map) {
+        assert !Objects.isNull(map.get("sqlToExecute"));
+        String sqlToExecute = map.get("sqlToExecute").toString();
+        String sql = "select flow_business_detail_select.*,\n" +
+                "flow_afbi.proc_inst_id, flow_afbi.business_table, flow_afbi.flow_code, flow_afbi.flow_version, flow_afbi.flow_current_node_id, flow_afbi.flow_current_node_name, flow_afbi.flow_start_time, flow_afbi.flow_end_time, \n" +
+                "flow_art.ID_ task_id,\n" +
+                "flow_start_au.user_id flow_start_user_id, flow_start_au.user_name flow_start_user_name, flow_start_ad.dept_id flow_start_dept_id, flow_start_ad.dept_name flow_start_dept_name,\n" +
+                "flow_current_au.user_id flow_current_user_id, flow_current_au.user_name flow_current_user_name, flow_current_ad.dept_id flow_current_dept_id, flow_current_ad.dept_name flow_current_dept_name from\n" +
+                "(%s) flow_business_detail_select\n" +
+                "left join as_flow_business_info flow_afbi\n" +
+                "on flow_afbi.flow_business_key = rrrrrrr12rrrrrrrrrrrrrr222rrreeeew334342rrrrrrrrrrrrrrrrrr.flow_business_key \n" +
+                "left join as_user flow_start_au\n" +
+                "on flow_start_au.user_id = flow_afbi.start_user_id \n" +
+                "left join as_dept flow_start_ad\n" +
+                "on flow_start_ad.dept_id = flow_start_au.dept_id\n" +
+                "left join ACT_RU_TASK flow_art\n" +
+                "on flow_art.PROC_INST_ID_ = flow_afbi.proc_inst_id\n" +
+                "and flow_art.SUSPENSION_STATE_ = 1\n" +
+                "left join as_user flow_current_au\n" +
+                "on flow_current_au.user_id = flow_art.ASSIGNEE_\n" +
+                "left join as_dept flow_current_ad\n" +
+                "on flow_current_ad.dept_id = flow_current_au.dept_id\n" +
+                "<where>\n" +
+                "\t(flow_afbi.proc_inst_id is null or flow_art.ID_ is not null)\n" +
+                "\t<if test=\"flowCurrentUser != null and flowCurrentUser != ''\">\n" +
+                "        and flow_current_au.user_id = #{flowCurrentUser}\n" +
+                "    </if>\n" +
+                "\t<if test=\"flowStartUser != null and flowStartUser != ''\">\n" +
+                "        and (flow_start_au.user_name like concat('%', #{flowStartUser}, '%') or flow_start_au.user_code = #{flowStartUser})\n" +
+                "    </if>\n" +
+                "    <if test=\"minFlowStartTime != null and minFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &gt;= #{minFlowStartTime}\n" +
+                "    </if>\n" +
+                "    <if test=\"maxFlowStartTime != null and maxFlowStartTime != ''\">\n" +
+                "        and flow_afbi.flow_start_time &lt;= #{maxFlowStartTime}\n" +
+                "    </if>\n" +
+                "</where>";
+        return getOrderString(map, new StringBuilder(String.format(sql, sqlToExecute)));
+    }
+
+    private String getOrderString(HashMap<String, Object> map, StringBuilder sql) {
         if (!Objects.isNull(map.get("orderToAppend"))) {
             sql.append(" order by ");
             List<TableOrderVo> tableOrderVos = (List<TableOrderVo>) map.get("orderToAppend");
@@ -33,7 +162,7 @@ public class SqlProvider {
             sql.deleteCharAt(sql.length() - 1);
         }
         String mybatisSql = SqlConstants.script_start + sql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 
@@ -55,7 +184,7 @@ public class SqlProvider {
         insertSql.append(CharacterConstants.EXTENSION_RIGHT);
         insertValuesSql.append(CharacterConstants.EXTENSION_RIGHT);
         String mybatisSql = SqlConstants.script_start + insertSql + insertValuesSql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 
@@ -73,7 +202,7 @@ public class SqlProvider {
         });
         deleteSql.delete(deleteSql.length() - 5, deleteSql.length());
         String mybatisSql = SqlConstants.script_start + deleteSql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 
@@ -97,7 +226,7 @@ public class SqlProvider {
         });
         deleteSql.delete(deleteSql.length() - 5, deleteSql.length());
         String mybatisSql = SqlConstants.script_start + deleteSql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 
@@ -123,7 +252,7 @@ public class SqlProvider {
         updateSql.delete(updateSql.length() - 2, updateSql.length());
         updateWhereSql.delete(updateWhereSql.length() - 5, updateWhereSql.length());
         String mybatisSql = SqlConstants.script_start + updateSql + updateWhereSql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 
@@ -144,7 +273,7 @@ public class SqlProvider {
         });
         seleteSql.delete(seleteSql.length() - 5, seleteSql.length());
         String mybatisSql = SqlConstants.script_start + seleteSql + SqlConstants.script_end;
-        log.info("待执行的myBatisSql：{}", mybatisSql);
+        log.info("待执行的sql：{}", mybatisSql);
         return mybatisSql;
     }
 

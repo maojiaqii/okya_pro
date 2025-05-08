@@ -14,6 +14,8 @@ okya:
   captchaType: none
   # 数据库数据删除方式（L: 逻辑删除（logical deletion‌）；P：物理删除（physical deletion‌））
   deletionType: L
+  # 数据库查询结果Map键大小写类型（L: 小写（lower）；U：大写（upper）），慎重修改，需要前端项目配合
+  mapKeyType: L
 
 server:
   port: 11001

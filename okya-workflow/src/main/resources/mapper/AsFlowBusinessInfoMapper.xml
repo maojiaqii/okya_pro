@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.okya.workflow.dao.AsFlowBusinessInfoMapper">
+ 
+    <resultMap type="top.okya.workflow.domain.AsFlowBusinessInfo" id="AsFlowBusinessInfoMap">
+        <result property="infoId" column="info_id" jdbcType="VARCHAR"/>
+        <result property="businessTable" column="business_table" jdbcType="VARCHAR"/>
+        <result property="businessId" column="business_id" jdbcType="VARCHAR"/>
+        <result property="flowCode" column="flow_code" jdbcType="VARCHAR"/>
+        <result property="flowVersion" column="flow_version" jdbcType="INTEGER"/>
+        <result property="flowBusinessKey" column="flow_business_key" jdbcType="VARCHAR"/>
+        <result property="procInstId" column="proc_inst_id" jdbcType="VARCHAR"/>
+        <result property="flowCurrentNodeId" column="flow_current_node_id" jdbcType="VARCHAR"/>
+        <result property="flowCurrentNodeName" column="flow_current_node_name" jdbcType="VARCHAR"/>
+        <result property="startUserId" column="start_user_id" jdbcType="VARCHAR"/>
+        <result property="startDeptId" column="start_dept_id" jdbcType="VARCHAR"/>
+        <result property="flowStartTime" column="flow_start_time" jdbcType="TIMESTAMP"/>
+        <result property="flowEndTime" column="flow_end_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+ 
+    <!--查询单个-->
+    <select id="queryById" resultMap="AsFlowBusinessInfoMap">
+        select info_id, business_table, business_id, flow_code, flow_version, flow_business_key, proc_inst_id, flow_current_node_id, flow_current_node_name, start_user_id, start_dept_id, flow_start_time, flow_end_time, is_delete, create_by, create_time, update_by, update_time, remark 
+        from as_flow_business_info
+        where info_id = #{id}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryByProcInstId" resultType="java.util.Map">
+        select afbi.start_user_id, afbi.start_dept_id, af.flow_nodes
+        from as_flow_business_info afbi
+        left join as_flow af
+        on afbi.flow_code = af.flow_code
+        and afbi.flow_version = af.flow_version
+        where proc_inst_id = #{procInstId}
+    </select>
+ 
+    <!--新增所有列-->
+    <insert id="insert">
+        insert into as_flow_business_info(info_id, business_table, business_id, flow_code, flow_version, flow_business_key, proc_inst_id, flow_current_node_id, flow_current_node_name, start_user_id, start_dept_id, flow_start_time, flow_end_time, remark)
+        values (#{infoId}, #{businessTable}, #{businessId}, #{flowCode}, #{flowVersion}, #{flowBusinessKey}, #{procInstId}, #{flowCurrentNodeId}, #{flowCurrentNodeName}, #{startUserId}, #{startDeptId}, #{flowStartTime}, #{flowEndTime}, #{remark})
+    </insert>
+ 
+</mapper>

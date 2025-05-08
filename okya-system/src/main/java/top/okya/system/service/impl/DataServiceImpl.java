@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.okya.component.config.OkyaConfig;
 import top.okya.component.domain.DictData;
+import top.okya.component.domain.LoginUser;
 import top.okya.component.domain.TableData;
+import top.okya.component.domain.dto.AsUser;
 import top.okya.component.domain.vo.DictDataVo;
 import top.okya.component.domain.vo.FormDataVo;
 import top.okya.component.domain.vo.TableDataVo;
@@ -17,6 +19,7 @@ import top.okya.component.domain.vo.others.table.TablePageVo;
 import top.okya.component.enums.exception.ServiceExceptionType;
 import top.okya.component.exception.ServiceException;
 import top.okya.component.exception.check.CheckAndThrowExceptions;
+import top.okya.component.global.Global;
 import top.okya.component.utils.common.IdUtil;
 import top.okya.component.utils.mybatis.JsonResultHandler;
 import top.okya.system.dao.AsDictionaryMapper;
@@ -28,6 +31,7 @@ import top.okya.system.domain.AsForm;
 import top.okya.system.domain.AsTable;
 import top.okya.system.service.DataService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -70,7 +74,29 @@ public class DataServiceImpl implements DataService {
         Map<String, Object> query = tableDataVo.getParams();
         query.put("sqlToExecute", tableSource);
         query.put("orderToAppend", tableDataVo.getOrder());
-        List<Map<String, Object>> tableData = sqlProviderMapper.query(query);
+
+        // 流程表格额外添加的变量
+        LoginUser loginUser = Global.getLoginUser();
+        AsUser asUser = loginUser.getAsUser();
+        query.put("flowCurrentUser", asUser.isAdmin() ? null : asUser.getUserId());
+
+        List<Map<String, Object>> tableData = new ArrayList<>();
+        Integer workflowType = asTable.getWorkflowType();
+        if(Objects.equals(workflowType, 0)){
+            // 普通表格
+            tableData = sqlProviderMapper.query(query);
+        } else if(Objects.equals(workflowType, 1)){
+            // 流程待办
+            tableData = sqlProviderMapper.queryWorkFlowTodo(query);
+        } else if(Objects.equals(workflowType, 2)){
+            // 流程已办
+            tableData = sqlProviderMapper.queryWorkFlowDone(query);
+        } else if(Objects.equals(workflowType, 3)){
+            // 我发起的
+            tableData = sqlProviderMapper.queryWorkFlowBelongToMe(query);
+        } else {
+            throw new ServiceException(ServiceExceptionType.UNKNOWN_TYPE, "表格", "workflow_type", workflowType);
+        }
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(tableData);
         long total = pageInfo.getTotal();
         return new TableData(total, tableData);

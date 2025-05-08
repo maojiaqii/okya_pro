@@ -19,6 +19,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class Basic {
     /**
+     * 是否删除（0:否 1:是）
+     */
+    private Integer isDelete;
+    /**
      * 状态（0正常 1停用）
      */
     private Integer status;

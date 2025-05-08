@@ -14,6 +14,7 @@ public enum ServiceExceptionType {
     DISABLED(30001101, "操作的对象已被停用！"),
     DELETED(30001102, "【%s】已被删除！"),
     UNKNOWN(30001103, "未找到操作的对象！"),
+    UNKNOWN_TYPE(30001104, "【%s】配置错误：【%s】未知的类型【%s】！"),
     GENERATE_FILE_FAILED(30001201, "在磁盘【%s】上生成分片文件失败！"),
     MERGE_FILE_FAILED(30001202, "在磁盘【%s】上合并文件失败！"),
     GET_FILE_INFO_FAILED(30001203, "获取文件信息失败！"),

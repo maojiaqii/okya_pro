@@ -47,7 +47,7 @@ public class WorkflowProcessVo {
      * 业务主键
      */
     @NotBlank(message = "业务主键不能为空！", groups = {Start.class})
-    private String businessKey;
+    private String flowBusinessKey;
     
     /**
      * 表单数据

@@ -102,7 +102,7 @@ public class CamundaProcessPredictor {
         }
 
         // 直接从BPMN模型中获取所有连线
-        Collection<SequenceFlow> allFlows = modelInstance.getModelElementsByType(SequenceFlow.class);
+        List<SequenceFlow> elementOutgoingFlows = CamundaUtils.getElementOutgoingFlows(modelInstance, currentElement);
         List<NextNode> nextNodes = new ArrayList<>();
         
         log.info("当前节点ID: {}, 类型: {}", 
@@ -110,15 +110,9 @@ public class CamundaProcessPredictor {
                 currentElement.getClass().getSimpleName());
 
         // 查找以当前节点为源的所有连线
-        for (SequenceFlow flow : allFlows) {
-            if (flow.getSource().getId().equals(currentElement.getId())) {
-                log.info("找到出口连线，目标节点ID: {}, 类型: {}",
-                        flow.getTarget().getId(),
-                        flow.getTarget().getClass().getSimpleName());
-
-                if (isConditionMet(flow, variables)) {
-                    nextNodes.addAll(findNextUserTasks(flow.getTarget(), variables, new HashSet<>(), allFlows));
-                }
+        for (SequenceFlow flow : elementOutgoingFlows) {
+            if (isConditionMet(flow, variables)) {
+                nextNodes.addAll(findNextUserTasks(flow.getTarget(), variables, new HashSet<>(), modelInstance));
             }
         }
         
@@ -128,7 +122,7 @@ public class CamundaProcessPredictor {
     /**
      * 递归查找下一个用户任务
      */
-    private List<NextNode> findNextUserTasks(FlowElement currentElement, Map<String, Object> variables, Set<String> visited, Collection<SequenceFlow> allFlows) {
+    private List<NextNode> findNextUserTasks(FlowElement currentElement, Map<String, Object> variables, Set<String> visited, BpmnModelInstance modelInstance) {
         List<NextNode> tasks = new ArrayList<>();
 
         if (currentElement instanceof UserTask) {
@@ -155,31 +149,21 @@ public class CamundaProcessPredictor {
             visited.add(gateway.getId());
             log.info("处理网关节点：{}", gateway.getId());
 
+            List<SequenceFlow> elementOutgoingFlows = CamundaUtils.getElementOutgoingFlows(modelInstance, gateway);
             // 查找以当前网关为源的所有连线
-            for (SequenceFlow flow : allFlows) {
-                if (flow.getSource().getId().equals(gateway.getId())) {
-                    log.info("网关出口连线，目标节点ID: {}, 类型: {}",
-                            flow.getTarget().getId(),
-                            flow.getTarget().getClass().getSimpleName());
-
-                    if (isConditionMet(flow, variables)) {
-                        tasks.addAll(findNextUserTasks(flow.getTarget(), variables, new HashSet<>(visited), allFlows));
-                    }
+            for (SequenceFlow flow : elementOutgoingFlows) {
+                if (isConditionMet(flow, variables)) {
+                    tasks.addAll(findNextUserTasks(flow.getTarget(), variables, new HashSet<>(visited), modelInstance));
                 }
             }
         } else if (currentElement instanceof Activity) {
             Activity activity = (Activity) currentElement;
             log.info("处理活动节点：{}", activity.getId());
 
+            List<SequenceFlow> elementOutgoingFlows = CamundaUtils.getElementOutgoingFlows(modelInstance, activity);
             // 查找以当前活动为源的所有连线
-            for (SequenceFlow flow : allFlows) {
-                if (flow.getSource().getId().equals(activity.getId())) {
-                    log.info("活动出口连线，目标节点ID: {}, 类型: {}",
-                            flow.getTarget().getId(),
-                            flow.getTarget().getClass().getSimpleName());
-
-                    tasks.addAll(findNextUserTasks(flow.getTarget(), variables, visited, allFlows));
-                }
+            for (SequenceFlow flow : elementOutgoingFlows) {
+                tasks.addAll(findNextUserTasks(flow.getTarget(), variables, visited, modelInstance));
             }
         }
 

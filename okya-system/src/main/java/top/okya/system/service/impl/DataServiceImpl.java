@@ -76,26 +76,28 @@ public class DataServiceImpl implements DataService {
         query.put("orderToAppend", tableDataVo.getOrder());
 
         // 流程表格额外添加的变量
-        LoginUser loginUser = Global.getLoginUser();
-        AsUser asUser = loginUser.getAsUser();
+        AsUser asUser = Objects.requireNonNull(Global.getLoginUser()).getAsUser();
         query.put("flowCurrentUser", asUser.isAdmin() ? null : asUser.getUserId());
 
         List<Map<String, Object>> tableData = new ArrayList<>();
         Integer workflowType = asTable.getWorkflowType();
-        if(Objects.equals(workflowType, 0)){
-            // 普通表格
-            tableData = sqlProviderMapper.query(query);
-        } else if(Objects.equals(workflowType, 1)){
-            // 流程待办
-            tableData = sqlProviderMapper.queryWorkFlowTodo(query);
-        } else if(Objects.equals(workflowType, 2)){
-            // 流程已办
-            tableData = sqlProviderMapper.queryWorkFlowDone(query);
-        } else if(Objects.equals(workflowType, 3)){
-            // 我发起的
-            tableData = sqlProviderMapper.queryWorkFlowBelongToMe(query);
-        } else {
-            throw new ServiceException(ServiceExceptionType.UNKNOWN_TYPE, "表格", "workflow_type", workflowType);
+        switch (workflowType) {
+            case 0:
+                // 普通表格
+                tableData = sqlProviderMapper.query(query);
+                break;
+            case 1:
+                // 流程待办
+                tableData = sqlProviderMapper.queryWorkFlowTodo(query);
+                break;
+            case 2:
+                tableData = sqlProviderMapper.queryWorkFlowDone(query);
+                break;
+            case 3:
+                tableData = sqlProviderMapper.queryWorkFlowBelongToMe(query);
+                break;
+            default:
+                throw new ServiceException(ServiceExceptionType.UNKNOWN_TYPE, "表格", "workflow_type", workflowType);
         }
         PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(tableData);
         long total = pageInfo.getTotal();
@@ -143,14 +145,14 @@ public class DataServiceImpl implements DataService {
             mapping.forEach(v -> {
                 if (v.containsKey("isKey") && (boolean) v.get("isKey")) {
                     String formField = (String) v.get("formField");
-                    if(a.containsKey(formField) && !Objects.isNull(a.get(formField))){
+                    if (a.containsKey(formField) && !Objects.isNull(a.get(formField))) {
                         isUpdate.set(true);
                     } else {
                         a.put(formField, IdUtil.randomUUID());
                     }
                 }
             });
-            if(isUpdate.get()){
+            if (isUpdate.get()) {
                 sqlProviderMapper.update(dbMapping);
             } else {
                 sqlProviderMapper.insert(dbMapping);
@@ -168,7 +170,7 @@ public class DataServiceImpl implements DataService {
         List<Map<String, Object>> data = formDataVo.getData();
         for (Map<String, Object> a : data) {
             dbMapping.put("content", a);
-            if(Objects.equals(OkyaConfig.getDeletionType(), "L")){
+            if (Objects.equals(OkyaConfig.getDeletionType(), "L")) {
                 sqlProviderMapper.deleteLogic(dbMapping);
             } else {
                 sqlProviderMapper.delete(dbMapping);

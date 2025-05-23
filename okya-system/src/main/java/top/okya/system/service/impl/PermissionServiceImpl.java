@@ -57,8 +57,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Map<String, Object>> myTenancys() {
-        LoginUser loginUser = Global.getLoginUser();
-        AsUser asUser = loginUser.getAsUser();
+        AsUser asUser = Objects.requireNonNull(Global.getLoginUser()).getAsUser();
         String userId = asUser.isAdmin() ? null : asUser.getUserId();
         return asPermissionMapper.queryTenancysByUserId(userId);
     }
@@ -67,8 +66,7 @@ public class PermissionServiceImpl implements PermissionService {
     public void resetPwd(UserPwdVo userPwdVo) {
         String userId = userPwdVo.getUserId();
         if (Objects.isNull(userId)) {
-            LoginUser loginUser = Global.getLoginUser();
-            AsUser asUser = loginUser.getAsUser();
+            AsUser asUser = Objects.requireNonNull(Global.getLoginUser()).getAsUser();
             userId = asUser.getUserId();
         }
         asUserMapper.updatePwdByUserId(userId, SecureUtil.encode(userPwdVo.getPassword()));
@@ -252,8 +250,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Permission> myPermissions(String currentTenancy) {
-        LoginUser loginUser = Global.getLoginUser();
-        AsUser asUser = loginUser.getAsUser();
+        AsUser asUser = Objects.requireNonNull(Global.getLoginUser()).getAsUser();
         String userId = asUser.isAdmin() ? null : asUser.getUserId();
         List<AsPermission> asPermissions = asPermissionMapper.queryPermissionsByUserId(userId, currentTenancy).stream().distinct().collect(Collectors.toList());
         // 新增加按钮、表格列、表单字段权限

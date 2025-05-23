@@ -99,7 +99,7 @@ public class FileServiceImpl implements FileService {
         // 使用 ConcurrentHashMap 来确保同一 identifier 合并操作的互斥
         synchronized (uploadLock.computeIfAbsent(identifier, k -> new Object())) {
             try {
-                LoginUser loginUser = Global.getLoginUser();
+                LoginUser loginUser = Objects.requireNonNull(Global.getLoginUser());
                 MultipartFile file = chunkVo.getFile();
                 String fileName = chunkVo.getFilename();
                 String chunkName = fileName + CharacterConstants.MINUS + chunkVo.getChunkNumber();
@@ -160,7 +160,7 @@ public class FileServiceImpl implements FileService {
         // 使用 ConcurrentHashMap 来确保同一 identifier 合并操作的互斥
         synchronized (mergeLock.computeIfAbsent(identifier, k -> new Object())) {
             try {
-                LoginUser loginUser = Global.getLoginUser();
+                LoginUser loginUser = Objects.requireNonNull(Global.getLoginUser());
                 List<AsUploaderFileChunk> unmergedChunks = asUploaderFileChunkMapper.queryByFileIdentifier(identifier)
                         .stream()
                         .filter(i -> Objects.equals(i.getMerged(), CHUNK_UNMERGED))

@@ -2,10 +2,12 @@ package top.okya.workflow.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import top.okya.component.domain.NextAssignee;
 import top.okya.workflow.domain.AsFlow;
 
 import java.util.List;
- 
+import java.util.Map;
+
 /**
  * 流程设计表(AsFlow)表数据库访问层
  *
@@ -34,7 +36,7 @@ public interface AsFlowMapper {
 
     AsFlow queryFlowById(String flowId);
 
-    List<String> getAssigneesByRole(@Param("roles") List<String> roles, @Param("roleRange") int roleRange, @Param("deptId") Object deptId);
+    List<NextAssignee> getAssigneesByRole(@Param("roles") List<String> roles, @Param("roleRange") int roleRange, @Param("deptId") Object deptId);
 
     int published(@Param("flowId") String flowId, @Param("deploymentId") String deploymentId);
 

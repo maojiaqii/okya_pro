@@ -35,15 +35,15 @@ public class BpmnConverter {
         process.setId(asFlow.getFlowCode());  // 确保流程ID与flowCode相同
         process.setName(asFlow.getFlowName());
         process.setExecutable(true);  // 重要！确保流程是可执行的
-        
+
         // 添加默认的流程变量
         ExtensionElements extensionElements = modelInstance.newInstance(ExtensionElements.class);
         process.addChildElement(extensionElements);
-        
+
         // 创建Camunda属性
         CamundaProperties camundaProperties = modelInstance.newInstance(CamundaProperties.class);
         extensionElements.addChildElement(camundaProperties);
-        
+
         JSONArray nodes = asFlow.getFlowNodes();
         definitions.addChildElement(process);
 
@@ -111,12 +111,15 @@ public class BpmnConverter {
                         completionCondition.setTextContent("${nrOfCompletedInstances >= 1}");
                         loop.setCompletionCondition(completionCondition);
                     } else if (Objects.equals(signType, "2")) {
-                        // 会签：不设置completionCondition，需要所有实例完成
+                        // 会签：需要所有实例通过或者任意实例不通过
+                        CompletionCondition completionCondition = modelInstance.newInstance(CompletionCondition.class);
+                        completionCondition.setTextContent(String.format("${%s >= 1 || %s == nrOfInstances}", FlowConstants.REJECT_COUNT, FlowConstants.APPROVE_COUNT));
+                        loop.setCompletionCondition(completionCondition);
                     } else if (Objects.equals(signType, "3")) {
-                        // 比例签：完成比例达到阈值
+                        // 比例签：通过比例达到阈值或者不通过比例到达1-阈值
                         CompletionCondition completionCondition = modelInstance.newInstance(CompletionCondition.class);
                         Integer approvePercent = node.getInteger("approvePercent");
-                        completionCondition.setTextContent(String.format("${nrOfCompletedInstances / nrOfInstances >= %s}", approvePercent / 100.0));
+                        completionCondition.setTextContent(String.format("${%s / nrOfInstances >= %s || %s / nrOfInstances > 1 - %s}", FlowConstants.APPROVE_COUNT, approvePercent / 100.0, FlowConstants.REJECT_COUNT, approvePercent / 100.0));
                         loop.setCompletionCondition(completionCondition);
                     }
                     userTask.setLoopCharacteristics(loop);
@@ -202,12 +205,13 @@ public class BpmnConverter {
 
     /**
      * 辅助方法：定义流程变量
-     * @param modelInstance BPMN模型实例
+     *
+     * @param modelInstance     BPMN模型实例
      * @param camundaProperties Camunda属性集合
-     * @param name 变量名称
-     * @param defaultValue 默认值
+     * @param name              变量名称
+     * @param defaultValue      默认值
      */
-    private static void defineProcessVariable(BpmnModelInstance modelInstance, CamundaProperties camundaProperties, 
+    private static void defineProcessVariable(BpmnModelInstance modelInstance, CamundaProperties camundaProperties,
                                               String name, String defaultValue) {
         CamundaProperty property = modelInstance.newInstance(CamundaProperty.class);
         property.setCamundaName(name);

@@ -1,6 +1,7 @@
 package top.okya.workflow.service;
 
-import top.okya.component.domain.WorkflowHistory;
+import top.okya.component.domain.PreNode;
+import top.okya.component.domain.WorkflowSelect;
 import top.okya.component.domain.vo.WorkflowProcessVo;
 
 import java.util.List;
@@ -22,20 +23,11 @@ public interface FlowProcessService {
     Map<String, Object> testProcess(WorkflowProcessVo workflowStartVo);
 
     /**
-     * 启动流程实例
-     *
-     * @param workflowStartVo 流程启动参数
-     * @return 流程实例ID
-     */
-    String startProcess(WorkflowProcessVo workflowStartVo);
-
-    /**
      * 完成任务
      *
-     * @param taskId 任务ID
-     * @param variables 任务变量
+     * @param workflowStartVo 流程启动参数
      */
-    void completeTask(String taskId, Map<String, Object> variables);
+    void completeTask(WorkflowProcessVo workflowStartVo);
 
     /**
      * 取消流程实例
@@ -44,4 +36,8 @@ public interface FlowProcessService {
      * @param reason 取消原因
      */
     void cancelProcess(String processInstanceId, String reason);
+
+    WorkflowSelect nextAssignees(WorkflowProcessVo workflowStartVo);
+
+    WorkflowSelect preNodes(WorkflowProcessVo workflowStartVo);
 }

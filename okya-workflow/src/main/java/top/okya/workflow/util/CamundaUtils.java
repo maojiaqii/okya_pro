@@ -1,7 +1,6 @@
 package top.okya.workflow.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.camunda.bpm.dmn.engine.impl.el.JuelExpression;
 import org.camunda.bpm.engine.history.HistoricActivityInstance;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.FlowElement;
@@ -11,6 +10,7 @@ import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.SubProcess;
 import org.camunda.bpm.model.bpmn.instance.UserTask;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,31 +25,38 @@ public class CamundaUtils {
 
     /**
      * 根据节点，获取入口连线
-     * @param source 源节点
+     *
+     * @param target 源节点
      * @return 入口连线列表
      */
-    public static List<SequenceFlow> getElementIncomingFlows(FlowNode source) {
-        return new ArrayList<>(source.getIncoming());
+    public static List<SequenceFlow> getElementIncomingFlows(BpmnModelInstance modelInstance, FlowNode target) {
+        return modelInstance.getModelElementsByType(SequenceFlow.class)
+                .stream().filter(flow -> flow.getTarget().getId().equals(target.getId()))
+                .collect(Collectors.toList());
     }
 
     /**
      * 根据节点，获取出口连线
+     *
      * @param source 源节点
      * @return 出口连线列表
      */
-    public static List<SequenceFlow> getElementOutgoingFlows(FlowNode source) {
-        return new ArrayList<>(source.getOutgoing());
+    public static List<SequenceFlow> getElementOutgoingFlows(BpmnModelInstance modelInstance, FlowNode source) {
+        return modelInstance.getModelElementsByType(SequenceFlow.class)
+                .stream().filter(flow -> flow.getSource().getId().equals(source.getId()))
+                .collect(Collectors.toList());
     }
 
     /**
      * 获取全部节点列表，包含子流程节点
+     *
      * @param modelInstance BPMN模型实例
      * @return 所有节点集合
      */
     public static Collection<FlowElement> getAllElements(BpmnModelInstance modelInstance) {
         Set<FlowElement> allElements = new HashSet<>();
         Collection<Process> processes = modelInstance.getModelElementsByType(Process.class);
-        
+
         for (Process process : processes) {
             allElements.addAll(process.getFlowElements());
             // 递归获取子流程中的节点
@@ -63,86 +70,89 @@ public class CamundaUtils {
 
     /**
      * 迭代获取父级任务节点列表，向前找
-     * @param source 起始节点
+     *
+     * @param source          起始节点
      * @param hasSequenceFlow 已经经过的连线的ID
-     * @param userTaskList 已找到的用户任务节点
+     * @param userTaskList    已找到的用户任务节点
      * @return 父级用户任务列表
      */
-    public static List<UserTask> iteratorFindParentUserTasks(FlowNode source, Set<String> hasSequenceFlow, List<UserTask> userTaskList) {
+    public static List<UserTask> iteratorFindParentUserTasks(BpmnModelInstance modelInstance, FlowNode source, Set<String> hasSequenceFlow, List<UserTask> userTaskList) {
         userTaskList = userTaskList == null ? new ArrayList<>() : userTaskList;
         hasSequenceFlow = hasSequenceFlow == null ? new HashSet<>() : hasSequenceFlow;
 
         // 获取入口连线
-        List<SequenceFlow> sequenceFlows = getElementIncomingFlows(source);
+        List<SequenceFlow> sequenceFlows = getElementIncomingFlows(modelInstance, source);
 
         for (SequenceFlow sequenceFlow : sequenceFlows) {
             if (hasSequenceFlow.contains(sequenceFlow.getId())) {
                 continue;
             }
             hasSequenceFlow.add(sequenceFlow.getId());
-            
+
             FlowNode sourceNode = sequenceFlow.getSource();
             if (sourceNode instanceof UserTask) {
                 userTaskList.add((UserTask) sourceNode);
                 continue;
             }
-            
+
             if (sourceNode instanceof SubProcess) {
                 StartEvent startEvent = ((SubProcess) sourceNode).getChildElementsByType(StartEvent.class).iterator().next();
-                List<UserTask> childUserTaskList = findChildProcessUserTasks(startEvent, null, null);
+                List<UserTask> childUserTaskList = findChildProcessUserTasks(modelInstance, startEvent, null, null);
                 if (childUserTaskList != null && !childUserTaskList.isEmpty()) {
                     userTaskList.addAll(childUserTaskList);
                     continue;
                 }
             }
-            
-            userTaskList = iteratorFindParentUserTasks(sourceNode, new HashSet<>(hasSequenceFlow), userTaskList);
+
+            userTaskList = iteratorFindParentUserTasks(modelInstance, sourceNode, new HashSet<>(hasSequenceFlow), userTaskList);
         }
         return userTaskList;
     }
 
     /**
      * 迭代获取子流程用户任务节点
-     * @param source 起始节点
+     *
+     * @param source          起始节点
      * @param hasSequenceFlow 已经经过的连线的ID
-     * @param userTaskList 需要撤回的用户任务列表
+     * @param userTaskList    需要撤回的用户任务列表
      * @return 子流程用户任务列表
      */
-    public static List<UserTask> findChildProcessUserTasks(FlowNode source, Set<String> hasSequenceFlow, List<UserTask> userTaskList) {
+    public static List<UserTask> findChildProcessUserTasks(BpmnModelInstance modelInstance, FlowNode source, Set<String> hasSequenceFlow, List<UserTask> userTaskList) {
         hasSequenceFlow = hasSequenceFlow == null ? new HashSet<>() : hasSequenceFlow;
         userTaskList = userTaskList == null ? new ArrayList<>() : userTaskList;
 
-        List<SequenceFlow> sequenceFlows = getElementOutgoingFlows(source);
+        List<SequenceFlow> sequenceFlows = getElementOutgoingFlows(modelInstance, source);
 
         for (SequenceFlow sequenceFlow : sequenceFlows) {
             if (hasSequenceFlow.contains(sequenceFlow.getId())) {
                 continue;
             }
             hasSequenceFlow.add(sequenceFlow.getId());
-            
+
             FlowNode targetNode = sequenceFlow.getTarget();
             if (targetNode instanceof UserTask) {
                 userTaskList.add((UserTask) targetNode);
                 continue;
             }
-            
+
             if (targetNode instanceof SubProcess) {
                 StartEvent startEvent = ((SubProcess) targetNode).getChildElementsByType(StartEvent.class).iterator().next();
-                List<UserTask> childUserTaskList = findChildProcessUserTasks(startEvent, hasSequenceFlow, null);
+                List<UserTask> childUserTaskList = findChildProcessUserTasks(modelInstance, startEvent, hasSequenceFlow, null);
                 if (childUserTaskList != null && !childUserTaskList.isEmpty()) {
                     userTaskList.addAll(childUserTaskList);
                     continue;
                 }
             }
-            
-            userTaskList = findChildProcessUserTasks(targetNode, new HashSet<>(hasSequenceFlow), userTaskList);
+
+            userTaskList = findChildProcessUserTasks(modelInstance, targetNode, new HashSet<>(hasSequenceFlow), userTaskList);
         }
         return userTaskList;
     }
 
     /**
      * 历史节点数据清洗，清洗掉又回滚导致的脏数据
-     * @param modelInstance BPMN模型实例
+     *
+     * @param modelInstance        BPMN模型实例
      * @param historicActivityList 历史任务实例信息，数据采用开始时间升序
      * @return 清洗后的历史节点ID列表
      */
@@ -209,39 +219,39 @@ public class CamundaUtils {
                 .orElse(null);
     }
 
-    private static Set<String> findDirtyRoads(FlowNode source, Set<String> sequenceFlows, List<String> targets) {
+    private static Set<String> findDirtyRoads(BpmnModelInstance modelInstance, FlowNode source, Set<String> sequenceFlows, List<String> targets) {
         Set<String> dirtyRoads = new HashSet<>();
-        List<SequenceFlow> incomingFlows = getElementIncomingFlows(source);
+        List<SequenceFlow> incomingFlows = getElementIncomingFlows(modelInstance, source);
 
         for (SequenceFlow flow : incomingFlows) {
             if (sequenceFlows.contains(flow.getId())) {
                 continue;
             }
             sequenceFlows.add(flow.getId());
-            
+
             FlowNode sourceNode = flow.getSource();
             if (targets.contains(sourceNode.getId())) {
                 dirtyRoads.add(sourceNode.getId());
                 continue;
             }
-            
+
             if (sourceNode instanceof SubProcess) {
                 StartEvent startEvent = ((SubProcess) sourceNode).getChildElementsByType(StartEvent.class).iterator().next();
-                dirtyRoads.addAll(findDirtyRoads(startEvent, sequenceFlows, targets));
+                dirtyRoads.addAll(findDirtyRoads(modelInstance, startEvent, sequenceFlows, targets));
             }
-            
-            dirtyRoads.addAll(findDirtyRoads(sourceNode, new HashSet<>(sequenceFlows), targets));
+
+            dirtyRoads.addAll(findDirtyRoads(modelInstance, sourceNode, new HashSet<>(sequenceFlows), targets));
         }
         return dirtyRoads;
     }
 
-    private static void processDirtyDataCleanup(HistoricActivityInstance currentInstance, 
-                                              List<String> multiTask,
-                                              List<String> deleteKeyList,
-                                              List<Set<String>> dirtyDataLineList,
-                                              int multiIndex,
-                                              StringBuilder multiKey,
-                                              boolean multiOpera) {
+    private static void processDirtyDataCleanup(HistoricActivityInstance currentInstance,
+                                                List<String> multiTask,
+                                                List<String> deleteKeyList,
+                                                List<Set<String>> dirtyDataLineList,
+                                                int multiIndex,
+                                                StringBuilder multiKey,
+                                                boolean multiOpera) {
         // 处理会签节点
         if (multiKey == null && multiTask.contains(currentInstance.getActivityId())) {
             for (int i = 0; i < deleteKeyList.size(); i++) {

@@ -12,6 +12,7 @@ import top.okya.component.annotation.ApiLog;
 import top.okya.component.domain.HttpResult;
 import top.okya.component.domain.vo.WorkflowDesignVo;
 import top.okya.component.domain.vo.WorkflowProcessVo;
+import top.okya.component.domain.vo.vgroup.workflow.Cancel;
 import top.okya.component.domain.vo.vgroup.workflow.Publish;
 import top.okya.component.domain.vo.vgroup.workflow.Save;
 import top.okya.component.enums.OperationType;
@@ -103,11 +104,38 @@ public class FlowController {
     /**
      * 发起流程
      */
-    @PostMapping(value = "/startProcess")
+    @PostMapping(value = "/completeTask")
     @ApiLog(title = "发起流程/送审", operationType = OperationType.OTHER)
-    public HttpResult startProcess(@Validated @RequestBody WorkflowProcessVo workflowStartVo) {
-        String processInstanceId = flowProcessService.startProcess(workflowStartVo);
-        return HttpResult.success("流程启动成功", processInstanceId);
+    public HttpResult completeTask(@Validated @RequestBody WorkflowProcessVo workflowStartVo) {
+        flowProcessService.completeTask(workflowStartVo);
+        return HttpResult.success("审核/送审成功");
+    }
+
+    /**
+     * 获取下一节点审批用户列表
+     */
+    @PostMapping(value = "/nextAssignees")
+    @ApiLog(title = "获取下一节点审批用户列表", operationType = OperationType.SEARCH)
+    public HttpResult nextAssignees(@Validated @RequestBody WorkflowProcessVo workflowStartVo) {
+        return HttpResult.success("操作成功", flowProcessService.nextAssignees(workflowStartVo));
+    }
+
+    /**
+     * 获取已执行（可退回）审批节点列表
+     */
+    @PostMapping(value = "/preNodes")
+    @ApiLog(title = "获取已执行（可退回）审批节点列表", operationType = OperationType.SEARCH)
+    public HttpResult preNodes(@Validated @RequestBody WorkflowProcessVo workflowStartVo) {
+        return HttpResult.success("操作成功", flowProcessService.preNodes(workflowStartVo));
+    }
+
+    /**
+     * 取消流程
+     */
+    @PostMapping(value = "/cancelProcess")
+    @ApiLog(title = "取消流程", operationType = OperationType.DELETE)
+    public HttpResult cancelProcess(@Validated(Cancel.class) @RequestBody WorkflowProcessVo workflowStartVo) {
+        return HttpResult.success("操作成功", flowProcessService.preNodes(workflowStartVo));
     }
 
 }

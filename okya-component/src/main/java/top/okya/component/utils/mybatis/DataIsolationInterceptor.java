@@ -273,7 +273,7 @@ public class DataIsolationInterceptor implements Interceptor {
      * @param update Update 语法树
      */
     private void setEnvToUpdate(Update update) {
-        AsUser loginUser = Global.getLoginUser().getAsUser();
+        AsUser loginUser = Objects.requireNonNull(Global.getLoginUser()).getAsUser();
         // 添加env列
         update.addUpdateSet(new Column(SqlConstants.update_by), new StringValue(loginUser.getUserId()));
         update.addUpdateSet(new Column(SqlConstants.update_time), new StringValue(DateFormatUtil.formatNow()));

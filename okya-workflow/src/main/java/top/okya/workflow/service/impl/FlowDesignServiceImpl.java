@@ -54,7 +54,7 @@ public class FlowDesignServiceImpl implements FlowDesignService {
     @Override
     @Transactional
     public String saveWorkflow(WorkflowDesignVo workflowVo) {
-        if(workflowVo.getIsNew()){
+        if (workflowVo.getIsNew()) {
             // 保存为新版本
             // 获取当前版本号
             Integer currentVersion = asFlowMapper.queryLastedVerByCode(workflowVo.getFlowCode());
@@ -76,17 +76,6 @@ public class FlowDesignServiceImpl implements FlowDesignService {
             }
         } else {
             throw new FlowException(FlowExceptionType.FLOW_DESIGN_ERROR, "不允许修改流程");
-            /*String flowId = workflowVo.getFlowId();
-            if(StringUtils.isEmpty(flowId)){
-                throw new FlowException(FlowExceptionType.FLOW_DESIGN_ERROR, "更新流程时流程Id不能为空");
-            }
-            AsFlow asFlow = (AsFlow) new AsFlow()
-                    .setFlowId(flowId)
-                    .setFlowName(workflowVo.getFlowName())
-                    .setFlowNodes(new JSONArray(workflowVo.getNodes()))
-                    .setStatus(workflowVo.getStatus())
-                    .setRemark(workflowVo.getRemark());
-            asFlowMapper.update(asFlow);*/
         }
         return "保存成功！";
     }
@@ -99,7 +88,7 @@ public class FlowDesignServiceImpl implements FlowDesignService {
         checkAndThrowExceptions.checkDbResult(asFlow);
         String flowCode = asFlow.getFlowCode();
 
-        try{
+        try {
             // 转换为BPMN模型
             BpmnModelInstance bpmnModelInstance = BpmnConverter.convertToBpmn(asFlow);
 

@@ -57,4 +57,8 @@ public class AsForm extends Basic implements Serializable {
      * 数据库映射关系
      */
     private JSONObject dbMapping;
+    /**
+     * 流程查询表单类型
+     */
+    private Integer workflowType;
 }

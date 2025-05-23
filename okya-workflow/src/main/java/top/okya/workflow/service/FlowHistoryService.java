@@ -19,12 +19,4 @@ public interface FlowHistoryService {
      * @return 流程历史路径信息列表
      */
     WorkflowHistory getProcessHistoryPath(String processInstanceId);
-
-    /**
-     * 获取流程实例的历史路径描述
-     *
-     * @param processInstanceId 流程实例ID
-     * @return 流程历史路径描述
-     */
-    String getProcessHistoryPathDescription(String processInstanceId);
 }

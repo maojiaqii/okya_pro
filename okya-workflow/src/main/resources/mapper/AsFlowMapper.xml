@@ -18,6 +18,11 @@
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap type="top.okya.component.domain.NextAssignee" id="NextAssigneeMap">
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <insert id="insert">
         insert into as_flow (flow_id, flow_code, flow_name, flow_version, flow_nodes, status, remark)
         values (#{flowId}, #{flowCode}, #{flowName}, #{flowVersion}, #{flowNodes, typeHandler=top.okya.component.utils.mybatis.JsonTypeHandler}, #{status}, #{remark})
@@ -55,8 +60,8 @@
         select * from as_flow where deployment_id = #{deploymentId}
     </select>
 
-    <select id="getAssigneesByRole" resultType="java.lang.String">
-        select * from as_user au
+    <select id="getAssigneesByRole" resultMap="NextAssigneeMap">
+        select au.user_id, concat(au.user_name, '@', au.user_code) user_name from as_user au
         where
         <foreach collection="roles" item="item" open="(" close=")" separator=" or ">
             au.roles_json like concat('%"', #{item}, '"%')

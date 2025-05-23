@@ -1,0 +1,58 @@
+[
+  {
+    "field": "flow_info_",
+    "label": "申请信息",
+    "children": [
+      {
+        "field": "flow_start_user_name",
+        "label": "申请人"
+      },
+      {
+        "field": "flow_start_dept_name",
+        "label": "所属部门"
+      },
+      {
+        "field": "flow_start_time",
+        "label": "申请时间"
+      }
+    ]
+  },
+  {
+    "field": "task_info_",
+    "label": "任务信息",
+    "children": [
+      {
+        "field": "flow_current_node_name",
+        "label": "当前节点"
+      },
+      {
+        "field": "task_start_time",
+        "label": "产生时间"
+      },
+      {
+        "field": "task_in_method",
+        "label": "产生方式",
+        "slots": {
+          "default": [
+            {
+              "colProps": {
+                "span": 12
+              },
+              "itemProps": {
+                "prop": "task_in_method_tag"
+              },
+              "componentProps": {
+                "type": "primary",
+                "component": "Tag",
+                "lifecycle": {
+                  "mounted": "() => {if(this.formData.task_in_method === '被退回'){\n\tthis.formItems.task_in_method_tag.componentProps.type = 'warning'\n\tthis.formItems.task_in_method_tag.componentProps.staticText = '被退回'\n}else{\n\tthis.formItems.task_in_method_tag.componentProps.type = 'success'\n\tthis.formItems.task_in_method_tag.componentProps.staticText = '正常流转'\n}}"
+                },
+                "staticText": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

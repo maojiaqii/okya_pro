@@ -1,0 +1,66 @@
+[
+  {
+    "field": "flow_info_",
+    "label": "申请信息",
+    "children": [
+      {
+        "field": "flow_start_user_name",
+        "label": "申请人"
+      },
+      {
+        "field": "flow_start_dept_name",
+        "label": "所属部门"
+      },
+      {
+        "field": "flow_start_time",
+        "label": "申请时间"
+      },
+      {
+        "field": "flow_end_time",
+        "label": "办结时间"
+      }
+    ]
+  },
+  {
+    "field": "task_info_",
+    "label": "任务信息",
+    "children": [
+      {
+        "field": "task_name",
+        "label": "审核节点"
+      },
+      {
+        "field": "task_start_time",
+        "label": "产生时间"
+      },
+      {
+        "field": "task_end_time",
+        "label": "审核时间"
+      },
+      {
+        "field": "task_result",
+        "label": "审核结果",
+        "slots": {
+          "default": [
+            {
+              "colProps": {
+                "span": 12
+              },
+              "itemProps": {
+                "prop": "task_result_tag"
+              },
+              "componentProps": {
+                "type": "primary",
+                "component": "Tag",
+                "lifecycle": {
+                  "mounted": "() => {if(this.formData.task_comment.startsWith('退回')){\n\tthis.formItems.task_result_tag.componentProps.type = 'danger'\n\tthis.formItems.task_result_tag.componentProps.staticText = '退回'\n}else{\n\tthis.formItems.task_result_tag.componentProps.type = 'success'\n\tthis.formItems.task_result_tag.componentProps.staticText = '通过'\n}}"
+                },
+                "staticText": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

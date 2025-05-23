@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.okya.component.domain.child.FullPath;
 import top.okya.component.domain.child.NodeExecuteInfo;
 
 import java.util.List;
@@ -33,5 +34,10 @@ public class WorkflowHistory {
      */
     @Builder.Default
     private boolean finished = false;
+
+    /**
+     * 流程完整路径
+     */
+    private List<FullPath> fullPath;
 
 }

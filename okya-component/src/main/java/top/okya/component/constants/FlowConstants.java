@@ -18,4 +18,11 @@ public class FlowConstants {
     public static final String STARTER_NODE_ID = "FSTARTERIDM";
     public static final String NODE_APPROVE_LIST = "nodeApproveList";
     public static final String ROLE_RANGE = "roleRange";
+    public static final String APPROVE = "审核通过";
+    public static final String REJECT = "审核不通过";
+    public static final String FROM_APPROVE = "正常流转";
+    public static final String FROM_REJECT = "被退回";
+    public static final String REJECT_TO = "rejectTo";
+    public static final String APPROVE_COUNT = "nrOfApprovedInstances";
+    public static final String REJECT_COUNT = "nrOfRejectedInstances";
 }

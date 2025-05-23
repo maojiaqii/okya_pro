@@ -51,4 +51,9 @@ public class NodeExecuteInfo {
      */
     private String assignee;
 
+    /**
+     * 审核意见
+     */
+    private String comment;
+
 }

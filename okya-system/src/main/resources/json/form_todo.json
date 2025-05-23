@@ -1,0 +1,84 @@
+[
+  {
+    "colProps": {
+      "lg": 6,
+      "md": 12,
+      "sm": 12,
+      "xl": 6,
+      "xs": 24
+    },
+    "itemProps": {
+      "prop": "flowStartUser",
+      "label": "申请人"
+    },
+    "componentProps": {
+      "component": "Input",
+      "clearable": true
+    }
+  },
+  {
+    "colProps": {
+      "lg": 6,
+      "md": 12,
+      "sm": 12,
+      "xl": 6,
+      "xs": 24
+    },
+    "itemProps": {
+      "prop": "flowIsReject",
+      "label": "是否退回"
+    },
+    "componentProps": {
+      "component": "Select",
+      "clearable": true,
+      "options": [
+        {
+          "label": "否",
+          "value": 0
+        },
+        {
+          "label": "是",
+          "value": 1
+        }
+      ]
+    }
+  },
+  {
+    "colProps": {
+      "lg": 6,
+      "md": 12,
+      "sm": 12,
+      "xl": 6,
+      "xs": 24
+    },
+    "itemProps": {
+      "prop": "minFlowStartTime",
+      "label": "申请时间（小）"
+    },
+    "componentProps": {
+      "type": "date",
+      "component": "DatePicker",
+      "valueFormat": "YYYY-MM-DD",
+      "clearable": true
+    }
+  },
+  {
+    "colProps": {
+      "lg": 6,
+      "md": 12,
+      "sm": 12,
+      "xl": 6,
+      "xs": 24
+    },
+    "itemProps": {
+      "prop": "maxFlowStartTime",
+      "label": "申请时间（大）"
+    },
+    "componentProps": {
+      "type": "date",
+      "component": "DatePicker",
+      "valueFormat": "YYYY-MM-DD",
+      "clearable": true
+    }
+  }
+]

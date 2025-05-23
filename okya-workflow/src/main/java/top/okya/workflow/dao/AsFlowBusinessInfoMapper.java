@@ -1,6 +1,7 @@
 package top.okya.workflow.dao;
  
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import top.okya.workflow.domain.AsFlowBusinessInfo;
 
 import java.util.List;
@@ -24,6 +25,13 @@ public interface AsFlowBusinessInfoMapper {
     AsFlowBusinessInfo queryById(String id);
 
     /**
+     * 通过assignee查询用户代码及名称
+     *
+     * @return 实例对象
+     */
+    String queryByAssignee(String id);
+
+    /**
      * 通过流程实例Id查询单条数据
      *
      * @param procInstId 流程实例Id
@@ -38,5 +46,10 @@ public interface AsFlowBusinessInfoMapper {
      * @return 影响行数
      */
     int insert(AsFlowBusinessInfo asFlowBusinessInfo);
- 
+
+    int finish(@Param("procInstId") String processInstanceId, @Param("endTime") String endTime);
+
+    int updateNodeInfo(@Param("procInstId") String processInstanceId, @Param("taskDefinitionKey") String taskDefinitionKey, @Param("taskDefinitionName") String taskDefinitionName);
+
+    int deleteByProcessInstanceId(String procInstId);
 }

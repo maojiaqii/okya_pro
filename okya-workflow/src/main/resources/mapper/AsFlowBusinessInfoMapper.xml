@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.okya.workflow.dao.AsFlowBusinessInfoMapper">
- 
+
     <resultMap type="top.okya.workflow.domain.AsFlowBusinessInfo" id="AsFlowBusinessInfoMap">
         <result property="infoId" column="info_id" jdbcType="VARCHAR"/>
         <result property="businessTable" column="business_table" jdbcType="VARCHAR"/>
@@ -23,28 +23,79 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
     </resultMap>
- 
+
     <!--查询单个-->
     <select id="queryById" resultMap="AsFlowBusinessInfoMap">
-        select info_id, business_table, business_id, flow_code, flow_version, flow_business_key, proc_inst_id, flow_current_node_id, flow_current_node_name, start_user_id, start_dept_id, flow_start_time, flow_end_time, is_delete, create_by, create_time, update_by, update_time, remark 
+        select info_id,
+               business_table,
+               business_id,
+               flow_code,
+               flow_version,
+               flow_business_key,
+               proc_inst_id,
+               flow_current_node_id,
+               flow_current_node_name,
+               start_user_id,
+               start_dept_id,
+               flow_start_time,
+               flow_end_time,
+               is_delete,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
         from as_flow_business_info
         where info_id = #{id}
     </select>
 
     <!--查询单个-->
     <select id="queryByProcInstId" resultType="java.util.Map">
-        select afbi.start_user_id, afbi.start_dept_id, af.flow_nodes
+        select afbi.start_user_id,
+               concat(au.user_name, '@', au.user_code) user_name,
+               afbi.start_dept_id,
+               af.flow_nodes,
+               afbi.flow_start_time,
+               afbi.flow_end_time
         from as_flow_business_info afbi
-        left join as_flow af
-        on afbi.flow_code = af.flow_code
-        and afbi.flow_version = af.flow_version
+                 left join as_user au on au.user_id = afbi.start_user_id
+                 left join as_flow af
+                           on afbi.flow_code = af.flow_code
+                               and afbi.flow_version = af.flow_version
         where proc_inst_id = #{procInstId}
     </select>
- 
+
+    <select id="queryByAssignee" resultType="java.lang.String">
+        select concat(user_id, ' ', user_name) from as_user where user_id = #{id}
+    </select>
+
     <!--新增所有列-->
     <insert id="insert">
-        insert into as_flow_business_info(info_id, business_table, business_id, flow_code, flow_version, flow_business_key, proc_inst_id, flow_current_node_id, flow_current_node_name, start_user_id, start_dept_id, flow_start_time, flow_end_time, remark)
-        values (#{infoId}, #{businessTable}, #{businessId}, #{flowCode}, #{flowVersion}, #{flowBusinessKey}, #{procInstId}, #{flowCurrentNodeId}, #{flowCurrentNodeName}, #{startUserId}, #{startDeptId}, #{flowStartTime}, #{flowEndTime}, #{remark})
+        insert into as_flow_business_info(info_id, business_table, business_id, flow_code, flow_version,
+                                          flow_business_key, proc_inst_id, flow_current_node_id, flow_current_node_name,
+                                          start_user_id, start_dept_id, flow_start_time, flow_end_time, remark)
+        values (#{infoId}, #{businessTable}, #{businessId}, #{flowCode}, #{flowVersion}, #{flowBusinessKey},
+                #{procInstId}, #{flowCurrentNodeId}, #{flowCurrentNodeName}, #{startUserId}, #{startDeptId},
+                #{flowStartTime}, #{flowEndTime}, #{remark})
     </insert>
- 
+
+    <update id="finish">
+        update as_flow_business_info
+        set flow_current_node_id   = '',
+            flow_current_node_name = '',
+            flow_end_time = #{endTime}
+        where proc_inst_id = #{procInstId}
+    </update>
+
+    <update id="updateNodeInfo">
+        update as_flow_business_info
+        set flow_current_node_id = #{taskDefinitionKey},
+            flow_current_node_name = #{taskDefinitionName}
+        where proc_inst_id = #{procInstId}
+    </update>
+
+    <delete id="deleteByProcessInstanceId">
+        delete from as_flow_business_info where proc_inst_id = #{procInstId}
+    </delete>
+
 </mapper>
